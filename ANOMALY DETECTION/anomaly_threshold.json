@@ -1,0 +1,8 @@
+{
+  "mean_error": 0.987039,
+  "std_error": 0.05161,
+  "statistical_threshold_3sigma": 1.141869,
+  "percentile_threshold_p99": 1.103765,
+  "max_healthy_error": 1.131802,
+  "calibration_samples": 225
+}
