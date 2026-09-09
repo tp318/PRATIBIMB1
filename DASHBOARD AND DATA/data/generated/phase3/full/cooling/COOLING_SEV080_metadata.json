@@ -1,0 +1,14 @@
+{
+  "run_id": "COOLING_SEV080",
+  "degradation_type": "COOLING",
+  "target_component": "COOLING_SYSTEM",
+  "max_severity": 0.8,
+  "trajectory_type": "CONSTANT",
+  "seed": 67,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 6531.433992281708,
+  "ambient_temperature_c": -5.316289118714181,
+  "total_raw_samples": 6001,
+  "total_window_samples": 56
+}

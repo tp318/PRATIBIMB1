@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_BEARING_EXP_U01",
+  "degradation_type": "BEARING",
+  "target_component": "BEARING",
+  "max_severity": 0.95,
+  "trajectory_type": "EXPONENTIAL",
+  "seed": 9015,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 4709.651473861885,
+  "ambient_temperature_c": -22.51015605505954,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

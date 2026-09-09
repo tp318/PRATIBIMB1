@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_CYL1_EXP_U01",
+  "degradation_type": "CYLINDER",
+  "target_component": "CYLINDER_1",
+  "max_severity": 0.95,
+  "trajectory_type": "EXPONENTIAL",
+  "seed": 9007,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 3486.059260831547,
+  "ambient_temperature_c": 9.30874819410505,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

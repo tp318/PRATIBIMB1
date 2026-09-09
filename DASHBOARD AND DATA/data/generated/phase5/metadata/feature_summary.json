@@ -1,0 +1,21 @@
+{
+  "run_count": 29,
+  "train_runs": [
+    "HEALTHY_001",
+    "HEALTHY_002",
+    "HEALTHY_003",
+    "HEALTHY_004"
+  ],
+  "val_runs": [
+    "HEALTHY_005",
+    "HEALTHY_006",
+    "CYL1_SEV020",
+    "CYL3_SEV020",
+    "BEARING_SEV020",
+    "COOLING_SEV020",
+    "LUBRICATION_SEV020"
+  ],
+  "sample_rate_hz": 100.0,
+  "window_size_sec": 5.0,
+  "stride_sec": 1.0
+}

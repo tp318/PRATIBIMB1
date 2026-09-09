@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_BEARING_LIN_U01",
+  "degradation_type": "BEARING",
+  "target_component": "BEARING",
+  "max_severity": 0.95,
+  "trajectory_type": "LINEAR",
+  "seed": 9013,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 6751.4434009392035,
+  "ambient_temperature_c": -10.540077898717954,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

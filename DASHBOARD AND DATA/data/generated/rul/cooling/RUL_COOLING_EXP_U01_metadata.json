@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_COOLING_EXP_U01",
+  "degradation_type": "COOLING",
+  "target_component": "COOLING_SYSTEM",
+  "max_severity": 0.95,
+  "trajectory_type": "EXPONENTIAL",
+  "seed": 9019,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 3679.9876593709305,
+  "ambient_temperature_c": 0.6854096984741815,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

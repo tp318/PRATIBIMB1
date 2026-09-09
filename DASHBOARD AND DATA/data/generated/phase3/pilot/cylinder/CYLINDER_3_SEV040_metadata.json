@@ -1,0 +1,12 @@
+{
+  "run_id": "CYLINDER_3_SEV040",
+  "degradation_type": "CYLINDER",
+  "target_component": "CYLINDER_3",
+  "max_severity": 0.4,
+  "trajectory_type": "CONSTANT",
+  "seed": 44,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "total_raw_samples": 1501,
+  "total_window_samples": 11
+}

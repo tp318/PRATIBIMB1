@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_LUBRICATION_LIN_U01",
+  "degradation_type": "LUBRICATION",
+  "target_component": "LUBRICATION_SYSTEM",
+  "max_severity": 0.95,
+  "trajectory_type": "LINEAR",
+  "seed": 9021,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 274.0758483624196,
+  "ambient_temperature_c": 30.43582772765227,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

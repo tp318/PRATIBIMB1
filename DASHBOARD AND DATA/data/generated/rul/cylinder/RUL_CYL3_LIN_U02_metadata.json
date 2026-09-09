@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_CYL3_LIN_U02",
+  "degradation_type": "CYLINDER",
+  "target_component": "CYLINDER_3",
+  "max_severity": 0.95,
+  "trajectory_type": "LINEAR",
+  "seed": 9010,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 4746.502969953445,
+  "ambient_temperature_c": -3.4050761432067027,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

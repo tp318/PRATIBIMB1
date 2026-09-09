@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_LUBRICATION_EXP_U02",
+  "degradation_type": "LUBRICATION",
+  "target_component": "LUBRICATION_SYSTEM",
+  "max_severity": 0.95,
+  "trajectory_type": "EXPONENTIAL",
+  "seed": 9024,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 4829.626876382406,
+  "ambient_temperature_c": -21.775421391076858,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

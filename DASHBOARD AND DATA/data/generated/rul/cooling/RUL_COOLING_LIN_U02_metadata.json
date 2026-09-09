@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_COOLING_LIN_U02",
+  "degradation_type": "COOLING",
+  "target_component": "COOLING_SYSTEM",
+  "max_severity": 0.95,
+  "trajectory_type": "LINEAR",
+  "seed": 9018,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 532.4095254184537,
+  "ambient_temperature_c": 34.90504199342237,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

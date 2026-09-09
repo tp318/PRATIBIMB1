@@ -1,0 +1,14 @@
+{
+  "run_id": "RUL_HEALTHY_U04",
+  "degradation_type": "NONE",
+  "target_component": "NONE",
+  "max_severity": 0.0,
+  "trajectory_type": "CONSTANT",
+  "seed": 9004,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 5414.137862611932,
+  "ambient_temperature_c": 2.3354040367630517,
+  "total_raw_samples": 18001,
+  "total_window_samples": 176
+}

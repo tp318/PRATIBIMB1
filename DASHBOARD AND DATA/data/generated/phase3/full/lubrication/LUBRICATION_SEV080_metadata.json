@@ -1,0 +1,14 @@
+{
+  "run_id": "LUBRICATION_SEV080",
+  "degradation_type": "LUBRICATION",
+  "target_component": "LUBRICATION_SYSTEM",
+  "max_severity": 0.8,
+  "trajectory_type": "CONSTANT",
+  "seed": 71,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 3355.3634743451403,
+  "ambient_temperature_c": 2.473520427828987,
+  "total_raw_samples": 6001,
+  "total_window_samples": 56
+}

@@ -1,0 +1,1042 @@
+<?xml version="1.0"?>
+<demos>
+  <demoitem>
+    <source type="m">AbstractCombustionEngineCarExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/AbstractCombustionEngineCarExample.html</file>
+    <metadata>ex00101001</metadata>
+    <thumbnail>html/AbstractCombustionEngineCarExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">AbstractCombustionEngineCar.slx</file>
+    <file component="sdl" timestamp="0">AbstractCombustionEngineCarInput.m</file>
+    <file component="sdl" timestamp="0">AbstractCombustionEngineCarPlot1.m</file>
+    <file component="sdl" timestamp="0">AbstractCombustionEngineCarPlot2Input.m</file>
+    <file component="sdl" timestamp="0">AbstractCombustionEngineCarSetup.m</file>
+    <file component="sdl" timestamp="0">AbstractCombustionEngineCarSlip.mlx</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">VehicleWithFourSpeedTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/VehicleWithFourSpeedTransmissionExample.html</file>
+    <metadata>ex00101002</metadata>
+    <thumbnail>html/VehicleWithFourSpeedTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1736785980">VehicleWithFourSpeedTransmission.slx</file>
+    <file component="sdl" timestamp="0">VehicleWithFourSpeedTransmissionPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">VehicleInSimscapeDrivelineAndSimulinkExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/VehicleInSimscapeDrivelineAndSimulinkExample.html</file>
+    <metadata>ex00101003</metadata>
+    <thumbnail>html/VehicleInSimscapeDrivelineAndSimulinkExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">VehicleInSimscapeDrivelineAndSimulink.slx</file>
+    <file component="sdl" timestamp="0">VehicleInSimscapeDrivelineAndSimulinkPlot1VehicleSpeed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">VehicleWithManualTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/VehicleWithManualTransmissionExample.html</file>
+    <metadata>ex00101004</metadata>
+    <thumbnail>html/VehicleWithManualTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1738082698">VehicleWithManualTransmission.slx</file>
+    <file component="sdl" timestamp="0">VehicleWithManualTransmissionPlot1Inputs.m</file>
+    <file component="sdl" timestamp="0">VehicleWithManualTransmissionPlot2Speeds.m</file>
+    <file component="sdl" timestamp="0">VehicleWithManualTransmissionPlot3Compare.m</file>
+    <file component="sdl" timestamp="0">VehicleWithManualTransmissionSchematicDetailed.jpg</file>
+    <file component="sdl" timestamp="0">VehicleWithManualTransmissionVelocityProfile.mat</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">VehicleWithFourWheelDriveExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/VehicleWithFourWheelDriveExample.html</file>
+    <metadata>ex00101005</metadata>
+    <thumbnail>html/VehicleWithFourWheelDriveExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1736786054">VehicleWithFourWheelDrive.slx</file>
+    <file component="sdl" timestamp="0">VehicleWithFourWheelDrivePlot1Speed.m</file>
+    <file component="sdl" timestamp="0">VehicleWithFourWheelDriveSetTires.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">TireParameterAndPerformanceExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/TireParameterAndPerformanceExample.html</file>
+    <metadata>ex00101006</metadata>
+    <thumbnail>html/TireParameterAndPerformanceExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1736785442">TireParameterAndPerformance.slx</file>
+    <file component="sdl" timestamp="0">TireParameterAndPerformanceInputs.mat</file>
+    <file component="sdl" timestamp="1702306649">TireParameterAndPerformanceHarnessMagicFormulaFit.m</file>
+    <file component="sdl" timestamp="0">TireParameterAndPerformancePlotStoppingDistance.m</file>
+    <file component="sdl" timestamp="0">TireParameterAndPerformanceStart.tir</file>
+    <file component="sdl" timestamp="1736785442">TireParameterAndPerformanceHarness.slx</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">VehicleFourWheelDriveTestbedExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/VehicleFourWheelDriveTestbedExample.html</file>
+    <metadata>ex00101007</metadata>
+    <thumbnail>html/VehicleFourWheelDriveTestbedExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1736785559">VehicleFourWheelDriveTestbed.slx</file>
+    <file component="sdl" timestamp="0">VehicleFourWheelDriveTestbedPlot1Speed.m</file>
+    <file component="sdl" timestamp="0">VehicleFourWheelDriveTestbedPlot2TestCenterDifferential.m</file>
+    <file component="sdl" timestamp="0">VehicleFourWheelDriveTestbedPlot3TestFrontRearDifferential.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">VehicleWithDualClutchTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/VehicleWithDualClutchTransmissionExample.html</file>
+    <metadata>ex00101008</metadata>
+    <thumbnail>html/VehicleWithDualClutchTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1736785916">VehicleWithDualClutchTransmission.slx</file>
+    <file component="sdl" timestamp="0">VehicleWithDualClutchTransmissionPlot1Speed.m</file>
+    <file component="sdl" timestamp="0">VehicleWithDualClutchTransmissionSetSolver.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">TwoModeHybridTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/TwoModeHybridTransmissionExample.html</file>
+    <metadata>ex00101009</metadata>
+    <thumbnail>html/TwoModeHybridTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1736785821">TwoModeHybridTransmission.slx</file>
+    <file component="sdl" timestamp="0">TwoModeHybridTransmissionPlot1Speed.m</file>
+    <file component="sdl" timestamp="0">TwoModeHybridTransmissionPlot2Ratio.m</file>
+    <file component="sdl" timestamp="0">TwoModeHybridTransmissionTransmission.jpg</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">TorsenDifferentialExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/TorsenDifferentialExample.html</file>
+    <metadata>ex00101010</metadata>
+    <thumbnail>html/TorsenDifferentialExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1736785735">TorsenDifferential.slx</file>
+    <file component="sdl" timestamp="0">TorsenDifferentialPlot1Speeds.m</file>
+    <file component="sdl" timestamp="0">TorsenDifferentialPlot2Torques.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">LimitedSlipDifferentialWithClutchesExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/LimitedSlipDifferentialWithClutchesExample.html</file>
+    <metadata>ex00101011</metadata>
+    <thumbnail>html/LimitedSlipDifferentialWithClutchesExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1736785650">LimitedSlipDifferentialWithClutches.slx</file>
+    <file component="sdl" timestamp="0">LimitedSlipDifferentialWithClutchesPlot1Speeds.m</file>
+    <file component="sdl" timestamp="0">LimitedSlipDifferentialWithClutchesPlot2Torques.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">EngineBrakingExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/EngineBrakingExample.html</file>
+    <metadata>ex00101012</metadata>
+    <thumbnail>html/EngineBrakingExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">EngineBraking.slx</file>
+    <file component="sdl" timestamp="0">EngineBrakingPlot1Speed.m</file>
+    <file component="sdl" timestamp="0">EngineBrakingPlot2Torque.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">PistonEngineTestbedExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/PistonEngineTestbedExample.html</file>
+    <metadata>ex00101013</metadata>
+    <thumbnail>html/PistonEngineTestbedExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">PistonEngineTestbed.slx</file>
+    <file component="sdl" timestamp="0">PistonEngineTestbedPlot1Torque.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">CrankAngleResolvedEngineExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/CrankAngleResolvedEngineExample.html</file>
+    <metadata>ex00101014</metadata>
+    <thumbnail>html/CrankAngleResolvedEngineExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">CrankAngleResolvedEngine.slx</file>
+    <file component="sdl" timestamp="0">CrankAngleResolvedEngine.png</file>
+    <file component="sdl" timestamp="1667301687">CrankAngleResolvedEngineInput.m</file>
+    <file component="sdl" timestamp="1667301687">CrankAngleResolvedEnginePlot.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">SingleCylinderSparkIgnitionEngineExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/SingleCylinderSparkIgnitionEngineExample.html</file>
+    <metadata>ex00101015</metadata>
+    <thumbnail>html/SingleCylinderSparkIgnitionEngineExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">SingleCylinderSparkIgnitionEngine.slx</file>
+    <file component="sdl" timestamp="0">SingleCylinderSparkIgnitionEnginePlot1.m</file>
+    <file component="sdl" timestamp="0">SingleCylinderSparkIgnitionEnginePlot2Compare.m</file>
+    <file component="sdl" timestamp="0">SingleCylinderSparkIgnitionEngineSetup.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">ShipPropellerExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/ShipPropellerExample.html</file>
+    <metadata>ex00101016</metadata>
+    <thumbnail>html/ShipPropellerExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">ShipPropeller.slx</file>
+    <file component="sdl" timestamp="0">ShipPropellerPlotCoefficientCurve.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">FiveSpeedTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/FiveSpeedTransmissionExample.html</file>
+    <metadata>ex00102001</metadata>
+    <thumbnail>html/FiveSpeedTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">FiveSpeedTransmission.slx</file>
+    <file component="sdl" timestamp="0">FiveSpeedTransmissionPlot1Speed.m</file>
+    <file component="sdl" timestamp="0">FiveSpeedTransmissionPlot2Gear.m</file>
+    <file component="sdl" timestamp="0">FiveSpeedTransmissionSchematic.jpg</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">CRCRFourSpeedTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/CRCRFourSpeedTransmissionExample.html</file>
+    <metadata>ex00102002</metadata>
+    <thumbnail>html/CRCRFourSpeedTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">CRCRFourSpeedTransmission.slx</file>
+    <file component="sdl" timestamp="0">CRCRFourSpeedTransmissionClutchVariantManual.jpg</file>
+    <file component="sdl" timestamp="0">CRCRFourSpeedTransmissionClutchVariantProgrammed.jpg</file>
+    <file component="sdl" timestamp="0">CRCRFourSpeedTransmissionPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">RavigneauxFourSpeedTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/RavigneauxFourSpeedTransmissionExample.html</file>
+    <metadata>ex00102003</metadata>
+    <thumbnail>html/RavigneauxFourSpeedTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">RavigneauxFourSpeedTransmission.slx</file>
+    <file component="sdl" timestamp="0">RavigneauxFourSpeedTransmissionPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">SimpsonThreeSpeedTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/SimpsonThreeSpeedTransmissionExample.html</file>
+    <metadata>ex00102004</metadata>
+    <thumbnail>html/SimpsonThreeSpeedTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">SimpsonThreeSpeedTransmission.slx</file>
+    <file component="sdl" timestamp="0">SimpsonThreeSpeedTransmissionPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">TwoSpeedTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/TwoSpeedTransmissionExample.html</file>
+    <metadata>ex00102005</metadata>
+    <thumbnail>html/TwoSpeedTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">TwoSpeedTransmission.slx</file>
+    <file component="sdl" timestamp="0">TwoSpeedTransmissionPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">HelicopterTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/HelicopterTransmissionExample.html</file>
+    <metadata>ex00102006</metadata>
+    <thumbnail>html/HelicopterTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">HelicopterTransmission.slx</file>
+    <file component="sdl" timestamp="0">HelicopterTransmissionPlot1Torque.m</file>
+    <file component="sdl" timestamp="0">HelicopterTransmissionPlot2CoefficientCurve.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">TransmissionTestbedExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/TransmissionTestbedExample.html</file>
+    <metadata>ex00102007</metadata>
+    <thumbnail>html/TransmissionTestbedExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">TransmissionTestbed.slx</file>
+    <file component="sdl" timestamp="0">TransmissionTestbedPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">TransmissionFaultDetectionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/TransmissionFaultDetectionExample.html</file>
+    <metadata>ex00102008</metadata>
+    <thumbnail>html/TransmissionFaultDetectionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">TransmissionFaultDetection.slx</file>
+    <file component="sdl" timestamp="0">TransmissionFaultDetectionPlot1ConfusionMatrix.m</file>
+    <file component="sdl" timestamp="0">TransmissionFaultDetectionTraining.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">PowerSplitHybridTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/PowerSplitHybridTransmissionExample.html</file>
+    <metadata>ex00103002</metadata>
+    <thumbnail>html/PowerSplitHybridTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">PowerSplitHybridTransmission.slx</file>
+    <file component="sdl" timestamp="0">PowerSplitHybridTransmissionPlot1Power.m</file>
+    <file component="sdl" timestamp="1746196137">PowerSplitHybridTransmissionPlot2Losses.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">ParallelHybridTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/ParallelHybridTransmissionExample.html</file>
+    <metadata>ex00103003</metadata>
+    <thumbnail>html/ParallelHybridTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1745792991">ParallelHybridTransmission.slx</file>
+    <file component="sdl" timestamp="0">ParallelHybridTransmissionPlot1Power.m</file>
+    <file component="sdl" timestamp="1746196198">ParallelHybridTransmissionPlot2Losses.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">SeriesHybridTransmissionExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/SeriesHybridTransmissionExample.html</file>
+    <metadata>ex00103004</metadata>
+    <thumbnail>html/SeriesHybridTransmissionExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">SeriesHybridTransmission.slx</file>
+    <file component="sdl" timestamp="0">SeriesHybridTransmissionPlot1Power.m</file>
+    <file component="sdl" timestamp="1746196229">SeriesHybridTransmissionPlot2Losses.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">ClutchesForAcceleratingAndBrakingExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/ClutchesForAcceleratingAndBrakingExample.html</file>
+    <metadata>ex00104001</metadata>
+    <thumbnail>html/ClutchesForAcceleratingAndBrakingExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">ClutchesForAcceleratingAndBraking.slx</file>
+    <file component="sdl" timestamp="0">ClutchesForAcceleratingAndBrakingPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">HydraulicallyActuatedDrivelineClutchExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/HydraulicallyActuatedDrivelineClutchExample.html</file>
+    <metadata>ex00104002</metadata>
+    <thumbnail>html/HydraulicallyActuatedDrivelineClutchExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">HydraulicallyActuatedDrivelineClutch.slx</file>
+    <file component="sdl" timestamp="0">HydraulicallyActuatedDrivelineClutchPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">CustomClutchExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/CustomClutchExample.html</file>
+    <metadata>ex00104003</metadata>
+    <thumbnail>html/CustomClutchExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">CustomClutch.slx</file>
+    <file component="sdl" timestamp="0">CustomClutchPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">SimpleGearExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/SimpleGearExample.html</file>
+    <metadata>ex00105001</metadata>
+    <thumbnail>html/SimpleGearExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">SimpleGear.slx</file>
+    <file component="sdl" timestamp="0">SimpleGearPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">VariableRatioGearExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/VariableRatioGearExample.html</file>
+    <metadata>ex00105002</metadata>
+    <thumbnail>html/VariableRatioGearExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">VariableRatioGear.slx</file>
+    <file component="sdl" timestamp="0">VariableRatioGearPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">GearWithBacklashExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/GearWithBacklashExample.html</file>
+    <metadata>ex00105003</metadata>
+    <thumbnail>html/GearWithBacklashExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1667474319">GearWithBacklash.slx</file>
+    <file component="sdl" timestamp="0">GearWithBacklashPlot1Speed.m</file>
+    <file component="sdl" timestamp="1667488504">GearWithBacklashPlot2CompareModels.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">GearboxEfficiencyMeasurementExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/GearboxEfficiencyMeasurementExample.html</file>
+    <metadata>ex00105004</metadata>
+    <thumbnail>html/GearboxEfficiencyMeasurementExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">GearboxEfficiencyMeasurement.slx</file>
+    <file component="sdl" timestamp="0">GearboxEfficiencyMeasurementPlot1Efficiency.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">EpicyclicGearEfficiencyMeasurementExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/EpicyclicGearEfficiencyMeasurementExample.html</file>
+    <metadata>ex00105005</metadata>
+    <thumbnail>html/EpicyclicGearEfficiencyMeasurementExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">EpicyclicGearEfficiencyMeasurement.slx</file>
+    <file component="sdl" timestamp="0">EpicyclicGearEfficiencyMeasurementSchematic.jpg</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">CustomPlanetaryGearExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/CustomPlanetaryGearExample.html</file>
+    <metadata>ex00105006</metadata>
+    <thumbnail>html/CustomPlanetaryGearExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">CustomPlanetaryGear.slx</file>
+    <file component="sdl" timestamp="0">CustomPlanetaryGearSchematic.jpg</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">ShaftWithTorsionalFlexibilityExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/ShaftWithTorsionalFlexibilityExample.html</file>
+    <metadata>ex00106001</metadata>
+    <thumbnail>html/ShaftWithTorsionalFlexibilityExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">ShaftWithTorsionalFlexibility.slx</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalFlexibilityPlot1Speed.m</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalFlexibilityPlot2Twist.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">ShaftWithTorsionalAndTransverseFlexibilityExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/ShaftWithTorsionalAndTransverseFlexibilityExample.html</file>
+    <metadata>ex00106002</metadata>
+    <thumbnail>html/ShaftWithTorsionalAndTransverseFlexibilityExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">ShaftWithTorsionalAndTransverseFlexibility.slx</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalAndTransverseFlexibilityCampbellDiagram.m</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalAndTransverseFlexibilityAnimate.m</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalAndTransverseFlexibilityAnimateEigenmodes.m</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalAndTransverseFlexibilityAnimateLumpedMass.m</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalAndTransverseFlexibilityCompareEigLumped.m</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalAndTransverseFlexibilityInputModes.mat</file>
+    <file component="sdl" timestamp="0">ShaftWithTorsionalAndTransverseFlexibilityPlotModes.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">RatchetLeadscrewMechanismExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/RatchetLeadscrewMechanismExample.html</file>
+    <metadata>ex00107001</metadata>
+    <thumbnail>html/RatchetLeadscrewMechanismExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">RatchetLeadscrewMechanism.slx</file>
+    <file component="sdl" timestamp="0">RatchetLeadscrewMechanismPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">SteppingMechanismWithDetentsExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/SteppingMechanismWithDetentsExample.html</file>
+    <metadata>ex00107002</metadata>
+    <thumbnail>html/SteppingMechanismWithDetentsExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">SteppingMechanismWithDetents.slx</file>
+    <file component="sdl" timestamp="0">SteppingMechanismWithDetentsPlot1Force.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">PowerWindowSystemExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/PowerWindowSystemExample.html</file>
+    <metadata>ex00107003</metadata>
+    <thumbnail>html/PowerWindowSystemExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">PowerWindowSystem.slx</file>
+    <file component="sdl" timestamp="0">PowerWindowSystemMechanismSchematic.jpg</file>
+    <file component="sdl" timestamp="0">PowerWindowSystemPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">SheetMetalFeederExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/SheetMetalFeederExample.html</file>
+    <metadata>ex00107004</metadata>
+    <thumbnail>html/SheetMetalFeederExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">SheetMetalFeeder.slx</file>
+    <file component="sdl" timestamp="0">SheetMetalFeederPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">HydromechanicalHoistExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/HydromechanicalHoistExample.html</file>
+    <metadata>ex00107005</metadata>
+    <thumbnail>html/HydromechanicalHoistExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">HydromechanicalHoist.slx</file>
+    <file component="sdl" timestamp="0">HydromechanicalHoistPlot1Position.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">WinchWithBrakeExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/WinchWithBrakeExample.html</file>
+    <metadata>ex00107006</metadata>
+    <thumbnail>html/WinchWithBrakeExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">WinchWithBrake.slx</file>
+    <file component="sdl" timestamp="0">WinchWithBrakePlot1Position.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">SuspensionSystemComparisonExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/SuspensionSystemComparisonExample.html</file>
+    <metadata>ex00107007</metadata>
+    <thumbnail>html/SuspensionSystemComparisonExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1747472469">SuspensionSystemComparison.slx</file>
+    <file component="sdl" timestamp="1747472469">SuspensionSystemComparisonPlot1Position.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">DoubleCardanJointExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/DoubleCardanJointExample.html</file>
+    <metadata>ex00107008</metadata>
+    <thumbnail>html/DoubleCardanJointExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">DoubleCardanJoint.slx</file>
+    <file component="sdl" timestamp="0">DoubleCardanJointPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">ManipulatorWithUnbalancedLoadExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/ManipulatorWithUnbalancedLoadExample.html</file>
+    <metadata>ex00107009</metadata>
+    <thumbnail>html/ManipulatorWithUnbalancedLoadExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">ManipulatorWithUnbalancedLoad.slx</file>
+    <file component="sdl" timestamp="0">ManipulatorWithUnbalancedLoadPlot1Position.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">DynamometerExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/DynamometerExample.html</file>
+    <metadata>ex00107010</metadata>
+    <thumbnail>html/DynamometerExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">Dynamometer.slx</file>
+    <file component="sdl" timestamp="0">DynamometerPlot1Torques.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">CapstanWithSlipExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/CapstanWithSlipExample.html</file>
+    <metadata>ex00107011</metadata>
+    <thumbnail>html/CapstanWithSlipExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">CapstanWithSlip.slx</file>
+    <file component="sdl" timestamp="0">CapstanWithSlipPlot1Speed.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">CompoundPulleyExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/CompoundPulleyExample.html</file>
+    <metadata>ex00107012</metadata>
+    <thumbnail>html/CompoundPulleyExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">CompoundPulley.slx</file>
+    <file component="sdl" timestamp="0">CompoundPulleyPlotSpeedForce.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">FixedCaliperDiskBrakeExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/FixedCaliperDiskBrakeExample.html</file>
+    <metadata>ex00108001</metadata>
+    <thumbnail>html/FixedCaliperDiskBrakeExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0">FixedCaliperDiskBrake.png</file>
+    <file component="sdl" timestamp="0" open="open">FixedCaliperDiskBrake.slx</file>
+    <file component="sdl" timestamp="0">FixedCaliperDiskBrakeData.m</file>
+    <file component="sdl" timestamp="0">FixedCaliperDiskBrakeInput.m</file>
+    <file component="sdl" timestamp="0">FixedCaliperDiskBrakePlotCharacteristics.m</file>
+    <file component="sdl" timestamp="0">FixedCaliperDiskBrakeTandemPrimaryCylinder.png</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">AutomotiveClutchExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/AutomotiveClutchExample.html</file>
+    <metadata>ex00108002</metadata>
+    <thumbnail>html/AutomotiveClutchExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="0">AutomotiveClutch.slx</file>
+    <file component="sdl" timestamp="0">AutomotiveClutchInput.m</file>
+    <file component="sdl" timestamp="1689262980">AutomotiveClutchPlotCharacteristics.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">TorqueConverterInTwoModeModelingExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/TorqueConverterInTwoModeModelingExample.html</file>
+    <metadata>ex00108003</metadata>
+    <thumbnail>html/TorqueConverterInTwoModeModelingExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="0" open="open">TorqueConverterInTwoModeModeling.slx</file>
+    <file component="sdl" timestamp="0">TorqueConverterInTwoModeModelingPlot1.mlx</file>
+    <file component="sdl" timestamp="0">TorqueConverterInTwoModeModelingPlot2Lockup.mlx</file>
+    <file component="sdl" timestamp="0">TorqueConverterInTwoModeModelingPlot3Drive.mlx</file>
+    <file component="sdl" timestamp="0">TorqueConverterInTwoModeModelingPlot4Coast.mlx</file>
+  </demoitem>
+  <demoitem>
+    <source type="livem">RegenerativeFrictionBrakingControlExample</source>
+    <type>live</type>
+    <extension>m</extension>
+    <metadata>ex14407933</metadata>
+    <thumbnail>html/RegenerativeFrictionBrakingControlExample_01.png</thumbnail>
+    <product>matlab</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <product>simulink</product>
+    <file component="sdl" timestamp="1760456309">RegenerativeFrictionBrakingControl.slx</file>
+    <file component="sdl" timestamp="1760470565">RegenerativeFrictionBrakingControlBrakeImage.png</file>
+    <file component="sdl" timestamp="1760470565">RegenerativeFrictionBrakingControlCylinderImage.png</file>
+    <file component="sdl" timestamp="1760470565">RegenerativeFrictionBrakingControlParameters.m</file>
+    <file component="sdl" timestamp="1760456309">RegenerativeFrictionBrakingControlPlot1StoppingDistance.m</file>
+    <file component="sdl" timestamp="1760470565">RegenerativeFrictionBrakingControlPlot2ComparePerformance.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="livem">ThresholdParameterTuningExample</source>
+    <type>live</type>
+    <extension>m</extension>
+    <metadata>ex18042857</metadata>
+    <thumbnail>html/ThresholdParameterTuningExample_01.png</thumbnail>
+    <sandboxPublished/>
+    <product>matlab</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="1705063976">ThresholdParameterTuning.slx</file>
+    <file component="sdl" timestamp="1703760605">ThresholdParameterTuningExample_01.png</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">ElevatorExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/ElevatorExample.html</file>
+    <metadata>ex20690192</metadata>
+    <thumbnail>html/ElevatorExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1723198608">Elevator.slx</file>
+    <file component="sdl" timestamp="1723198608">ElevatorParameters.m</file>
+    <file component="sdl" timestamp="1756464641">ElevatorExample.m</file>
+    <file component="sdl" timestamp="1723198608">ElevatorVariableViewer.jpg</file>
+    <file component="sdl" timestamp="1723198608">ElevatorCableProperties.jpg</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">VehicleWithTorqueLossFaultExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/VehicleWithTorqueLossFaultExample.html</file>
+    <metadata>ex23894505</metadata>
+    <thumbnail>html/VehicleWithTorqueLossFaultExample_01.png</thumbnail>
+    <sandboxPublished/>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1767535790">VehicleWithTorqueLossFault.mdl</file>
+    <file component="sdl" timestamp="1767535790">VehicleWithTorqueLossFaultPlot1Speed.m</file>
+    <file component="sdl" timestamp="1767535790">VehicleWithTorqueLossFaultPlot2Engine.m</file>
+    <file component="sdl" timestamp="1767535790">VehicleWithTorqueLossFault_FaultModel.slx</file>
+    <file component="sdl" timestamp="1767535790">VehicleWithTorqueLossFault_faultInfo.xml</file>
+  </demoitem>
+  <demoitem>
+    <source type="livem">WindTurbineDrivelineWithVibrationsExample</source>
+    <type>live</type>
+    <extension>m</extension>
+    <metadata>ex24255127</metadata>
+    <thumbnail>data/WindTurbineDrivelineWithVibrationsModelScreenshot.PNG</thumbnail>
+    <sandboxPublished/>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="1674766850">WindTurbineDrivelineWithVibrations.slx</file>
+    <file component="sdl" timestamp="1674766850">WindTurbineDrivelineWithVibrationsAnimate.m</file>
+    <file component="sdl" timestamp="1667390099">WindTurbineDrivelineWithVibrationsIcon.jpg</file>
+    <file component="sdl" timestamp="1674766850">WindTurbineDrivelineWithVibrationsParameters.m</file>
+    <file component="sdl" timestamp="1674766850">WindTurbineDrivelineWithVibrationsPerformanceComparison.m</file>
+    <file component="sdl" timestamp="1674766850">WindTurbineDrivelineWithVibrationsPlotCampbellDiagram.m</file>
+    <file component="sdl" timestamp="1674766850">WindTurbineDrivelineWithVibrationsPlotControlledPower.m</file>
+    <file component="sdl" timestamp="1667390099">WindTurbineDrivelineWithVibrationsPlotEigenmodes.m</file>
+    <file component="sdl" timestamp="1674766850">WindTurbineDrivelineWithVibrationsModelScreenshot.PNG</file>
+  </demoitem>
+  <demoitem>
+    <source type="livem">WindTurbineBladeOptimizationExample</source>
+    <type>live</type>
+    <extension>m</extension>
+    <metadata>ex30246135</metadata>
+    <thumbnail>html/WindTurbineBladeOptimizationExample_01.png</thumbnail>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="1723204128">WindTurbineBladeOptimization.slx</file>
+    <file component="sdl" timestamp="1723204128">WindTurbineBladeOptimizationRun.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="livem">PlanetaryGearComparisonExample</source>
+    <type>live</type>
+    <extension>m</extension>
+    <metadata>ex48030463</metadata>
+    <thumbnail>html/PlanetaryGearComparisonExample_01.png</thumbnail>
+    <product>matlab</product>
+    <product>sdl</product>
+    <product>simscapemultibody</product>
+    <file component="sdl" timestamp="1773929511">Extr_Data_Gear.m</file>
+    <file component="sdl" timestamp="1773929511">Extr_Data_Link2Hole.m</file>
+    <file component="sdl" timestamp="1773929511">Extr_Data_Ring.m</file>
+    <file component="sdl" timestamp="1773929511">planetaryGearParam.m</file>
+    <file component="sdl" timestamp="1773929511">PlanetaryGearComparison.slx</file>
+    <file component="sdl" timestamp="1773929511">planetaryGearPlot.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="livem">WindPoweredVehicleWithPropellerExample</source>
+    <type>live</type>
+    <extension>m</extension>
+    <metadata>ex50515577</metadata>
+    <thumbnail>html/WindPoweredVehicleWithPropellerExample_02.png</thumbnail>
+    <product>matlab</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <product>simulink</product>
+    <file component="sdl" timestamp="1738229178">WindPoweredVehicleWithPropellerPlot1Forces.m</file>
+    <file component="sdl" timestamp="1738229178">WindPoweredVehicleWithPropellerPlot2Slip.m</file>
+    <file component="sdl" timestamp="1738229178">WindPoweredVehicleWithPropeller.slx</file>
+    <file component="sdl" timestamp="1738229178">WindPoweredVehicleWithPropellerTestRig.slx</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">SimpleRotationalMechanicalSystemExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/SimpleRotationalMechanicalSystemExample.html</file>
+    <metadata>ex76247803</metadata>
+    <thumbnail>html/SimpleRotationalMechanicalSystemExample_01.png</thumbnail>
+    <product>matlab</product>
+    <product>sdl</product>
+    <product>simscape</product>
+    <file component="sdl" timestamp="1746624711">SimpleRotationalMechanicalSystemExample.m</file>
+    <file component="sdl" timestamp="1707821048">SimpleRotationalMechanicalSystem_dynamic.slx</file>
+    <file component="sdl" open="open" timestamp="1707821048">SimpleRotationalMechanicalSystem.slx</file>
+    <file component="sdl" timestamp="1707821048">SimpleRotationalMechanicalSystem_translational.slx</file>
+    <file component="sdl" timestamp="1707821048">SimpleRotationalMechanicalSystem_electrical.slx</file>
+    <file component="sdl" timestamp="1707821048">SimpleRotationalMechanicalSystem_thermal.slx</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">TranslationalPowerSensorExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/TranslationalPowerSensorExample.html</file>
+    <metadata>ex84382651</metadata>
+    <hideCode/>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1727349035">TranslationalPowerSensor.slx</file>
+  </demoitem>
+  <demoitem>
+    <source type="m">DogClutchWithDynamicModalModelExample</source>
+    <type>model</type>
+    <extension>m</extension>
+    <file>html/DogClutchWithDynamicModalModelExample.html</file>
+    <metadata>ex86021509</metadata>
+    <thumbnail>html/DogClutchWithDynamicModalModelExample_01.png</thumbnail>
+    <hideCode/>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" open="open" timestamp="1726850675">DogClutchWithDynamicModalModel.slx</file>
+    <file component="sdl" timestamp="1720446441">DogClutchWithDynamicModalModelPlot1.m</file>
+  </demoitem>
+  <demoitem>
+    <source type="livem">CustomGearLibraryExample</source>
+    <type>live</type>
+    <extension>m</extension>
+    <metadata>ex90058182</metadata>
+    <thumbnail>html/CustomGearLibraryExample_16.png</thumbnail>
+    <product>matlab</product>
+    <product>simulink</product>
+    <product>simscape</product>
+    <product>sdl</product>
+    <file component="sdl" timestamp="1770630384">CustomGearLibraryBeveledSunPlanetGear.slx</file>
+    <file component="sdl" timestamp="1770630384">CustomGearLibraryDifferentialGear.slx</file>
+    <file component="sdl" timestamp="1770630384">CustomGearLibraryPlanetaryGear.slx</file>
+    <file component="sdl" timestamp="1770630384">CustomGearLibrarySimpleGearPair.slx</file>
+    <file component="sdl" timestamp="1770630384">CustomGearLibrarySunPlanetGear.slx</file>
+    <file component="sdl" timestamp="1769989959">Gears_lib.slx</file>
+    <dir component="sdl" timestamp="1770630384">+Gears</dir>
+  </demoitem>
+</demos>

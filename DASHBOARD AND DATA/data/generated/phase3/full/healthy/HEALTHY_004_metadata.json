@@ -1,0 +1,14 @@
+{
+  "run_id": "HEALTHY_004",
+  "degradation_type": "NONE",
+  "target_component": "NONE",
+  "max_severity": 0.0,
+  "trajectory_type": "CONSTANT",
+  "seed": 46,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 2339.280053273154,
+  "ambient_temperature_c": -8.052528425640126,
+  "total_raw_samples": 6001,
+  "total_window_samples": 56
+}

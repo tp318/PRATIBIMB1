@@ -1,0 +1,14 @@
+{
+  "run_id": "BEARING_SEV020",
+  "degradation_type": "BEARING",
+  "target_component": "BEARING",
+  "max_severity": 0.2,
+  "trajectory_type": "CONSTANT",
+  "seed": 60,
+  "operating_profile": "DEFAULT_MISSION",
+  "sample_rate_hz": 100.0,
+  "altitude_m": 6750.8737557181585,
+  "ambient_temperature_c": -10.00946376099526,
+  "total_raw_samples": 6001,
+  "total_window_samples": 56
+}

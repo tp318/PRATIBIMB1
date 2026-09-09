@@ -1,0 +1,88 @@
+{
+  "feature_config": "residual",
+  "failure_threshold": 0.3,
+  "health_mae_heldout_unit": 0.022543662235117858,
+  "health_rmse_heldout_unit": 0.04085749891618269,
+  "training_residual_std": 0.011260710401173624,
+  "per_run": [
+    {
+      "run_id": "RUL_BEARING_EXP_U02",
+      "is_healthy_run": false,
+      "n_predictions": 153,
+      "rul_mae_s": 72.69,
+      "true_failure_time_s": 162.99
+    },
+    {
+      "run_id": "RUL_BEARING_LIN_U02",
+      "is_healthy_run": false,
+      "n_predictions": 123,
+      "rul_mae_s": 17.01,
+      "true_failure_time_s": 132.99
+    },
+    {
+      "run_id": "RUL_COOLING_EXP_U02",
+      "is_healthy_run": false,
+      "n_predictions": 153,
+      "rul_mae_s": 144.54,
+      "true_failure_time_s": 162.99
+    },
+    {
+      "run_id": "RUL_COOLING_LIN_U02",
+      "is_healthy_run": false,
+      "n_predictions": 123,
+      "rul_mae_s": 23.98,
+      "true_failure_time_s": 132.99
+    },
+    {
+      "run_id": "RUL_CYL1_EXP_U02",
+      "is_healthy_run": false,
+      "n_predictions": 153,
+      "rul_mae_s": 52.88,
+      "true_failure_time_s": 162.99
+    },
+    {
+      "run_id": "RUL_CYL1_LIN_U02",
+      "is_healthy_run": false,
+      "n_predictions": 123,
+      "rul_mae_s": 19.48,
+      "true_failure_time_s": 132.99
+    },
+    {
+      "run_id": "RUL_CYL3_EXP_U02",
+      "is_healthy_run": false,
+      "n_predictions": 153,
+      "rul_mae_s": 69.07,
+      "true_failure_time_s": 162.99
+    },
+    {
+      "run_id": "RUL_CYL3_LIN_U02",
+      "is_healthy_run": false,
+      "n_predictions": 123,
+      "rul_mae_s": 20.38,
+      "true_failure_time_s": 132.99
+    },
+    {
+      "run_id": "RUL_HEALTHY_U02",
+      "is_healthy_run": true,
+      "n_predictions": 171,
+      "rul_mae_s": null,
+      "true_failure_time_s": null
+    },
+    {
+      "run_id": "RUL_LUBRICATION_EXP_U02",
+      "is_healthy_run": false,
+      "n_predictions": 153,
+      "rul_mae_s": 60.03,
+      "true_failure_time_s": 162.99
+    },
+    {
+      "run_id": "RUL_LUBRICATION_LIN_U02",
+      "is_healthy_run": false,
+      "n_predictions": 123,
+      "rul_mae_s": 16.1,
+      "true_failure_time_s": 132.99
+    }
+  ],
+  "n_predictions": 1551,
+  "units_note": "RUL is in SIMULATION seconds, not engine flight hours."
+}

@@ -1,0 +1,287 @@
+{
+  "raw": {
+    "statistical": {
+      "precision": 0.8765432098765432,
+      "recall": 0.08452380952380953,
+      "f1_score": 0.15418023887079263,
+      "fpr": 0.05952380952380952,
+      "tpr": 0.08452380952380953,
+      "roc_auc": 0.7031108276643991,
+      "pr_auc": 0.894113606768597,
+      "tp": 71,
+      "fp": 10,
+      "tn": 158,
+      "fn": 769,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 0.06845238095238096
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 0.07142857142857142
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.06547619047619048
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 0.1488095238095238
+        }
+      }
+    },
+    "isolation_forest": {
+      "precision": 0.8571428571428571,
+      "recall": 0.09285714285714286,
+      "f1_score": 0.16756176154672395,
+      "fpr": 0.07738095238095238,
+      "tpr": 0.09285714285714286,
+      "roc_auc": 0.6451459750566894,
+      "pr_auc": 0.8766909779941512,
+      "tp": 78,
+      "fp": 13,
+      "tn": 155,
+      "fn": 762,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 0.13095238095238096
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 0.08333333333333333
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.05357142857142857
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 0.06547619047619048
+        }
+      }
+    },
+    "autoencoder": {
+      "precision": 0.9965870307167235,
+      "recall": 0.6952380952380952,
+      "f1_score": 0.8190743338008415,
+      "fpr": 0.011904761904761904,
+      "tpr": 0.6952380952380952,
+      "roc_auc": 0.9224914965986395,
+      "pr_auc": 0.9842558756229016,
+      "tp": 584,
+      "fp": 2,
+      "tn": 166,
+      "fn": 256,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 0.6696428571428571
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 0.8928571428571429
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.24404761904761904
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 1.0
+        }
+      }
+    }
+  },
+  "residual": {
+    "statistical": {
+      "precision": 1.0,
+      "recall": 0.8666666666666667,
+      "f1_score": 0.9285714285714286,
+      "fpr": 0.0,
+      "tpr": 0.8666666666666667,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "tp": 728,
+      "fp": 0,
+      "tn": 168,
+      "fn": 112,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 1.0
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 1.0
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.8809523809523809
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 0.4523809523809524
+        }
+      }
+    },
+    "isolation_forest": {
+      "precision": 0.9897510980966325,
+      "recall": 0.8047619047619048,
+      "f1_score": 0.8877216021011162,
+      "fpr": 0.041666666666666664,
+      "tpr": 0.8047619047619048,
+      "roc_auc": 0.9635345804988662,
+      "pr_auc": 0.9926309851665518,
+      "tp": 676,
+      "fp": 7,
+      "tn": 161,
+      "fn": 164,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 1.0
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 1.0
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.4642857142857143
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 0.5595238095238095
+        }
+      }
+    },
+    "autoencoder": {
+      "precision": 1.0,
+      "recall": 0.8690476190476191,
+      "f1_score": 0.9299363057324841,
+      "fpr": 0.0,
+      "tpr": 0.8690476190476191,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "tp": 730,
+      "fp": 0,
+      "tn": 168,
+      "fn": 110,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 1.0
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 1.0
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.8869047619047619
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 0.4583333333333333
+        }
+      }
+    }
+  },
+  "hybrid": {
+    "statistical": {
+      "precision": 1.0,
+      "recall": 0.8666666666666667,
+      "f1_score": 0.9285714285714286,
+      "fpr": 0.0,
+      "tpr": 0.8666666666666667,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "tp": 728,
+      "fp": 0,
+      "tn": 168,
+      "fn": 112,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 1.0
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 1.0
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.8809523809523809
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 0.4523809523809524
+        }
+      }
+    },
+    "isolation_forest": {
+      "precision": 0.9929453262786596,
+      "recall": 0.6702380952380952,
+      "f1_score": 0.8002842928216063,
+      "fpr": 0.023809523809523808,
+      "tpr": 0.6702380952380952,
+      "roc_auc": 0.9157525510204081,
+      "pr_auc": 0.9814246111019119,
+      "tp": 563,
+      "fp": 4,
+      "tn": 164,
+      "fn": 277,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 1.0
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 0.8154761904761905
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.10119047619047619
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 0.43452380952380953
+        }
+      }
+    },
+    "autoencoder": {
+      "precision": 1.0,
+      "recall": 0.8642857142857143,
+      "f1_score": 0.9272030651340997,
+      "fpr": 0.0,
+      "tpr": 0.8642857142857143,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "tp": 726,
+      "fp": 0,
+      "tn": 168,
+      "fn": 114,
+      "by_family": {
+        "CYLINDER": {
+          "count": 336,
+          "detection_rate": 1.0
+        },
+        "BEARING": {
+          "count": 168,
+          "detection_rate": 1.0
+        },
+        "COOLING": {
+          "count": 168,
+          "detection_rate": 0.8809523809523809
+        },
+        "LUBRICATION": {
+          "count": 168,
+          "detection_rate": 0.44047619047619047
+        }
+      }
+    }
+  }
+}

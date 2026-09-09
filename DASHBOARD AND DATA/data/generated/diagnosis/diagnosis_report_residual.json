@@ -1,0 +1,210 @@
+{
+  "feature_config": "residual",
+  "n_features": 178,
+  "classes": [
+    "BEARING",
+    "COOLING",
+    "CYLINDER",
+    "HEALTHY",
+    "LUBRICATION"
+  ],
+  "train_runs": [
+    "BEARING_SEV020",
+    "BEARING_SEV040",
+    "COOLING_SEV020",
+    "COOLING_SEV040",
+    "CYL1_SEV020",
+    "CYL1_SEV040",
+    "CYL3_SEV020",
+    "CYL3_SEV040",
+    "HEALTHY_001",
+    "HEALTHY_002",
+    "HEALTHY_003",
+    "HEALTHY_004",
+    "LUBRICATION_SEV020",
+    "LUBRICATION_SEV040"
+  ],
+  "val_runs": [
+    "BEARING_SEV060",
+    "COOLING_SEV060",
+    "CYL1_SEV060",
+    "CYL3_SEV060",
+    "HEALTHY_005",
+    "HEALTHY_006",
+    "LUBRICATION_SEV060"
+  ],
+  "test_runs": [
+    "BEARING_SEV080",
+    "COOLING_SEV080",
+    "CYL1_SEV080",
+    "CYL3_SEV080",
+    "HEALTHY_007",
+    "HEALTHY_008",
+    "HEALTHY_009",
+    "LUBRICATION_SEV080"
+  ],
+  "test_summary": {
+    "accuracy": 0.9665178571428571,
+    "balanced_accuracy": 0.9464285714285714,
+    "macro_precision": 0.9621382007822685,
+    "macro_recall": 0.9464285714285714,
+    "macro_f1": 0.9489787405862545,
+    "n_samples": 448
+  },
+  "test_per_class": [
+    {
+      "fault_class": "BEARING",
+      "precision": 0.8615384615384616,
+      "recall": 1.0,
+      "f1": 0.9256198347107438,
+      "support": 56
+    },
+    {
+      "fault_class": "COOLING",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 56
+    },
+    {
+      "fault_class": "CYLINDER",
+      "precision": 0.9491525423728814,
+      "recall": 1.0,
+      "f1": 0.9739130434782609,
+      "support": 112
+    },
+    {
+      "fault_class": "HEALTHY",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 168
+    },
+    {
+      "fault_class": "LUBRICATION",
+      "precision": 1.0,
+      "recall": 0.7321428571428571,
+      "f1": 0.845360824742268,
+      "support": 56
+    }
+  ],
+  "test_confusion_matrix": {
+    "pred_BEARING": {
+      "true_BEARING": 56,
+      "true_COOLING": 0,
+      "true_CYLINDER": 0,
+      "true_HEALTHY": 0,
+      "true_LUBRICATION": 9
+    },
+    "pred_COOLING": {
+      "true_BEARING": 0,
+      "true_COOLING": 56,
+      "true_CYLINDER": 0,
+      "true_HEALTHY": 0,
+      "true_LUBRICATION": 0
+    },
+    "pred_CYLINDER": {
+      "true_BEARING": 0,
+      "true_COOLING": 0,
+      "true_CYLINDER": 112,
+      "true_HEALTHY": 0,
+      "true_LUBRICATION": 6
+    },
+    "pred_HEALTHY": {
+      "true_BEARING": 0,
+      "true_COOLING": 0,
+      "true_CYLINDER": 0,
+      "true_HEALTHY": 168,
+      "true_LUBRICATION": 0
+    },
+    "pred_LUBRICATION": {
+      "true_BEARING": 0,
+      "true_COOLING": 0,
+      "true_CYLINDER": 0,
+      "true_HEALTHY": 0,
+      "true_LUBRICATION": 41
+    }
+  },
+  "top_features": [
+    {
+      "feature": "res_res_signed_oil_pressure_peak",
+      "importance": 0.04908920525277837
+    },
+    {
+      "feature": "res_res_signed_oil_pressure_rms",
+      "importance": 0.04542517747036528
+    },
+    {
+      "feature": "res_res_signed_oil_pressure_min",
+      "importance": 0.04187783001170747
+    },
+    {
+      "feature": "res_res_signed_oil_pressure_max",
+      "importance": 0.0349102492758699
+    },
+    {
+      "feature": "res_res_signed_oil_pressure_mean",
+      "importance": 0.034826253816063676
+    },
+    {
+      "feature": "res_res_signed_friction_torque_mean",
+      "importance": 0.034271423800259576
+    },
+    {
+      "feature": "res_res_signed_friction_torque_rms",
+      "importance": 0.030314365450582782
+    },
+    {
+      "feature": "res_ind_torque_dev_min",
+      "importance": 0.028897392304188117
+    },
+    {
+      "feature": "res_ind_torque_dev_mean",
+      "importance": 0.028446318779056904
+    },
+    {
+      "feature": "res_res_signed_friction_torque_min",
+      "importance": 0.027434312063984004
+    },
+    {
+      "feature": "res_res_signed_cht_peak",
+      "importance": 0.02730056931105403
+    },
+    {
+      "feature": "res_ind_torque_dev_rms",
+      "importance": 0.02658188695266725
+    },
+    {
+      "feature": "res_ind_torque_dev_peak",
+      "importance": 0.024878996102585493
+    },
+    {
+      "feature": "res_res_signed_cht_mean",
+      "importance": 0.022640301650185803
+    },
+    {
+      "feature": "res_ind_oil_dev_min",
+      "importance": 0.022077907248276366
+    },
+    {
+      "feature": "res_res_signed_friction_torque_peak",
+      "importance": 0.021165428686034656
+    },
+    {
+      "feature": "res_res_signed_cht_min",
+      "importance": 0.021155923464880017
+    },
+    {
+      "feature": "res_ind_thermal_dev_mean",
+      "importance": 0.02078674206809643
+    },
+    {
+      "feature": "res_res_signed_cht_max",
+      "importance": 0.019921466391302323
+    },
+    {
+      "feature": "res_ind_thermal_dev_max",
+      "importance": 0.01986168625146306
+    }
+  ]
+}
