@@ -58,6 +58,19 @@
   .led.live { background: var(--normal); }
   .led.down { background: var(--warning); }
 
+  .guide-tour-btn {
+    font: inherit; font-size: 13px; font-weight: 700;
+    padding: 6px 15px; border-radius: 9999px;
+    background: #0f172a; color: #ffffff; border: 1px solid #0f172a;
+    display: inline-flex; align-items: center; gap: 6px;
+    cursor: pointer; transition: all 0.15s ease;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+  }
+  .guide-tour-btn:hover {
+    background: #1e293b; transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+  }
+
   /* ================= toolbar ================= */
   .toolbar {
     display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap;
@@ -511,7 +524,7 @@
     font-size: 1.25em; font-weight: 300; color: #334155;
   }
 
-  /* ================= Apple-Style Frosted Blur Hero Opening (Minimalist, No White Box) ================= */
+  /* ================= Apple-Style Frosted Blur Hero Opening with Reflection Effect ================= */
   .pratibimb-hero-overlay {
     position: fixed; inset: 0; z-index: 9999;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -533,11 +546,40 @@
     from { opacity: 0; transform: translateY(18px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  .hero-reflection-wrap {
+    display: inline-block;
+    position: relative;
+    margin: 0 auto 32px auto;
+    padding-bottom: 28px;
+  }
   .hero-apple-title {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
-    font-size: 62px; font-weight: 800; letter-spacing: -1.6px;
-    color: #0f172a; margin: 0 0 18px 0;
-    line-height: 1.05;
+    font-size: 80px; font-weight: 900; letter-spacing: 5px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 65%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    line-height: 1.0;
+    text-transform: uppercase;
+    -webkit-box-reflect: below -6px linear-gradient(transparent 50%, rgba(0, 0, 0, 0.3) 95%);
+  }
+  .hero-reflection-mirror {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    transform: scaleY(-1) translateY(4px);
+    transform-origin: top;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
+    font-size: 80px; font-weight: 900; letter-spacing: 5px;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0.0) 75%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: none;
+    user-select: none;
+    filter: blur(1.5px);
+    line-height: 1.0;
+    opacity: 0.55;
   }
   .hero-typewriter-line {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
@@ -623,35 +665,60 @@
     to { background: #991b1b; box-shadow: 0 0 14px rgba(220,38,38,0.8); }
   }
 
-  /* ================= Interactive Tutorial Tour Overlay ================= */
+  /* ================= Interactive Guided Tour Spotlight Focus ================= */
+  .tour-backdrop-dim {
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(15, 23, 42, 0.72);
+    pointer-events: none;
+    animation: fade-in 0.25s ease-out;
+  }
+
+  .tour-spotlight-box {
+    position: fixed;
+    border-radius: 8px;
+    border: 3px solid #0284c7;
+    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.72), 0 0 35px rgba(2, 132, 199, 0.8);
+    pointer-events: none;
+    z-index: 10001;
+    transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease;
+  }
+
   .tutorial-overlay {
-    position: fixed; inset: 0; z-index: 9998;
-    background: rgba(0, 0, 0, 0.45);
-    display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    position: fixed; inset: 0; z-index: 10002;
+    background: transparent;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 28px;
+    pointer-events: none;
     animation: fade-in 0.25s ease-out;
   }
   @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
   .tutorial-card {
-    background: var(--surface); border: 1px solid var(--border-2);
-    box-shadow: 0 20px 52px rgba(0,0,0,0.24); border-radius: 8px;
-    padding: 28px 32px; max-width: 580px; width: 90vw;
+    pointer-events: auto;
+    background: #ffffff;
+    border: 2px solid #0284c7;
+    box-shadow: 0 25px 65px rgba(0,0,0,0.6), 0 0 30px rgba(2, 132, 199, 0.35);
+    border-radius: 10px;
+    padding: 24px 30px;
+    max-width: 680px;
+    width: 92vw;
+    color: #0f172a;
   }
   .tutorial-step-tag {
     display: inline-block; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .8px;
     background: var(--accent-bg); color: var(--accent);
-    padding: 4px 10px; border-radius: 3px; margin-bottom: 10px;
+    padding: 4px 10px; border-radius: 3px; margin-bottom: 6px;
   }
   .tutorial-step-title {
-    font-size: 20px; font-weight: 700; color: var(--ink); margin: 0 0 12px 0;
+    font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 10px 0;
   }
   .tutorial-step-desc {
-    font-size: 14.5px; color: var(--ink-2); line-height: 1.65; margin-bottom: 24px;
+    font-size: 14.5px; color: #334155; line-height: 1.65; margin-bottom: 20px;
   }
   .tutorial-footer {
     display: flex; align-items: center; justify-content: space-between;
-    padding-top: 16px; border-top: 1px solid var(--border);
+    padding-top: 14px; border-top: 1px solid var(--border);
   }
   .tutorial-dots { display: flex; gap: 7px; }
   .tutorial-dot {
@@ -795,6 +862,187 @@
     font-family: var(--mono); font-size: 12px; text-align: right;
     font-variant-numeric: tabular-nums;
   }
+
+  /* ================= Replay & Simulation Tab CSS ================= */
+  .replay-container {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .replay-hero-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 16px 20px; border-radius: 4px; flex-wrap: wrap; gap: 14px;
+  }
+  .replay-hero-info h2 {
+    font-size: 18px; font-weight: 800; color: var(--ink); margin: 0 0 4px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .replay-hero-info p {
+    font-size: 13.5px; color: var(--ink-2); margin: 0;
+  }
+
+  /* Airworthiness Clearance Status Card */
+  .clearance-banner {
+    display: flex; align-items: center; gap: 20px;
+    padding: 14px 22px; border-radius: 6px;
+    background: var(--surface-2); border: 1.5px solid var(--border-2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03); flex-wrap: wrap;
+  }
+  .clearance-status-pill {
+    font-size: 18px; font-weight: 800; font-family: var(--mono);
+    padding: 8px 18px; border-radius: 5px; letter-spacing: 1px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .clearance-status-pill.GO {
+    background: #ecfdf5; color: #047857; border: 1.5px solid #10b981;
+  }
+  .clearance-status-pill.CAUTION_GO {
+    background: #fffbeb; color: #b45309; border: 1.5px solid #f59e0b;
+  }
+  .clearance-status-pill.NO_GO {
+    background: #fef2f2; color: #b91c1c; border: 1.5px solid #ef4444;
+    animation: schem-badge-pulse 0.9s infinite alternate;
+  }
+  .clearance-metrics {
+    display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px;
+  }
+  .clearance-metric-item {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .clearance-metric-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    color: var(--ink-3); letter-spacing: .5px;
+  }
+  .clearance-metric-val {
+    font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--ink);
+  }
+
+  /* Scenarios Grid */
+  .scenarios-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .scenario-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 18px; display: flex; flex-direction: column;
+    justify-content: space-between; transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+  .scenario-card:hover {
+    border-color: var(--accent); transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  }
+  .scenario-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .scenario-name {
+    font-size: 16px; font-weight: 700; color: var(--ink); margin: 0;
+  }
+  .scenario-badge {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 3px; background: var(--accent-bg); color: var(--accent);
+  }
+  .scenario-desc {
+    font-size: 13px; color: var(--ink-2); line-height: 1.5; margin-bottom: 14px;
+    min-height: 40px;
+  }
+  .scenario-specs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px;
+    background: var(--surface-2); padding: 10px 12px; border-radius: 4px;
+    font-size: 12px; margin-bottom: 16px; font-family: var(--mono);
+  }
+  .scenario-spec-row { display: flex; justify-content: space-between; }
+  .scenario-spec-row span { color: var(--ink-3); }
+  .scenario-spec-row b { color: var(--ink); font-weight: 600; }
+  .scenario-btn {
+    font: inherit; font-size: 13px; font-weight: 700; padding: 9px 16px;
+    border-radius: 4px; border: 1px solid var(--accent);
+    background: var(--accent); color: #ffffff; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all 0.15s;
+  }
+  .scenario-btn:hover {
+    background: var(--accent-hover); box-shadow: 0 2px 8px rgba(0,102,204,0.25);
+  }
+
+  /* 50 Hz Interactive Replay Player */
+  .player-box {
+    background: #0b0f17; border: 1px solid #1e293b;
+    border-radius: 6px; padding: 22px; color: #e2e8f0;
+    box-shadow: inset 0 2px 12px rgba(0,0,0,0.5);
+  }
+  .player-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #1e293b; padding-bottom: 14px; margin-bottom: 18px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .player-title {
+    font-size: 16px; font-weight: 700; letter-spacing: .5px;
+    display: flex; align-items: center; gap: 10px; color: #f8fafc;
+  }
+  .player-controls {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .player-btn {
+    font: inherit; font-size: 13px; font-weight: 700;
+    padding: 7px 16px; border-radius: 4px; cursor: pointer;
+    background: #1e293b; border: 1px solid #334155; color: #f8fafc;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .player-btn:hover { background: #334155; }
+  .player-btn.play {
+    background: #0284c7; border-color: #0284c7; color: #ffffff;
+  }
+  .player-btn.play:hover { background: #0369a1; }
+  .scrubber-wrap {
+    display: flex; flex-direction: column; gap: 8px; margin: 18px 0;
+  }
+  .scrubber-slider {
+    width: 100%; height: 8px; border-radius: 4px;
+    background: #334155; outline: none; -webkit-appearance: none;
+    cursor: pointer;
+  }
+  .scrubber-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 18px; height: 18px;
+    border-radius: 50%; background: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+    cursor: pointer;
+  }
+  .scrubber-time-row {
+    display: flex; justify-content: space-between; font-family: var(--mono);
+    font-size: 12px; color: #94a3b8;
+  }
+  .residuals-meter-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px; margin-top: 18px;
+  }
+  .res-card {
+    background: #131b2a; border: 1px solid #1e293b;
+    border-radius: 4px; padding: 10px 14px; display: flex; flex-direction: column;
+    gap: 4px;
+  }
+  .res-card-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    color: #64748b; letter-spacing: .5px;
+  }
+  .res-card-val {
+    font-family: var(--mono); font-size: 16px; font-weight: 700; color: #38bdf8;
+  }
+  .res-card.warning .res-card-val { color: #f87171; }
+  .res-card.warning { border-color: rgba(239,68,68,0.4); background: #261317; }
+
+  /* SQLite Sorties Table */
+  .sortie-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .sortie-table th {
+    text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    text-transform: uppercase; color: var(--ink-3); padding: 8px 12px;
+    background: var(--surface-2); border-bottom: 1px solid var(--border-2);
+  }
+  .sortie-table td {
+    padding: 9px 12px; border-bottom: 1px solid var(--border); font-family: var(--mono);
+  }
+  .sortie-table tr:hover td { background: var(--surface-2); }
 </style>
 </head>
 

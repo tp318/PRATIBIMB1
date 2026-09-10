@@ -32,6 +32,7 @@ Endpoints:
 import asyncio
 import math
 import os
+import sys
 import time
 from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional
@@ -55,6 +56,28 @@ from AeroTwin.mission.risk import MissionProfile, MissionRiskAssessor
 from AeroTwin.simulator.runner import EngineRunner
 
 _ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Link REPLAY AND SIMULATION package
+_WORKSPACE_ROOT = os.path.dirname(_ROOT_DIR)
+_REPLAY_DIR = os.path.join(_WORKSPACE_ROOT, "REPLAY AND SIMULATION")
+if os.path.isdir(_REPLAY_DIR) and _REPLAY_DIR not in sys.path:
+    sys.path.insert(0, _REPLAY_DIR)
+
+try:
+    from mission_scenario import PRESETS as SCENARIO_PRESETS, build_scenario, list_presets as list_scenario_presets, ScenarioType
+    from flight_replay import FlightReplayer, FAULT_NAMES as REPLAY_FAULT_NAMES
+    from mission_engine import MissionSimulator as ReplayMissionSimulator, ClearanceStatus as ReplayClearanceStatus
+    from database.sqlite_db import SqliteMissionDatabase
+    _replay_db = SqliteMissionDatabase()
+    _flight_replayer = FlightReplayer()
+    _replay_mission_sim = ReplayMissionSimulator()
+    REPLAY_MODULES_AVAILABLE = True
+except Exception as _err:
+    print(f"[AeroTwin] Warning: REPLAY AND SIMULATION could not be loaded: {_err}")
+    REPLAY_MODULES_AVAILABLE = False
+    _replay_db = None
+    _flight_replayer = None
+    _replay_mission_sim = None
 
 # Telemetry is generated at 100 Hz; broadcasting every frame would flood clients
 # for no benefit, so the stream is decimated to this rate.
@@ -922,6 +945,181 @@ def mission_report():
     if service.pipeline is None:
         raise HTTPException(status_code=404, detail="No sortie in progress.")
     return service.pipeline.mission_report()
+
+
+# ------------------------------------------------------------------- Replay & Simulation Endpoints
+
+class ScenarioRunRequest(BaseModel):
+    scenario_type: str = "HIGH_ALTITUDE"
+
+
+@app.get("/api/replay/scenarios")
+def get_replay_scenarios():
+    """Returns preset mission scenarios (High Altitude, Endurance, Hot Weather, Rapid Throttle)."""
+    if not REPLAY_MODULES_AVAILABLE:
+        return {"scenarios": []}
+    return {"scenarios": list_scenario_presets()}
+
+
+@app.post("/api/replay/scenarios/run")
+async def run_replay_scenario(req: ScenarioRunRequest):
+    """Executes a preset mission scenario with matching altitude, weather, throttle curve, and duration."""
+    if not REPLAY_MODULES_AVAILABLE:
+        raise HTTPException(status_code=500, detail="REPLAY AND SIMULATION module not loaded.")
+
+    try:
+        sc_type = ScenarioType[req.scenario_type.upper()]
+    except KeyError:
+        raise HTTPException(status_code=422, detail=f"Unknown scenario {req.scenario_type}")
+
+    scenario = SCENARIO_PRESETS[sc_type]
+
+    alt_ft = scenario.altitude_m * 3.28084
+    amb_c = scenario.ambient_temp_at_altitude_c
+    dur_s = scenario.duration_s
+    thr = scenario.cruise_throttle
+
+    # Start simulation
+    await service.start(seed=42, mission_duration_s=dur_s)
+    service.set_auto_mode(False)
+    service.set_controls(
+        throttle=thr,
+        altitude_ft=alt_ft,
+        ambient_c=amb_c,
+    )
+
+    # If scenario has fault injection, apply it
+    if scenario.inject_fault:
+        try:
+            cfg = DegradationConfig.single_fault(
+                degradation_type=DegradationType[scenario.inject_fault.upper()],
+                component_id=ComponentID.CYLINDER_3,
+                severity=scenario.fault_severity,
+                trajectory_type=TrajectoryType.CONSTANT,
+                start_time=scenario.fault_at_s,
+            )
+            service.injector.config = cfg
+        except Exception:
+            pass
+
+    # Log into SQLite DB
+    if _replay_db:
+        try:
+            m_id = f"SORTIE_{req.scenario_type.upper()}_{int(time.time())}"
+            _replay_db.create_mission(
+                mission_id=m_id,
+                mission_name=scenario.display_name,
+                flight_profile=scenario.scenario_type.value,
+                injected_fault=scenario.inject_fault or "NONE",
+                fault_severity=scenario.fault_severity,
+                engine_id=1,
+            )
+        except Exception:
+            pass
+
+    return {
+        "ok": True,
+        "scenario": scenario.to_dict(),
+        "commanded": {
+            "throttle": thr,
+            "altitude_ft": round(alt_ft, 1),
+            "ambient_c": round(amb_c, 2),
+            "duration_s": dur_s,
+        }
+    }
+
+
+@app.get("/api/replay/clearance")
+def get_flight_clearance(
+    profile_name: str = "ISR_SURVEILLANCE",
+    rul_hours: Optional[float] = None,
+    health_index: Optional[float] = None,
+    fault_name: Optional[str] = None,
+):
+    """Evaluates dynamic pre-flight and in-flight mission clearance (GO / CAUTION_GO / NO_GO)."""
+    if not REPLAY_MODULES_AVAILABLE or _replay_mission_sim is None:
+        raise HTTPException(status_code=500, detail="Mission clearance engine not loaded.")
+
+    if health_index is None:
+        if service.latest_assessment and "health" in service.latest_assessment:
+            health_index = float(service.latest_assessment["health"].get("health_index", 1.0))
+        else:
+            health_index = 0.98
+
+    if rul_hours is None:
+        if service.latest_assessment and "rul" in service.latest_assessment:
+            rul_sec = service.latest_assessment["rul"].get("rul_seconds")
+            rul_hours = (rul_sec / 3600.0) if rul_sec else 0.25
+        else:
+            rul_hours = 0.25
+
+    if fault_name is None:
+        if service.latest_assessment and "diagnosis" in service.latest_assessment:
+            fault_name = str(service.latest_assessment["diagnosis"].get("predicted_fault", "Normal"))
+        else:
+            fault_name = "Normal"
+
+    assessment = _replay_mission_sim.evaluate_clearance(
+        profile_name=profile_name,
+        predicted_rul_hours=rul_hours,
+        composite_health_index=health_index,
+        active_fault_name=fault_name,
+    )
+    return assessment.to_dict()
+
+
+@app.get("/api/replay/engines")
+def get_replay_engines():
+    """Returns available recorded engine trajectories for 50 Hz replay."""
+    engine_catalog = [
+        {"engine_id": 0, "name": "Engine 0 (Healthy Baseline)", "fault": "Normal", "duration_s": 30.0, "frames": 1500},
+        {"engine_id": 1, "name": "Engine 1 (Cylinder Misfire)", "fault": "Misfire", "duration_s": 30.0, "frames": 1500},
+        {"engine_id": 2, "name": "Engine 2 (Injector Clogging)", "fault": "Injector", "duration_s": 30.0, "frames": 1500},
+        {"engine_id": 3, "name": "Engine 3 (Cooling System Failure)", "fault": "Cooling", "duration_s": 30.0, "frames": 1500},
+        {"engine_id": 4, "name": "Engine 4 (Lubrication Loss)", "fault": "Lubrication", "duration_s": 30.0, "frames": 1500},
+        {"engine_id": 7, "name": "Engine 7 (Thermal Overheating)", "fault": "Overheating", "duration_s": 30.0, "frames": 1500},
+        {"engine_id": 8, "name": "Engine 8 (Bearing Wear & Vibration)", "fault": "Vibration", "duration_s": 30.0, "frames": 1500},
+    ]
+    return {"engines": engine_catalog}
+
+
+@app.get("/api/replay/engines/{engine_id}/samples")
+def get_replay_engine_samples(engine_id: int, step_stride: int = 2):
+    """Returns time-series trajectory samples for interactive scrub and replay."""
+    if not REPLAY_MODULES_AVAILABLE or _flight_replayer is None:
+        raise HTTPException(status_code=500, detail="Flight replayer not available.")
+
+    df = _flight_replayer.load_engine_data(engine_id)
+    df_sampled = df.iloc[::max(1, step_stride)]
+    
+    samples = []
+    for idx, row in df_sampled.iterrows():
+        i = int(idx)
+        samples.append({
+            "step": i,
+            "time_sec": round(i * 0.02, 2),
+            "fault_label": int(row["fault_label"]),
+            "fault_name": REPLAY_FAULT_NAMES.get(int(row["fault_label"]), "Unknown"),
+            "rul_hours": round(float(row["rul_hours"]), 4),
+            "residuals": {
+                "rpm": round(float(row["rpm_residual"]), 2),
+                "cht": round(float(row["cht_residual"]), 2),
+                "egt": round(float(row["egt_residual"]), 2),
+                "oil_p": round(float(row["oil_pressure_residual"]), 3),
+                "oil_t": round(float(row["oil_temp_residual"]), 2),
+                "fuel": round(float(row["fuel_flow_residual"]), 2),
+                "vib": round(float(row["vibration_residual"]), 3),
+            }
+        })
+    return {"engine_id": engine_id, "total_samples": len(samples), "samples": samples}
+
+
+@app.get("/api/replay/history")
+def get_replay_history(limit: int = 15):
+    """Returns recent sortie mission logs from SQLite database."""
+    if not REPLAY_MODULES_AVAILABLE or _replay_db is None:
+        return {"missions": []}
+    return {"missions": _replay_db.list_missions(limit=limit)}
 
 
 @app.websocket("/ws/telemetry")

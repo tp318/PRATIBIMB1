@@ -248,7 +248,10 @@ function HeroOverlay(props) {
 
   return h("div", { className: cls("pratibimb-hero-overlay", unblurring && "unblurring") },
     h("div", { className: "hero-minimal-wrap" },
-      h("h1", { className: "hero-apple-title" }, "PRATIBIMB"),
+      h("div", { className: "hero-reflection-wrap" },
+        h("h1", { className: "hero-apple-title" }, "PRATIBIMB"),
+        h("div", { className: "hero-reflection-mirror", "aria-hidden": "true" }, "PRATIBIMB")
+      ),
       h("p", { className: "hero-typewriter-line" },
         HERO_TEXT.slice(0, typedIndex),
         typedIndex < HERO_TEXT.length ? h("span", { className: "typewriter-cursor" }) : null
@@ -269,43 +272,95 @@ function HeroOverlay(props) {
   );
 }
 
-// ----------------------------------------------------------- Interactive Skippable Tutorial
+// ----------------------------------------------------------- Interactive Full-Website Guided Walkthrough
 const TUTORIAL_STEPS = [
   {
     step: 1,
-    title: "Avionics & Subsystem Link Indicators",
-    tag: "Hardware Connectivity",
-    desc: "Real-time telemetry heartbeat status for ECU, FADEC, Edge AI compute, Telemetry RF downlink, and Ground Control Station (GCS). Displays dual-channel bus latency in milliseconds and packet counters.",
+    tab: "monitoring",
+    targetId: "tour-subsystems",
+    tag: "Subsystem Avionics & Health Status",
+    title: "1. Hardware Subsystem Health & Dual-Bus Connectivity",
+    desc: "Welcome to PRATIBIMB! At the very top, the Subsystem Strip monitors real-time heartbeat, round-trip latency, and packet exchange for the Engine Control Unit (ECU), Full Authority Digital Engine Control (FADEC), Onboard Edge AI Inference Computer, UHF Telemetry Downlink, and Ground Control Station (GCS). The audio alarm toggle enables periodic avionics alert beeps when anomalies occur.",
   },
   {
     step: 2,
-    title: "Mission Sortie & Dynamic Flight Controls",
-    tag: "Simulation Controls",
-    desc: "Launch the engine sortie in Auto-Mission Profile or take manual authority using the interactive throttle, altitude, and ambient temperature sliders.",
+    tab: "monitoring",
+    targetId: "tour-telemetry",
+    tag: "Live Flight Mission & Telemetry",
+    title: "2. Real-Time Telemetry & Analytical Redundancy Traces",
+    desc: "The Telemetry tab displays real-time 100 Hz engine data decimated to 10 Hz. Solid colored traces depict observed physical sensor readings (RPM, CHT, EGT, Oil Pressure, Vibration), while dashed lines represent the Physics Digital Twin expected nominal reference. Residuals (r = Y_measured - Y_twin) isolate genuine mechanical degradation from altitude and ambient temperature fluctuations.",
   },
   {
     step: 3,
-    title: "Virtual Digital Twin & Governing Equations",
-    tag: "Physics Engine",
-    desc: "Switch to the new 'Digital Twin & Physics' tab to view an interactive virtual schematic of the 4-cylinder engine with live reciprocating pistons, animated airflow, and mathematical differential equations evaluated in real time.",
+    tab: "twin_physics",
+    targetId: "tour-virtual-engine",
+    tag: "Virtual Engine Digital Twin",
+    title: "3. Cutaway Reciprocating Engine & 4-Stroke Cycle",
+    desc: "The Digital Twin & Physics tab features an interactive cutaway CAD-style visualization of the Rotax 914-class 4-cylinder engine. Watch the dual overhead camshafts, intake/exhaust poppet valves, reciprocating pistons, connecting rods, and oil lubrication circuit synchronously respond to engine RPM, throttle, and cylinder-specific faults in real time.",
   },
   {
     step: 4,
-    title: "Sensor Telemetry vs Theoretical Residuals",
-    tag: "Analytical Redundancy",
-    desc: "The digital twin reference model predicts nominal engine behavior. Residual differences (r = Y_measured - Y_twin) decouple true mechanical/thermal faults from ambient atmospheric variations.",
+    tab: "twin_physics",
+    targetId: "tour-equations",
+    tag: "Physics Engine Formulations",
+    title: "4. Eight Governing First-Principles Differential Equations",
+    desc: "PRATIBIMB isn't a black box: it is anchored in first-principles thermodynamics. Scroll down to inspect the live differential equations: Cylinder Combustion Pressure (Woschni heat release), Crankshaft Kinematic Dynamics (dω/dt), Conjugate Heat Transfer (q_combustion vs q_cooling), and Hydrodynamic Reynolds Lubrication (Petroff dynamic viscosity).",
   },
   {
     step: 5,
-    title: "Explainable AI (TreeSHAP & DeepSHAP)",
-    tag: "Model Transparency",
-    desc: "Explore the ML Diagnostics tab powered by TreeSHAP. Observe game-theoretic Shapley feature attributions revealing exactly which physical sensors and residual trends pushed the model toward the diagnosed fault.",
+    tab: "xgboost",
+    targetId: "tour-diagnostics",
+    tag: "Fault Diagnostics",
+    title: "5. Gradient Boosted Multi-Class Fault Classification",
+    desc: "In Fault Diagnostics, an onboard multi-class Gradient Boosted Tree classifier identifies impending faults. Model C incorporates analytical physics residuals alongside raw telemetry, achieving an empirical +30.15% accuracy improvement over raw sensors alone.",
   },
   {
     step: 6,
-    title: "Real-Time Fault Injection & Sound Alert",
+    tab: "xgboost",
+    targetId: "tour-shap",
+    tag: "Explainable AI (TreeSHAP)",
+    title: "6. Exact Game-Theoretic Shapley Feature Attribution",
+    desc: "To guarantee defense-grade explainability, TreeSHAP evaluates exact polynomial-time Shapley values: f(x) = E[f(x)] + Σ φ_i. The dashboard visualizes risk-increasing features (orange bars pushing the prediction toward a fault) vs nominal envelope suppressors (blue bars anchoring healthy operation).",
+  },
+  {
+    step: 7,
+    tab: "efficiency",
+    targetId: "tour-efficiency",
+    tag: "Thermodynamics & Energy",
+    title: "7. Shaft Power Deficit & Specific Fuel Penalty (BSFC)",
+    desc: "The Efficiency tab tracks mechanical shaft power output (kW) and Brake Specific Fuel Consumption (BSFC in kg/kWh). Any mechanical friction or cylinder blow-by is immediately quantified as a percentage power deficit and fuel consumption penalty relative to an ambient-matched brand new engine.",
+  },
+  {
+    step: 8,
+    tab: "monitoring",
+    targetId: "tour-fault-injection",
     tag: "Failure Mode Testing",
-    desc: "Use the Fault Injection console to inject Cooling, Bearing, Lubrication, or Cylinder degradation. Watch the dual-tone audio beep beep sound alert activate and the twin track RUL degradation.",
+    title: "8. Live Fault Injection & Periodic Avionics Beep Alarm",
+    desc: "Test the digital twin under adverse conditions! Use the Live Fault Injection panel to induce Cylinder Misfire, Bearing Wear, Cooling System Failure, or Lubrication Loss. As soon as degradation begins, PRATIBIMB triggers rhythmic avionics beeping alerts and monitors rapid health index drops.",
+  },
+  {
+    step: 9,
+    tab: "replay_sim",
+    targetId: "tour-clearance",
+    tag: "Airworthiness Clearance Engine",
+    title: "9. Pre-Flight Airworthiness Clearance (GO / CAUTION / NO_GO)",
+    desc: "In the Replay & Simulation tab, PRATIBIMB's Flight Clearance Engine evaluates whether the UAV can safely launch or complete a selected mission profile (ISR Surveillance, Combat Loiter, High Altitude). It cross-references live Remaining Useful Life (RUL), health index, and active faults against required endurance safety margins.",
+  },
+  {
+    step: 10,
+    tab: "replay_sim",
+    targetId: "tour-replayer",
+    tag: "Simulation Scenario Presets & 50Hz Replayer",
+    title: "10. Operational Scenarios & 50 Hz Blackbox Replayer",
+    desc: "Simulate operational military profiles with one click: High Altitude Cruise (7,500m ceiling, -33.8°C), 14-Hour Long Endurance, or Hot Desert ISA+15°C Peak Load. You can also scrub 50 Hz flight records across normal and degraded engines (misfires, injector clogging, bearing wear) and inspect the persistent SQLite sortie database.",
+  },
+  {
+    step: 11,
+    tab: "maintenance",
+    targetId: "tour-maintenance",
+    tag: "Predictive Maintenance",
+    title: "11. Maintenance Advisory, RUL Countdown & Sortie Reports",
+    desc: "Finally, the Maintenance Advisory tab converts physics health indices into actionable maintenance work orders (e.g. spark plug fouling inspection, oil filter flush, cylinder compression test) before catastrophic failure occurs. Tour complete — you are ready to command PRATIBIMB!",
   },
 ];
 
@@ -314,9 +369,59 @@ function TutorialOverlay(props) {
   const curr = TUTORIAL_STEPS[step] || TUTORIAL_STEPS[0];
   const isLast = step >= TUTORIAL_STEPS.length - 1;
 
-  return h("div", { className: "tutorial-overlay", onClick: function(e) { if(e.target===e.currentTarget) onClose(); } },
+  const [spotlightRect, setSpotlightRect] = useState(null);
+
+  useEffect(function() {
+    function updateRect() {
+      if (!curr || !curr.targetId) {
+        setSpotlightRect(null);
+        return;
+      }
+      const el = document.getElementById(curr.targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(function() {
+          const r = el.getBoundingClientRect();
+          setSpotlightRect({
+            top: r.top,
+            left: r.left,
+            width: r.width,
+            height: r.height,
+          });
+        }, 140);
+      } else {
+        setSpotlightRect(null);
+      }
+    }
+
+    updateRect();
+    const timer = setTimeout(updateRect, 260);
+    window.addEventListener("resize", updateRect);
+    window.addEventListener("scroll", updateRect, true);
+
+    return function() {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateRect);
+      window.removeEventListener("scroll", updateRect, true);
+    };
+  }, [step, curr]);
+
+  return h("div", { className: "tutorial-overlay" },
+    spotlightRect ? h("div", {
+      className: "tour-spotlight-box",
+      style: {
+        top: Math.max(0, spotlightRect.top - 6) + "px",
+        left: Math.max(0, spotlightRect.left - 6) + "px",
+        width: Math.min(window.innerWidth - 8, spotlightRect.width + 12) + "px",
+        height: Math.min(window.innerHeight - 8, spotlightRect.height + 12) + "px",
+      }
+    }) : h("div", { className: "tour-backdrop-dim" }),
+
     h("div", { className: "tutorial-card" },
-      h("div", { className: "tutorial-step-tag" }, curr.tag + " • Step " + (step + 1) + " of " + TUTORIAL_STEPS.length),
+      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" } },
+        h("span", { className: "tutorial-step-tag" }, curr.tag + " • Step " + (step + 1) + " of " + TUTORIAL_STEPS.length),
+        curr.tab ? h("span", { style: { fontSize: "11px", fontWeight: "700", fontFamily: "var(--mono)", background: "#f1f5f9", border: "1px solid #cbd5e1", padding: "2px 8px", borderRadius: "3px", color: "#475569" } }, "Active Section: " + curr.tab) : null
+      ),
       h("h2", { className: "tutorial-step-title" }, curr.title),
       h("p", { className: "tutorial-step-desc" }, curr.desc),
       h("div", { className: "tutorial-footer" },
@@ -326,9 +431,9 @@ function TutorialOverlay(props) {
           })
         ),
         h("div", { className: "tutorial-nav" },
-          h("button", { onClick: onSkip, className: "hero-skip-btn" }, "Skip Tutorial"),
-          step > 0 ? h("button", { onClick: onPrev }, "← Back") : null,
-          h("button", { className: "go", onClick: isLast ? onClose : onNext }, isLast ? "✓ Get Started" : "Next →")
+          h("button", { onClick: onSkip, className: "hero-skip-btn" }, "Skip Tour"),
+          step > 0 ? h("button", { onClick: onPrev }, "← Previous") : null,
+          h("button", { className: "go", onClick: isLast ? onClose : onNext }, isLast ? "✓ Finish Tour" : "Next Section →")
         )
       )
     )
@@ -348,7 +453,7 @@ function SubsystemStrip(props) {
 
   const keys = ["ECU", "FADEC", "EDGE", "TELEMETRY", "GCS"];
 
-  return h("div", { className: "subsystem-strip" },
+  return h("div", { className: "subsystem-strip", id: "tour-subsystems" },
     h("span", { className: "subsystem-title" }, "Subsystems:"),
     keys.map(function(key) {
       const item = subs[key] || {};
@@ -663,7 +768,7 @@ function MonitoringTab(props) {
 
   return h("div", { className: "grid2" },
     h("div", null,
-      h("div", { className: "block" },
+      h("div", { className: "block", id: "tour-telemetry" },
         h("div", { className: "block-head" },
           "Observed against digital twin expected",
           h("span", { className: "legend" },
@@ -759,7 +864,7 @@ function EfficiencyTab(props) {
           pct(eff && eff.bsfc_penalty_pct, 2)),
         h("div", { className: "stat-n" }, "Excess fuel for the same work"))
     ),
-    h("div", { className: "block", style: { marginTop: "12px" } },
+    h("div", { className: "block", id: "tour-efficiency", style: { marginTop: "12px" } },
       h("div", { className: "block-head" },
         "Efficiency trend",
         h("span", { className: "legend" },
@@ -847,7 +952,7 @@ function MaintenanceTab(props) {
   const health = a && a.health ? a.health.health_index : null;
 
   return h("div", null,
-    h("div", { className: "block" },
+    h("div", { className: "block", id: "tour-maintenance" },
       h("div", { className: "block-head" }, "Advisory basis"),
       h("div", { className: "block-body" },
         h("dl", { className: "kv", style: { maxWidth: "520px" } },
@@ -1041,7 +1146,7 @@ function XGBoostTab(props) {
 
     h("div", { className: "grid2", style: { marginTop: "12px" } },
       h("div", null,
-        h("div", { className: "block" },
+        h("div", { className: "block", id: "tour-diagnostics" },
           h("div", { className: "block-head" },
             "9-Class Real-Time Probability Distribution",
             h("span", { className: "aux" }, "Softmax Output Vector")
@@ -1144,7 +1249,7 @@ function XGBoostTab(props) {
     ),
 
     // Explainable AI: TreeSHAP / DeepSHAP Feature Attribution
-    h("div", { className: "shap-panel" },
+    h("div", { className: "shap-panel", id: "tour-shap" },
       h("div", { className: "shap-head" },
         h("span", { className: "shap-title" }, "Explainable AI: TreeSHAP Feature Attribution (Exact Game-Theoretic Shapley Values)"),
         h("span", { className: "shap-badge" }, "Explainability Engine")
@@ -1355,7 +1460,7 @@ function DigitalTwinTab(props) {
 
     h("div", { className: "dt-tab-grid", style: { marginTop: "14px" } },
       // Virtual Engine Schematic SVG
-      h("div", { className: "twin-schematic-box" },
+      h("div", { className: "twin-schematic-box", id: "tour-virtual-engine" },
         h("div", { className: "twin-schematic-title" },
           h("span", null, "Virtual Engine Digital Twin — Real-Time 4-Stroke Cutaway"),
           h("span", { className: cls("badge", effFault && "warn") },
@@ -1722,7 +1827,7 @@ function DigitalTwinTab(props) {
     ),
 
     // Governing Physics Equations Section — Formatted Mathematically
-    h("div", { className: "block", style: { marginTop: "16px" } },
+    h("div", { className: "block", id: "tour-equations", style: { marginTop: "16px" } },
       h("div", { className: "block-head" },
         "Governing Physics Equations (Digital Twin CORE Mechanics & Thermodynamic Equations)",
         h("span", { className: "aux" }, "Evaluated in Real-Time at 10 Hz")
@@ -2012,15 +2117,398 @@ function DigitalTwinTab(props) {
   );
 }
 
+// -------------------------------------------------------------------- ReplaySimulationTab
+function ReplaySimulationTab(props) {
+  const { onRunScenarioSuccess } = props;
+
+  // 1. Mission Clearance State
+  const [profile, setProfile] = useState("ISR_SURVEILLANCE");
+  const [clearance, setClearance] = useState(null);
+  const [clearanceLoading, setClearanceLoading] = useState(false);
+
+  // 2. Mission Scenarios State
+  const [scenarios, setScenarios] = useState([]);
+  const [scenarioLoading, setScenarioLoading] = useState(false);
+  const [scenarioMsg, setScenarioMsg] = useState(null);
+
+  // 3. 50 Hz Flight Replayer State
+  const [engines, setEngines] = useState([]);
+  const [selectedEngineId, setSelectedEngineId] = useState(0);
+  const [samples, setSamples] = useState([]);
+  const [sampleIdx, setSampleIdx] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [replaySpeed, setReplaySpeed] = useState(1);
+  const playTimerRef = useRef(null);
+
+  // 4. SQLite Sortie History
+  const [history, setHistory] = useState([]);
+
+  // Fetch clearance
+  const fetchClearance = useCallback(async function(pName) {
+    setClearanceLoading(true);
+    try {
+      const res = await fetch("/api/replay/clearance?profile_name=" + encodeURIComponent(pName || profile));
+      if (res.ok) {
+        const data = await res.json();
+        setClearance(data);
+      }
+    } catch (e) {
+      console.warn("Clearance fetch failed:", e);
+    } finally {
+      setClearanceLoading(false);
+    }
+  }, [profile]);
+
+  function loadEngineSamples(engId) {
+    setIsPlaying(false);
+    fetch("/api/replay/engines/" + engId + "/samples?step_stride=2")
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.samples) {
+          setSamples(d.samples);
+          setSampleIdx(0);
+        }
+      })
+      .catch(function(e) { console.warn("Samples fetch error:", e); });
+  }
+
+  // Fetch scenarios, engines, history on mount
+  useEffect(function() {
+    // Scenarios
+    fetch("/api/replay/scenarios")
+      .then(function(r) { return r.json(); })
+      .then(function(d) { if (d.scenarios) setScenarios(d.scenarios); })
+      .catch(function(e) { console.warn("Scenarios fetch error:", e); });
+
+    // Clearance
+    fetchClearance(profile);
+
+    // Engines
+    fetch("/api/replay/engines")
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.engines && d.engines.length) {
+          setEngines(d.engines);
+          setSelectedEngineId(d.engines[0].engine_id);
+          loadEngineSamples(d.engines[0].engine_id);
+        }
+      })
+      .catch(function(e) { console.warn("Engines fetch error:", e); });
+
+    // History
+    fetch("/api/replay/history?limit=10")
+      .then(function(r) { return r.json(); })
+      .then(function(d) { if (d.missions) setHistory(d.missions); })
+      .catch(function(e) { console.warn("History fetch error:", e); });
+  }, []);
+
+  // Animation player loop for 50 Hz replay
+  useEffect(function() {
+    if (isPlaying && samples.length > 0) {
+      const intervalMs = Math.max(16, Math.round(40 / replaySpeed));
+      playTimerRef.current = setInterval(function() {
+        setSampleIdx(function(prev) {
+          if (prev >= samples.length - 1) {
+            setIsPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, intervalMs);
+      return function() { clearInterval(playTimerRef.current); };
+    }
+  }, [isPlaying, replaySpeed, samples.length]);
+
+  // Run Scenario
+  async function runScenario(sc) {
+    setScenarioLoading(true);
+    setScenarioMsg(null);
+    try {
+      const res = await fetch("/api/replay/scenarios/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scenario_type: sc.scenario_type }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setScenarioMsg("✅ Scenario '" + sc.display_name + "' initiated! Telemetry live streaming.");
+        if (onRunScenarioSuccess) {
+          setTimeout(onRunScenarioSuccess, 600);
+        }
+      } else {
+        setScenarioMsg("❌ " + (data.detail || "Failed to start scenario"));
+      }
+    } catch (e) {
+      setScenarioMsg("❌ Error: " + String(e));
+    } finally {
+      setScenarioLoading(false);
+    }
+  }
+
+  const currentSample = (samples && samples[sampleIdx]) || null;
+  const resids = (currentSample && currentSample.residuals) || {};
+  const maxSec = samples.length > 0 ? (samples[samples.length - 1].time_sec || 30.0) : 30.0;
+  const currSec = currentSample ? currentSample.time_sec : 0.0;
+
+  return h("div", { className: "replay-container" },
+    // Replay Hero Banner
+    h("div", { className: "replay-hero-bar" },
+      h("div", { className: "replay-hero-info" },
+        h("h2", null, "Airworthiness Clearance & 50 Hz Flight Replay Engine"),
+        h("p", null, "Integrated tactical flight simulation, pre-flight clearance dispatch rules, and blackbox time-series replay from the PRATIBIMB Replay & Simulation subsystem.")
+      )
+    ),
+
+    // 1. Airworthiness Clearance Banner
+    h("div", { className: "clearance-banner", id: "tour-clearance" },
+      h("div", { style: { display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap" } },
+        h("span", { style: { fontSize: "12px", fontWeight: "700", textTransform: "uppercase", color: "var(--ink-3)" } }, "Clearance Profile:"),
+        h("select", {
+          className: "fault-select",
+          style: { width: "230px", fontWeight: "600" },
+          value: profile,
+          onChange: function(e) {
+            const p = e.target.value;
+            setProfile(p);
+            fetchClearance(p);
+          }
+        },
+          h("option", { value: "ISR_SURVEILLANCE" }, "ISR Surveillance (7.5 min / 450s)"),
+          h("option", { value: "HIGH_ALTITUDE_CRUISE" }, "High Altitude Cruise (8.0 min / 480s)"),
+          h("option", { value: "COMBAT_LOITER" }, "Combat Loiter (10.0 min / 600s)"),
+          h("option", { value: "EXTENDED_RANGE" }, "Extended Range (15.0 min / 900s)")
+        ),
+        h("button", {
+          onClick: function() { fetchClearance(profile); },
+          disabled: clearanceLoading,
+          style: { padding: "6px 12px", fontSize: "12px" }
+        }, clearanceLoading ? "Evaluating…" : "🔄 Refresh")
+      ),
+
+      clearance ? h("div", {
+        className: cls("clearance-status-pill", clearance.status)
+      },
+        clearance.status === "GO" ? "✅ FLIGHT STATUS: GO" :
+        clearance.status === "CAUTION_GO" ? "⚠️ STATUS: CAUTION GO" :
+        "⛔ FLIGHT STATUS: NO-GO"
+      ) : null,
+
+      clearance ? h("div", { className: "clearance-metrics" },
+        h("div", { className: "clearance-metric-item" },
+          h("span", { className: "clearance-metric-label" }, "Composite Health Index"),
+          h("span", { className: "clearance-metric-val", style: { color: clearance.health_index >= 0.85 ? "var(--normal)" : (clearance.health_index >= 0.65 ? "var(--caution)" : "var(--warning)") } },
+            (clearance.health_index * 100).toFixed(1) + "%"
+          )
+        ),
+        h("div", { className: "clearance-metric-item" },
+          h("span", { className: "clearance-metric-label" }, "Predicted RUL"),
+          h("span", { className: "clearance-metric-val" }, clearance.predicted_rul_minutes + " min")
+        ),
+        h("div", { className: "clearance-metric-item" },
+          h("span", { className: "clearance-metric-label" }, "Required Duration"),
+          h("span", { className: "clearance-metric-val" }, clearance.required_mission_minutes + " min")
+        ),
+        h("div", { className: "clearance-metric-item" },
+          h("span", { className: "clearance-metric-label" }, "Active Fault Detected"),
+          h("span", { className: "clearance-metric-val", style: { color: clearance.active_fault === "Normal" ? "var(--normal)" : "var(--warning)" } },
+            clearance.active_fault || "Normal"
+          )
+        )
+      ) : null
+    ),
+
+    clearance && clearance.reasons && clearance.reasons.length ? h("div", {
+      style: {
+        background: "var(--surface)", border: "1px solid var(--border)",
+        borderRadius: "4px", padding: "10px 16px", fontSize: "13px",
+        color: "var(--ink-2)", lineHeight: "1.5"
+      }
+    },
+      h("b", { style: { color: "var(--ink)", marginRight: "8px" } }, "Clearance Rationale:"),
+      clearance.reasons.join(" • ")
+    ) : null,
+
+    // 2. Operational Mission Scenarios Presets
+    h("div", null,
+      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "12px", flexWrap: "wrap", gap: "8px" } },
+        h("h3", { style: { margin: 0, fontSize: "16px", fontWeight: "800", color: "var(--ink)" } }, "⚡ Tactical Mission Simulation Presets"),
+        scenarioMsg ? h("span", { style: { fontSize: "13px", fontWeight: "600", color: scenarioMsg.startsWith("✅") ? "var(--normal)" : "var(--warning)" } }, scenarioMsg) : null
+      ),
+      h("div", { className: "scenarios-grid" },
+        scenarios.map(function(sc) {
+          return h("div", { key: sc.scenario_type, className: "scenario-card" },
+            h("div", null,
+              h("div", { className: "scenario-head" },
+                h("h4", { className: "scenario-name" }, sc.display_name),
+                h("span", { className: "scenario-badge" }, sc.scenario_type)
+              ),
+              h("p", { className: "scenario-desc" }, sc.description),
+              h("div", { className: "scenario-specs" },
+                h("div", { className: "scenario-spec-row" },
+                  h("span", null, "Ceiling Alt:"),
+                  h("b", null, sc.altitude_m.toLocaleString() + " m (" + Math.round(sc.altitude_m * 3.28084).toLocaleString() + " ft)")
+                ),
+                h("div", { className: "scenario-spec-row" },
+                  h("span", null, "Ambient OAT:"),
+                  h("b", null, sc.ambient_temp_c.toFixed(1) + " °C")
+                ),
+                h("div", { className: "scenario-spec-row" },
+                  h("span", null, "ISA Offset:"),
+                  h("b", null, (sc.isa_delta_c >= 0 ? "+" : "") + sc.isa_delta_c + " °C")
+                ),
+                h("div", { className: "scenario-spec-row" },
+                  h("span", null, "Duration:"),
+                  h("b", null, (sc.duration_s / 60).toFixed(1) + " min (" + sc.duration_s + "s)")
+                )
+              )
+            ),
+            h("button", {
+              className: "scenario-btn",
+              onClick: function() { runScenario(sc); },
+              disabled: scenarioLoading
+            }, scenarioLoading ? "Initializing…" : "▶ Run Scenario Mission")
+          );
+        })
+      )
+    ),
+
+    // 3. 50 Hz Interactive Blackbox Replayer
+    h("div", { className: "player-box", id: "tour-replayer" },
+      h("div", { className: "player-header" },
+        h("div", { className: "player-title" },
+          "50 Hz Flight Replayer (Blackbox Scrub & Playback)",
+          h("span", { style: { fontSize: "12px", background: "rgba(56,189,248,0.15)", color: "#38bdf8", padding: "2px 8px", borderRadius: "3px" } }, "50 SAMPLES/SEC")
+        ),
+        h("div", { className: "player-controls" },
+          h("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Select Engine:"),
+          h("select", {
+            className: "fault-select",
+            style: { width: "260px", background: "#1e293b", color: "#f8fafc", borderColor: "#334155" },
+            value: selectedEngineId,
+            onChange: function(e) {
+              const id = parseInt(e.target.value);
+              setSelectedEngineId(id);
+              loadEngineSamples(id);
+            }
+          },
+            engines.map(function(eng) {
+              return h("option", { key: eng.engine_id, value: eng.engine_id }, eng.name);
+            })
+          ),
+          h("button", {
+            className: cls("player-btn", isPlaying ? null : "play"),
+            onClick: function() { setIsPlaying(!isPlaying); }
+          }, isPlaying ? "⏸ Pause" : "▶ Play 50Hz"),
+          h("button", {
+            className: "player-btn",
+            onClick: function() { setSampleIdx(0); setIsPlaying(false); }
+          }, "⏮ Rewind"),
+          [1, 2, 5].map(function(sp) {
+            return h("button", {
+              key: sp,
+              className: cls("player-btn", replaySpeed === sp && "play"),
+              onClick: function() { setReplaySpeed(sp); }
+            }, sp + "x");
+          })
+        )
+      ),
+
+      // Scrubber Timeline Slider
+      h("div", { className: "scrubber-wrap" },
+        h("input", {
+          type: "range",
+          className: "scrubber-slider",
+          min: 0,
+          max: Math.max(0, samples.length - 1),
+          value: sampleIdx,
+          onChange: function(e) {
+            setSampleIdx(parseInt(e.target.value));
+          }
+        }),
+        h("div", { className: "scrubber-time-row" },
+          h("span", null, "Time: T+" + currSec.toFixed(2) + "s / T+" + maxSec.toFixed(2) + "s (Step " + (currentSample ? currentSample.step : 0) + ")"),
+          h("span", null,
+            "Active Classification: ",
+            h("b", { style: { color: currentSample && currentSample.fault_name !== "Normal" ? "#f87171" : "#34d399" } },
+              (currentSample ? currentSample.fault_name : "Normal") +
+              (currentSample && currentSample.rul_hours ? " • RUL: " + (currentSample.rul_hours * 60).toFixed(1) + " min" : "")
+            )
+          )
+        )
+      ),
+
+      // Analytical Residuals Gauges
+      h("div", { className: "residuals-meter-grid" },
+        [
+          { label: "RPM Residual", val: resids.rpm != null ? (resids.rpm > 0 ? "+" : "") + resids.rpm.toFixed(1) + " rpm" : "–", warn: Math.abs(resids.rpm || 0) > 60 },
+          { label: "CHT Residual", val: resids.cht != null ? (resids.cht > 0 ? "+" : "") + resids.cht.toFixed(2) + " °C" : "–", warn: Math.abs(resids.cht || 0) > 8 },
+          { label: "EGT Residual", val: resids.egt != null ? (resids.egt > 0 ? "+" : "") + resids.egt.toFixed(2) + " °C" : "–", warn: Math.abs(resids.egt || 0) > 25 },
+          { label: "Oil Press Resid", val: resids.oil_p != null ? (resids.oil_p > 0 ? "+" : "") + resids.oil_p.toFixed(3) + " bar" : "–", warn: Math.abs(resids.oil_p || 0) > 0.4 },
+          { label: "Oil Temp Resid", val: resids.oil_t != null ? (resids.oil_t > 0 ? "+" : "") + resids.oil_t.toFixed(2) + " °C" : "–", warn: Math.abs(resids.oil_t || 0) > 5 },
+          { label: "Fuel Flow Resid", val: resids.fuel != null ? (resids.fuel > 0 ? "+" : "") + resids.fuel.toFixed(2) + " L/h" : "–", warn: Math.abs(resids.fuel || 0) > 1.5 },
+          { label: "Vibration Resid", val: resids.vib != null ? (resids.vib > 0 ? "+" : "") + resids.vib.toFixed(3) + " g" : "–", warn: Math.abs(resids.vib || 0) > 0.3 },
+        ].map(function(m, idx) {
+          return h("div", { key: idx, className: cls("res-card", m.warn && "warning") },
+            h("span", { className: "res-card-label" }, m.label),
+            h("span", { className: "res-card-val" }, m.val)
+          );
+        })
+      )
+    ),
+
+    // 4. SQLite Sortie Mission Database
+    h("div", { className: "block", style: { marginTop: "10px" } },
+      h("div", { className: "block-head" },
+        "Persistent Sortie Mission Log (SQLite Flight Database)",
+        h("span", { className: "aux" }, "Local time-series records")
+      ),
+      h("div", { className: "block-body" },
+        !history || !history.length ? h("div", { className: "empty" }, "No historical missions recorded in local database.") :
+          h("table", { className: "sortie-table" },
+            h("thead", null,
+              h("tr", null,
+                h("th", null, "Sortie ID"),
+                h("th", null, "Engine / Unit"),
+                h("th", null, "Profile"),
+                h("th", { className: "num" }, "Duration"),
+                h("th", null, "Clearance"),
+                h("th", { className: "num" }, "Health Index"),
+                h("th", null, "Status")
+              )
+            ),
+            h("tbody", null,
+              history.map(function(m) {
+                return h("tr", { key: m.mission_id || m.id },
+                  h("td", { style: { fontWeight: "700" } }, m.mission_id || ("SRT-" + m.id)),
+                  h("td", null, m.engine_id || "UAV-ROT-914"),
+                  h("td", null, m.profile_name || "ISR_SURVEILLANCE"),
+                  h("td", { className: "num" }, (m.duration_s ? (m.duration_s / 60).toFixed(1) + " min" : "–")),
+                  h("td", null,
+                    h("span", { className: cls("tag", m.final_clearance === "GO" ? "normal" : (m.final_clearance === "CAUTION_GO" ? "caution" : "warning")) },
+                      m.final_clearance || "GO"
+                    )
+                  ),
+                  h("td", { className: "num" }, (m.health_index != null ? (m.health_index * 100).toFixed(1) + "%" : "98.0%")),
+                  h("td", null, m.status || "COMPLETED")
+                );
+              })
+            )
+          )
+      )
+    )
+  );
+}
+
 // -------------------------------------------------------------------- app
 
 const TABS = [
   ["monitoring", "Telemetry"],
   ["twin_physics", "Digital Twin & Physics"],
-  ["xgboost", "⚡ ML Diagnostics (TreeSHAP)"],
+  ["xgboost", "Fault Diagnostics"],
   ["efficiency", "Efficiency"],
   ["alerts", "Fault alerts"],
   ["maintenance", "Maintenance advisory"],
+  ["replay_sim", "Replay & Simulation"],
   ["report", "Mission report"],
 ];
 
@@ -2361,13 +2849,21 @@ function App() {
   const windowReady = status && status.pipeline && status.pipeline.window_ready;
   const modelsUp = ["anomaly", "diagnosis", "rul"].filter(function (m) { return models[m]; }).length;
 
+  function goToTutorialStep(targetStep) {
+    const s = Math.max(0, Math.min(TUTORIAL_STEPS.length - 1, targetStep));
+    setTutorialStep(s);
+    if (TUTORIAL_STEPS[s] && TUTORIAL_STEPS[s].tab) {
+      setTab(TUTORIAL_STEPS[s].tab);
+    }
+  }
+
   return h("div", { className: "app" },
     // Apple-style natural blur hero overlay
     heroVisible ? h(HeroOverlay, {
       onStartDemo: function() {
         setHeroVisible(false);
         setTutorialActive(true);
-        setTutorialStep(0);
+        goToTutorialStep(0);
       },
       onSkip: function() {
         setHeroVisible(false);
@@ -2377,8 +2873,8 @@ function App() {
     // Interactive skippable step-by-step tutorial overlay
     tutorialActive ? h(TutorialOverlay, {
       step: tutorialStep,
-      onNext: function() { setTutorialStep(function(s) { return Math.min(TUTORIAL_STEPS.length - 1, s + 1); }); },
-      onPrev: function() { setTutorialStep(function(s) { return Math.max(0, s - 1); }); },
+      onNext: function() { goToTutorialStep(tutorialStep + 1); },
+      onPrev: function() { goToTutorialStep(tutorialStep - 1); },
       onSkip: function() { setTutorialActive(false); },
       onClose: function() { setTutorialActive(false); }
     }) : null,
@@ -2524,7 +3020,7 @@ function App() {
     ) : null,
 
     // ---- Fault Injection Panel (live, no mission reset) ----
-    running ? h("div", { className: "fault-panel" },
+    (running || (tutorialActive && tutorialStep === 7)) ? h("div", { className: "fault-panel", id: "tour-fault-injection" },
       h("div", { className: "fault-panel-head" },
         h("span", { className: "fault-panel-title" }, "⚡ Live Fault Injection"),
         activeFault
@@ -2652,6 +3148,7 @@ function App() {
       tab === "efficiency" ? h(EfficiencyTab, { hist: hist.current, tick: tick, efficiency: efficiency, effSummary: effSummary }) :
       tab === "alerts" ? h(AlertsTab, { alerts: alerts, counts: alertCounts }) :
       tab === "maintenance" ? h(MaintenanceTab, { items: assessment && assessment.maintenance, assessment: assessment }) :
+      tab === "replay_sim" ? h(ReplaySimulationTab, { onRunScenarioSuccess: function() { setTab("monitoring"); } }) :
       h(ReportTab, { report: report })
     ),
 
