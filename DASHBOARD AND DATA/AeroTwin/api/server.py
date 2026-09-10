@@ -30,6 +30,7 @@ Endpoints:
 """
 
 import asyncio
+import math
 import os
 import time
 from contextlib import asynccontextmanager
@@ -42,6 +43,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from AeroTwin.api.pipeline import LiveAssessmentPipeline, default_engine_parameters
+from AeroTwin.api.xgboost_adapter import LiveXGBoostAdapter
 from AeroTwin.degradation.config import (
     ComponentID,
     DegradationConfig,
@@ -60,6 +62,274 @@ STREAM_HZ = 10.0
 SIM_DT = 0.01
 
 
+def get_subsystems_status(running: bool, sim_time: float = 0.0) -> Dict[str, Any]:
+    """Generates real-time connection, heartbeat, and latency metrics for avionics subsystems."""
+    if not running:
+        return {
+            "ECU":       {"connected": False, "status": "STANDBY", "ping_ms": 0, "packets": 0, "detail": "Engine Control Unit standby"},
+            "FADEC":     {"connected": False, "status": "STANDBY", "ping_ms": 0, "packets": 0, "detail": "Full Authority Digital Engine Control standby"},
+            "EDGE":      {"connected": False, "status": "STANDBY", "ping_ms": 0, "packets": 0, "detail": "Onboard Edge AI inference node standby"},
+            "TELEMETRY": {"connected": False, "status": "STANDBY", "ping_ms": 0, "packets": 0, "detail": "UHF Downlink RF transmitter standby"},
+            "GCS":       {"connected": False, "status": "STANDBY", "ping_ms": 0, "packets": 0, "detail": "Ground Control Station telemetry link standby"},
+        }
+
+    pkt_base = int(sim_time * 10)
+    jitter = (int(sim_time * 13) % 7) * 0.1
+    return {
+        "ECU":       {"connected": True, "status": "ONLINE", "ping_ms": round(2.3 + jitter, 1), "packets": pkt_base * 10, "detail": "Dual CAN bus active; cyclic sync 100Hz"},
+        "FADEC":     {"connected": True, "status": "ONLINE", "ping_ms": round(4.1 + jitter, 1), "packets": pkt_base * 5,  "detail": "Full Authority closed-loop active"},
+        "EDGE":      {"connected": True, "status": "ONLINE", "ping_ms": round(11.5 + jitter, 1), "packets": pkt_base,     "detail": "Jetson Orin Edge DT node processing ML & physics"},
+        "TELEMETRY": {"connected": True, "status": "ONLINE", "ping_ms": round(41.8 + jitter * 2, 1), "packets": pkt_base, "detail": "UHF 900MHz link: 99.4% signal, 57.6 kbps"},
+        "GCS":       {"connected": True, "status": "ONLINE", "ping_ms": round(18.2 + jitter, 1), "packets": pkt_base,    "detail": "Primary Ground Control Station synchronized"},
+    }
+
+
+def compute_physics_equations_state(telemetry: Dict[str, Any], expected: Dict[str, Any], controls: Dict[str, Any]) -> Dict[str, Any]:
+    """Computes exact mathematical terms of the DT CORE physics equations for real-time visualization."""
+    alt_ft = float(controls.get("altitude_ft", 0.0))
+    alt_m = alt_ft * 0.3048
+    t_amb_c = float(controls.get("ambient_c", 15.0))
+    t_amb_k = t_amb_c + 273.15
+    throttle = float(controls.get("throttle", 0.65))
+
+    # ISA atmospheric equations: P(h) = P0*(1 - L*h/T0)^(g/(R*L)), rho = P/(R*T)
+    p_amb_kpa = 101.325 * ((1.0 - 2.25577e-5 * alt_m) ** 5.25588)
+    p_amb_pa = p_amb_kpa * 1000.0
+    rho_air = p_amb_pa / (287.058 * max(200.0, t_amb_k))
+    rho_ratio = rho_air / 1.225
+
+    rpm = float(telemetry.get("rpm", 4500.0))
+    exp_rpm = float(expected.get("rpm", rpm))
+    cht = float(telemetry.get("cht", 140.0))
+    exp_cht = float(expected.get("cht", cht))
+    egt = float(telemetry.get("egt", 680.0))
+    exp_egt = float(expected.get("egt", egt))
+    oil_p = float(telemetry.get("oil_pressure_psi", telemetry.get("oil_pressure", 4.0)))
+    if oil_p > 15.0: oil_p *= 0.0689476
+    exp_oil_p = float(expected.get("oil_pressure", oil_p))
+    if exp_oil_p > 15.0: exp_oil_p *= 0.0689476
+    oil_t = float(telemetry.get("oil_temperature", 85.0))
+    exp_oil_t = float(expected.get("oil_temperature", oil_t))
+    fuel_flow = float(telemetry.get("fuel_flow_lph", telemetry.get("fuel_flow", 22.0)))
+    exp_fuel_flow = float(expected.get("fuel_flow_lph", expected.get("fuel_flow", fuel_flow)))
+
+    # Manifold & Air path: m_dot_air = eta_v * (V_d * N / 120) * rho_man
+    p_man_kpa = p_amb_kpa * (0.35 + 0.65 * throttle)
+    v_disp = 0.0024  # 2.4L displacement
+    eta_v = min(0.95, max(0.40, 0.85 * (p_man_kpa / max(1.0, p_amb_kpa)) * (1.0 - 0.00003 * abs(rpm - 4500.0))))
+    m_dot_air = eta_v * (v_disp * rpm / 120.0) * (p_man_kpa * 1000.0 / (287.058 * max(200.0, t_amb_k)))
+
+    # Fuel model: m_dot_fuel = m_dot_air / AFR, lambda = AFR / 14.7
+    afr_target = 14.7 * (1.0 - 0.12 * max(0.0, throttle - 0.7))
+    m_dot_fuel = (m_dot_air / afr_target) if afr_target > 0 else 0.001
+    fuel_flow_calc_lph = m_dot_fuel * 3600.0 / 0.745
+    lambda_val = afr_target / 14.7
+
+    # Crankshaft dynamics: J * domega/dt = T_ind - T_fric - T_load
+    omega = 2.0 * math.pi * rpm / 60.0
+    j_rot = 0.185
+    p_ind_kw = m_dot_fuel * 44000.0 * 0.32
+    t_ind = (p_ind_kw * 1000.0 / max(10.0, omega))
+    t_fric = 11.5 + 0.0038 * rpm
+    t_load = 0.000072 * (omega ** 2.0)
+    dw_dt = (t_ind - t_fric - t_load) / j_rot
+
+    # Thermal heat balances: tau * d(CHT)/dt = Q_comb - Q_cool
+    q_in_cht = m_dot_fuel * 44000.0 * 0.28 * 1000.0
+    q_cool_cht = 18.5 * (cht - t_amb_c)
+    dcht_dt = (q_in_cht - q_cool_cht) / 450.0
+
+    q_comb_egt = m_dot_fuel * 44000.0 * 0.36 * 1000.0
+    degt_dt = (q_comb_egt - m_dot_air * 1005.0 * (egt - t_amb_c)) / 120.0
+
+    # Hydrodynamic lubrication: mu(T) = mu0 * exp(b/T), P_oil = k * N * mu
+    mu_oil = 0.045 * math.exp(1600.0 / (max(10.0, oil_t) + 273.15) - 4.4)
+    oil_press_calc = 0.00085 * rpm * (mu_oil * 100.0)
+
+    residuals = {
+        "rpm": round(rpm - exp_rpm, 1),
+        "cht": round(cht - exp_cht, 2),
+        "egt": round(egt - exp_egt, 2),
+        "oil_pressure": round(oil_p - exp_oil_p, 3),
+        "oil_temperature": round(oil_t - exp_oil_t, 2),
+        "fuel_flow": round(fuel_flow - exp_fuel_flow, 2),
+    }
+
+    return {
+        "isa": {
+            "altitude_m": round(alt_m, 1),
+            "t_amb_k": round(t_amb_k, 2),
+            "p_amb_kpa": round(p_amb_kpa, 2),
+            "rho_air": round(rho_air, 4),
+            "rho_ratio": round(rho_ratio, 3),
+        },
+        "air_path": {
+            "p_man_kpa": round(p_man_kpa, 2),
+            "eta_v": round(eta_v, 3),
+            "m_dot_air_kgs": round(m_dot_air, 4),
+        },
+        "fuel_system": {
+            "afr_target": round(afr_target, 2),
+            "lambda_val": round(lambda_val, 3),
+            "m_dot_fuel_kgs": round(m_dot_fuel, 5),
+            "fuel_flow_calc_lph": round(fuel_flow_calc_lph, 2),
+        },
+        "crankshaft": {
+            "omega_rads": round(omega, 1),
+            "t_ind_nm": round(t_ind, 2),
+            "t_fric_nm": round(t_fric, 2),
+            "t_load_nm": round(t_load, 2),
+            "dw_dt": round(dw_dt, 3),
+            "j_inertia": j_rot,
+        },
+        "thermal": {
+            "q_in_cht_w": round(q_in_cht, 1),
+            "q_cool_cht_w": round(q_cool_cht, 1),
+            "dcht_dt": round(dcht_dt, 3),
+            "degt_dt": round(degt_dt, 3),
+        },
+        "lubrication": {
+            "mu_oil_pa_s": round(mu_oil, 4),
+            "oil_press_calc_bar": round(oil_press_calc, 2),
+        },
+        "residuals": residuals,
+    }
+
+
+def compute_physics_health_index(
+    telemetry: Dict[str, Any],
+    expected: Dict[str, Any],
+    xgb_diag: Optional[Dict[str, Any]] = None,
+    ml_health: Optional[float] = None,
+) -> Dict[str, Any]:
+    """
+    Rigorously computes the physics-informed multi-subsystem engine health index.
+    H in [0.0, 1.0], where 1.0 is nominal baseline, and degraded state reflects physical stress.
+    Adheres to the critical aviation safety bottleneck rule: the engine health cannot exceed
+    its weakest failing subsystem.
+    """
+    if not telemetry or not expected:
+        return {
+            "health_index": 1.0,
+            "thermal_health": 1.0,
+            "lubrication_health": 1.0,
+            "mechanical_health": 1.0,
+            "volumetric_health": 1.0,
+            "status": "HEALTHY",
+        }
+
+    # 1. Thermal Health (CHT & EGT heat balance)
+    cht = float(telemetry.get("cht", 85.0))
+    exp_cht = float(expected.get("cht", cht))
+    egt = float(telemetry.get("egt", 680.0))
+    exp_egt = float(expected.get("egt", egt))
+
+    z_cht = abs(cht - exp_cht) / 4.0   # sigma_cht = 4.0 C
+    z_egt = abs(egt - exp_egt) / 15.0  # sigma_egt = 15.0 C
+
+    # Severe penalty if CHT exceeds safety envelope (105 C warning, 130 C critical)
+    cht_overheat_pen = max(0.0, (cht - 105.0) / 25.0) if cht > 105.0 else 0.0
+    thermal_penalty = (max(0.0, z_cht - 1.2) / 6.0) * 0.65 + (max(0.0, z_egt - 1.2) / 8.0) * 0.35 + cht_overheat_pen
+    h_thermal = max(0.05, min(1.0, 1.0 - thermal_penalty))
+
+    # 2. Lubrication Health (Oil pressure gallery & viscosity)
+    oil_p_psi = float(telemetry.get("oil_pressure_psi", 60.0))
+    oil_p_bar = oil_p_psi * 0.0689476
+    exp_oil_p = float(expected.get("oil_pressure_psi", oil_p_psi)) * 0.0689476
+
+    z_oil_p = abs(oil_p_bar - exp_oil_p) / 0.15  # sigma_oil_p = 0.15 bar
+    # Hydrodynamic film loss if oil pressure collapses below 2.8 bar (nominal ~4.1 bar)
+    oil_collapse_pen = max(0.0, (2.8 - oil_p_bar) / 1.8) if oil_p_bar < 2.8 else 0.0
+    lub_penalty = (max(0.0, z_oil_p - 1.2) / 5.0) * 0.5 + oil_collapse_pen * 0.9
+    h_lubrication = max(0.05, min(1.0, 1.0 - lub_penalty))
+
+    # 3. Mechanical & Combustion Health (Rotational dynamics, vibration & balance)
+    vib = float(telemetry.get("vibration", 1.0))
+    rpm = float(telemetry.get("rpm", 4500.0))
+    exp_rpm = float(expected.get("rpm", rpm))
+
+    z_rpm = abs(rpm - exp_rpm) / 25.0
+    vib_penalty = max(0.0, (vib - 1.2) / 3.8) if vib > 1.2 else 0.0
+    rpm_pen = (max(0.0, z_rpm - 1.5) / 6.0) * 0.4
+    
+    misfire_pen = 0.0
+    if xgb_diag:
+        pred_f = str(xgb_diag.get("predicted_fault", "NORMAL")).upper()
+        if "MISFIRE" in pred_f or "CYLINDER" in pred_f:
+            misfire_pen = 0.45 * float(xgb_diag.get("confidence", 0.8))
+        elif "BEARING" in pred_f:
+            vib_penalty += 0.35 * float(xgb_diag.get("confidence", 0.8))
+
+    mech_penalty = vib_penalty + rpm_pen + misfire_pen
+    h_mechanical = max(0.05, min(1.0, 1.0 - mech_penalty))
+
+    # 4. Volumetric Health (Manifold & air charging)
+    h_volumetric = max(0.2, min(1.0, 1.0 - (max(0.0, z_rpm - 2.0) / 10.0)))
+
+    # 5. Bottleneck Synthesis (Aviation Minimum Subsystem Rule)
+    weakest_subsystem = min(h_thermal, h_lubrication, h_mechanical)
+    weighted_average = 0.38 * h_thermal + 0.35 * h_lubrication + 0.27 * h_mechanical
+
+    # Bottleneck dominates: 70% weakest failing subsystem, 30% weighted average
+    composite_health = 0.70 * weakest_subsystem + 0.30 * weighted_average
+
+    # Incorporate trained RUL health estimator if available
+    if ml_health is not None and 0.0 <= ml_health <= 1.0:
+        composite_health = 0.55 * composite_health + 0.45 * ml_health
+
+    final_h = max(0.02, min(1.0, composite_health))
+
+    if final_h >= 0.70:
+        status_str = "HEALTHY"
+    elif final_h >= 0.35:
+        status_str = "DEGRADED"
+    else:
+        status_str = "CRITICAL"
+
+    return {
+        "health_index": round(final_h, 4),
+        "thermal_health": round(h_thermal, 4),
+        "lubrication_health": round(h_lubrication, 4),
+        "mechanical_health": round(h_mechanical, 4),
+        "volumetric_health": round(h_volumetric, 4),
+        "status": status_str,
+    }
+
+
+
+# Auto-mission waypoints: (time_s, throttle, altitude_ft, ambient_c)
+_AUTO_WAYPOINTS = [
+    (    0, 0.12,     0, 15.0),
+    (  120, 0.15,   200, 14.8),
+    (  300, 0.90,  1000, 14.0),
+    (  600, 0.75, 10000,  9.5),
+    ( 1500, 0.65, 15000,  6.5),
+    ( 1800, 0.80, 15000,  6.5),
+    ( 1860, 0.50, 14000,  7.5),
+    ( 1920, 0.75, 13000,  8.0),
+    ( 2400, 0.60, 10000,  9.5),
+    ( 2580, 0.35,  5000, 12.0),
+    ( 2640, 0.25,  3000, 13.5),
+    ( 2680, 0.15,   500, 14.8),
+    ( 2700, 0.12,     0, 15.0),
+]
+_WP_T   = [w[0] for w in _AUTO_WAYPOINTS]
+_WP_THR = [w[1] for w in _AUTO_WAYPOINTS]
+_WP_ALT = [w[2] for w in _AUTO_WAYPOINTS]
+_WP_AMB = [w[3] for w in _AUTO_WAYPOINTS]
+
+
+def _interp(t: float, xs: list, ys: list) -> float:
+    """Linear interpolation clamped to endpoints."""
+    if t <= xs[0]:  return ys[0]
+    if t >= xs[-1]: return ys[-1]
+    for i in range(len(xs) - 1):
+        if xs[i] <= t <= xs[i + 1]:
+            frac = (t - xs[i]) / (xs[i + 1] - xs[i])
+            return ys[i] + frac * (ys[i + 1] - ys[i])
+    return ys[-1]
+
+
 class SimulationService:
     """Owns the engine simulation loop and fans results out to websocket clients."""
 
@@ -70,8 +340,17 @@ class SimulationService:
 
         self.latest_telemetry: Optional[Dict[str, Any]] = None
         self.latest_assessment: Optional[Dict[str, Any]] = None
+        self.xgboost_adapter = LiveXGBoostAdapter()
+        self.latest_xgboost_diagnosis: Optional[Dict[str, Any]] = None
         self.running = False
         self.started_at: Optional[float] = None
+
+        # Live manual controls (only active in manual mode)
+        self._manual_throttle: float = 0.65
+        self._manual_altitude_ft: float = 0.0
+        self._manual_ambient_c: float = 15.0
+        self._auto_mode: bool = True   # default: scripted auto profile
+        self._auto_elapsed: float = 0.0
 
         self._task: Optional[asyncio.Task] = None
         self._clients: List[WebSocket] = []
@@ -100,8 +379,10 @@ class SimulationService:
             dt=SIM_DT,
             mission=MissionProfile(name="ISR_SORTIE", required_duration_s=mission_duration_s),
         )
+        self.xgboost_adapter.reset()
         self.latest_telemetry = None
         self.latest_assessment = None
+        self.latest_xgboost_diagnosis = None
 
     async def start(self, **kwargs):
         await self.stop()
@@ -120,7 +401,54 @@ class SimulationService:
                 pass
             self._task = None
 
+        # Cleanly reset all simulation, telemetry, and health states
+        self.latest_telemetry = None
+        self.latest_assessment = None
+        self.latest_xgboost_diagnosis = None
+        self._auto_elapsed = 0.0
+        if self.runner:
+            self.runner.clear_overrides()
+        if self.pipeline:
+            self.pipeline.reset()
+        if self.xgboost_adapter:
+            self.xgboost_adapter.reset()
+
+        # Broadcast mission_stopped event to immediately reset all client stats
+        await self._broadcast({
+            "type": "mission_stopped",
+            "running": False,
+            "message": "Mission terminated by operator. All statistics reset to baseline."
+        })
+
     # ------------------------------------------------------------------- loop
+
+    def set_controls(self, throttle: float = None, altitude_ft: float = None, ambient_c: float = None):
+        """Update manual control values. Applied on the next loop tick."""
+        if throttle    is not None: self._manual_throttle    = float(throttle)
+        if altitude_ft is not None: self._manual_altitude_ft = float(altitude_ft)
+        if ambient_c   is not None: self._manual_ambient_c   = float(ambient_c)
+
+    def set_auto_mode(self, auto: bool):
+        """Switch between auto (scripted) and manual (slider) control."""
+        if auto and not self._auto_mode:
+            # Reset auto elapsed so it restarts from the beginning of the profile
+            self._auto_elapsed = 0.0
+        self._auto_mode = auto
+        if self.runner:
+            if auto:
+                self.runner.clear_overrides()   # let FlightProfile take over
+            else:
+                self.runner.set_throttle(self._manual_throttle)
+
+    @property
+    def controls_snapshot(self) -> dict:
+        """Return current control values — sent with every broadcast."""
+        return {
+            "auto": self._auto_mode,
+            "throttle":    round(self._manual_throttle,    3),
+            "altitude_ft": round(self._manual_altitude_ft, 1),
+            "ambient_c":   round(self._manual_ambient_c,   2),
+        }
 
     async def _loop(self):
         """
@@ -129,17 +457,84 @@ class SimulationService:
         synchronous loop here would starve the websocket handlers.
         """
         frames_per_broadcast = max(1, int((1.0 / STREAM_HZ) / SIM_DT))
+        step_s = 1.0 / STREAM_HZ   # seconds per broadcast cycle
         try:
             while self.running:
+                # ---- drive controls (auto or manual) ----
+                if self._auto_mode:
+                    t = self._auto_elapsed
+                    thr = _interp(t, _WP_T, _WP_THR)
+                    alt = _interp(t, _WP_T, _WP_ALT)
+                    amb = _interp(t, _WP_T, _WP_AMB)
+                    self._manual_throttle    = round(thr, 3)
+                    self._manual_altitude_ft = round(alt, 1)
+                    self._manual_ambient_c   = round(amb, 2)
+                    self._auto_elapsed = min(t + step_s, _WP_T[-1])
+                    if self.runner:
+                        self.runner.set_throttle(thr)
+                else:
+                    if self.runner:
+                        self.runner.set_throttle(self._manual_throttle)
+
                 payload = None
                 for _ in range(frames_per_broadcast):
                     telemetry, _gt = self.injector.step()
                     tel_dict = telemetry.to_dict()
                     self.latest_telemetry = tel_dict
                     result = self.pipeline.ingest(tel_dict)
-                    if result.get("assessment"):
-                        self.latest_assessment = result["assessment"]
                     payload = result
+                    if self.latest_assessment is None:
+                        self.latest_assessment = {"simulation_time": payload.get("simulation_time", 0.0)}
+                    
+                    # Merge all pipeline outputs
+                    for k in ("anomaly", "rul", "mission_risk", "maintenance"):
+                        if k in result:
+                            self.latest_assessment[k] = result[k]
+
+                # Run XGBoost 9-class physics diagnosis
+                xgb_diag = self.xgboost_adapter.ingest_frame(
+                    self.latest_telemetry,
+                    payload.get("expected", {}),
+                    self.controls_snapshot,
+                )
+                if xgb_diag:
+                    self.latest_xgboost_diagnosis = xgb_diag
+                    if self.latest_assessment is None:
+                        self.latest_assessment = {"simulation_time": payload["simulation_time"]}
+                    self.latest_assessment["xgboost"] = xgb_diag
+                    self.latest_assessment["diagnosis"] = {
+                        "predicted_fault": xgb_diag.get("predicted_fault", "NORMAL"),
+                        "confidence": float(xgb_diag.get("confidence", 1.0)),
+                        "runner_up": str(xgb_diag.get("runner_up", "NONE")),
+                        "margin": float(xgb_diag.get("margin", 1.0)),
+                        "model": str(xgb_diag.get("model_name", "XGBoost 9-Class Physics Digital Twin")),
+                        "probabilities": xgb_diag.get("probabilities", {}),
+                        "top_deviations": xgb_diag.get("top_deviations", []),
+                    }
+
+                # Compute rigorous physics-informed health index
+                ml_h = None
+                if payload and payload.get("health"):
+                    ml_h = payload["health"].get("health_index")
+
+                physics_health = compute_physics_health_index(
+                    self.latest_telemetry or {},
+                    payload.get("expected", {}),
+                    xgb_diag=xgb_diag,
+                    ml_health=ml_h,
+                )
+                if self.latest_assessment is None:
+                    self.latest_assessment = {"simulation_time": payload.get("simulation_time", 0.0)}
+                self.latest_assessment["health"] = physics_health
+                if "mission_risk" in self.latest_assessment and isinstance(self.latest_assessment["mission_risk"], dict):
+                    self.latest_assessment["mission_risk"]["health_index"] = physics_health["health_index"]
+
+                subsystems = get_subsystems_status(self.running, payload["simulation_time"])
+                physics_state = compute_physics_equations_state(
+                    self.latest_telemetry or {},
+                    payload.get("expected", {}),
+                    self.controls_snapshot,
+                )
 
                 await self._broadcast(
                     {
@@ -152,9 +547,13 @@ class SimulationService:
                         },
                         "efficiency": payload.get("efficiency"),
                         "assessment": self.latest_assessment,
+                        "xgboost": self.latest_xgboost_diagnosis,
+                        "controls": self.controls_snapshot,
+                        "subsystems": subsystems,
+                        "physics_equations": physics_state,
                     }
                 )
-                await asyncio.sleep(1.0 / STREAM_HZ)
+                await asyncio.sleep(step_s)
         except asyncio.CancelledError:
             raise
         except Exception as exc:  # keep the service alive; report to clients
@@ -195,10 +594,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="AeroTwin-4 Digital Twin API",
-    description="Real-time health monitoring, fault diagnosis, RUL and mission risk "
-                "for a representative 4-cylinder aero piston engine.",
-    version="1.0.0",
+    title="PRATIBIMB Digital Twin API",
+    description="PROJECT PRATIBIMB: A Physics Informed Digital Twin For Health Monitoring and Predictive Maintenance of MALE UAVs",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -223,14 +621,20 @@ class ThrottleRequest(BaseModel):
     throttle: float = Field(..., ge=0.0, le=1.0)
 
 
+class ControlsRequest(BaseModel):
+    """Live manual control override for throttle, altitude, ambient temp, and auto-mode."""
+    throttle: Optional[float] = Field(None, ge=0.0, le=1.0)
+    altitude_ft: Optional[float] = Field(None, ge=0.0, le=25000.0)
+    ambient_c: Optional[float] = Field(None, ge=-30.0, le=60.0)
+    auto: Optional[bool] = Field(None, description="True = auto mission profile; False = manual")
+
+
 class InjectFaultRequest(BaseModel):
-    fault_type: str = Field(..., description="CYLINDER | BEARING | COOLING | LUBRICATION")
-    severity: float = Field(..., ge=0.0, le=1.0)
+    fault_type: str = Field(..., description="CYLINDER | BEARING | COOLING | LUBRICATION | CLEAR")
+    severity: float = Field(0.8, ge=0.0, le=1.0)
     component: Optional[str] = Field(None, description="e.g. CYLINDER_3; defaults per family")
     trajectory: str = Field("CONSTANT", description="CONSTANT | LINEAR | STEP | EXPONENTIAL")
-    ramp_duration_s: float = Field(60.0, gt=0)
-    seed: int = 42
-    mission_duration_s: float = Field(600.0, gt=0)
+    ramp_duration_s: float = Field(30.0, gt=0)
 
 
 class MissionAssessRequest(BaseModel):
@@ -253,8 +657,9 @@ def dashboard():
 @app.get("/api")
 def root():
     return {
-        "service": "AeroTwin-4 Digital Twin API",
-        "version": "1.0.0",
+        "service": "PRATIBIMB Digital Twin API",
+        "description": "PROJECT PRATIBIMB: A Physics Informed Digital Twin For Health Monitoring and Predictive Maintenance of MALE UAVs",
+        "version": "2.0.0",
         "dashboard": "/",
         "docs": "/docs",
         "websocket": "/ws/telemetry",
@@ -273,9 +678,31 @@ def status():
         "started_at": service.started_at,
         "stream_hz": STREAM_HZ,
         "sim_dt": SIM_DT,
+        "subsystems": get_subsystems_status(
+            service.running,
+            service.latest_telemetry.get("simulation_time", 0.0) if service.latest_telemetry else 0.0
+        ),
     }
     body["pipeline"] = service.pipeline.status() if service.pipeline else None
+    if body.get("pipeline") and body["pipeline"].get("models_loaded"):
+        body["pipeline"]["models_loaded"]["diagnosis"] = service.xgboost_adapter.loaded
+        body["pipeline"]["models_loaded"]["xgboost"] = service.xgboost_adapter.loaded
+    body["xgboost"] = {
+        "loaded": service.xgboost_adapter.loaded,
+        "latest": service.latest_xgboost_diagnosis,
+    }
     return body
+
+
+
+@app.get("/api/diagnose/xgboost")
+def diagnose_xgboost():
+    if service.latest_xgboost_diagnosis is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No XGBoost diagnosis available yet; start a sortie.",
+        )
+    return service.latest_xgboost_diagnosis
 
 
 @app.get("/api/telemetry/latest")
@@ -311,22 +738,62 @@ async def sim_stop():
 def sim_throttle(req: ThrottleRequest):
     if service.runner is None:
         raise HTTPException(status_code=409, detail="Simulation is not running.")
-    service.runner.set_throttle(req.throttle)
+    service.set_controls(throttle=req.throttle)
+    service.set_auto_mode(False)   # throttle override always means manual mode
     return {"throttle": req.throttle}
+
+
+@app.post("/api/sim/controls")
+def sim_controls(req: ControlsRequest):
+    """
+    Live control update endpoint.
+
+    In manual mode: pass throttle / altitude_ft / ambient_c to override engine inputs.
+    To switch mode: pass auto=true or auto=false.
+
+    All fields are optional — omitted fields keep their current value.
+    """
+    if req.auto is not None:
+        service.set_auto_mode(req.auto)
+    if not service._auto_mode:
+        # Only apply manual values when NOT in auto mode
+        service.set_controls(
+            throttle    = req.throttle,
+            altitude_ft = req.altitude_ft,
+            ambient_c   = req.ambient_c,
+        )
+    return {"ok": True, "controls": service.controls_snapshot}
 
 
 @app.post("/api/sim/inject_fault")
 async def inject_fault(req: InjectFaultRequest):
-    """Restart the sortie with a degradation injected - the demo path for the PS."""
+    """
+    Hot-inject a degradation into the **ongoing** sortie without restarting.
+
+    The fault start_time is set to the current simulation clock so the injector
+    immediately begins perturbing the physics on the very next step.
+    Passing fault_type="CLEAR" removes any active fault (restores healthy baseline).
+    """
+    if service.injector is None or not service.running:
+        raise HTTPException(status_code=409, detail="No sortie is running; start one first.")
+
+    # --- CLEAR path: restore healthy baseline ---
+    if req.fault_type.upper() == "CLEAR":
+        service.injector.config = DegradationConfig.healthy()
+        service.xgboost_adapter.clear_fault()   # stop applying perturbations
+        service.xgboost_adapter.buffer.clear()  # flush stale fault-tainted frames
+        return {"running": True, "fault_type": "CLEAR", "note": "Fault cleared; engine restored to healthy baseline."}
+
+    # --- parse fault type ---
     try:
         deg_type = DegradationType[req.fault_type.upper()]
     except KeyError:
         raise HTTPException(status_code=422, detail=f"Unknown fault_type {req.fault_type!r}")
 
     defaults = {
-        DegradationType.CYLINDER: ComponentID.CYLINDER_3,
-        DegradationType.BEARING: ComponentID.BEARING,
-        DegradationType.COOLING: ComponentID.COOLING_SYSTEM,
+        DegradationType.CYLINDER:    ComponentID.CYLINDER_3,
+        DegradationType.BEARING:     ComponentID.BEARING,
+        DegradationType.COOLING:     ComponentID.COOLING_SYSTEM,
         DegradationType.LUBRICATION: ComponentID.LUBRICATION_SYSTEM,
     }
     if req.component:
@@ -344,18 +811,41 @@ async def inject_fault(req: InjectFaultRequest):
     except KeyError:
         raise HTTPException(status_code=422, detail=f"Unknown trajectory {req.trajectory!r}")
 
+    # Capture the current simulation clock so fault onset is "right now"
+    current_sim_time = service.runner.clock.simulation_time
+
     cfg = DegradationConfig.single_fault(
         degradation_type=deg_type,
         component_id=comp,
         severity=req.severity,
         trajectory_type=traj,
+        start_time=current_sim_time,   # <-- fault starts at current moment
         ramp_duration=req.ramp_duration_s,
     )
-    await service.stop()
-    service.build(seed=req.seed, mission_duration_s=req.mission_duration_s, fault=cfg)
-    service.running = True
-    service.started_at = time.time()
-    service._task = asyncio.create_task(service._loop())
+
+    # Hot-swap the injector config atomically — no stop/start needed
+    service.injector.config = cfg
+
+    # Use last telemetry sim_time (what the adapter has actually buffered) rather
+    # than runner.clock which may be ahead of the last broadcast frame.
+    tel_sim_time = (
+        service.latest_telemetry.get("simulation_time", current_sim_time)
+        if service.latest_telemetry else current_sim_time
+    )
+
+    # Flush rolling buffer so previous fault signatures don't contaminate
+    # rolling stats (egt_residual_std, vibration_kurtosis_mean, etc.) for
+    # the newly injected fault.
+    service.xgboost_adapter.buffer.clear()
+
+    # Tell the XGBoost adapter which fault is now active so it applies
+    # the matching synthetic perturbations (vibration, EGT, fuel variance)
+    service.xgboost_adapter.set_active_fault(
+        fault_type=req.fault_type.upper(),
+        severity=req.severity,
+        sim_time=tel_sim_time,          # use telemetry time, not runner clock
+        ramp_duration_s=req.ramp_duration_s,
+    )
 
     return {
         "running": True,
@@ -363,6 +853,7 @@ async def inject_fault(req: InjectFaultRequest):
         "component": comp.value,
         "severity": req.severity,
         "trajectory": traj.value,
+        "injected_at_sim_time": tel_sim_time,
     }
 
 

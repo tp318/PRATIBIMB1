@@ -115,19 +115,21 @@ class EfficiencyTracker:
         return s
 
     def series(self) -> List[Dict[str, Any]]:
-        return [s.to_dict() for s in self.samples]
+        snapshot = list(self.samples)
+        return [s.to_dict() for s in snapshot]
 
     def summary(self) -> Dict[str, Any]:
+        snapshot = list(self.samples)
         def mean_of(attr):
-            vals = [getattr(s, attr) for s in self.samples if getattr(s, attr) is not None]
+            vals = [getattr(s, attr) for s in snapshot if getattr(s, attr) is not None]
             return sum(vals) / len(vals) if vals else None
 
         def peak_of(attr):
-            vals = [getattr(s, attr) for s in self.samples if getattr(s, attr) is not None]
+            vals = [getattr(s, attr) for s in snapshot if getattr(s, attr) is not None]
             return max(vals) if vals else None
 
         return {
-            "n_samples": len(self.samples),
+            "n_samples": len(snapshot),
             "mean_power_kw": mean_of("power_kw"),
             "mean_power_deficit_pct": mean_of("power_deficit_pct"),
             "peak_power_deficit_pct": peak_of("power_deficit_pct"),
