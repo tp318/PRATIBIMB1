@@ -7,7 +7,10 @@ from .splits import RunSplitter
 from .preprocessing import FeatureScaler
 from .statistical import StatisticalAnomalyDetector
 from .isolation_forest import IsolationForestAnomalyDetector
-from .autoencoder import AutoencoderAnomalyDetector
+try:
+    from .autoencoder import AutoencoderAnomalyDetector
+except ImportError:
+    AutoencoderAnomalyDetector = None
 from .scoring import AnomalyScorer
 from .evaluation import Evaluator
 

@@ -5,6 +5,8 @@ Trained strictly using healthy training feature vectors to minimize MSE reconstr
 Higher reconstruction error = HIGHER ANOMALY SCORE.
 """
 
+from __future__ import annotations
+
 from typing import Optional, Dict, Any, Tuple, List
 import os
 import json
