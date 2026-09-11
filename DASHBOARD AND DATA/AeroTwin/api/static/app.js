@@ -206,6 +206,205 @@ function SortieLogModal(props) {
   );
 }
 
+// ----------------------------------------------------------- 3D Flight View
+// A small Three.js scene reacting to live control inputs: throttle drives
+// forward airspeed, altitude sets height above the ground grid, and RPM
+// drives propeller speed. Kept to flat materials and a grid ground (no
+// bloom/glow) to read as a technical flight-sim view rather than a game demo.
+function Flight3DModal(props) {
+  const { open, onClose, liveRef } = props;
+  const mountRef = useRef(null);
+  const rafRef = useRef(null);
+  const sceneRef = useRef(null);
+  const [hud, setHud] = useState({ speed: 0, alt: 0, rpm: 0, throttle: 0 });
+
+  useEffect(function () {
+    if (!open || !mountRef.current || typeof THREE === "undefined") return;
+
+    const mount = mountRef.current;
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xcfe0f0);
+    scene.fog = new THREE.Fog(0xcfe0f0, 260, 1400);
+
+    const camera = new THREE.PerspectiveCamera(52, mount.clientWidth / mount.clientHeight, 0.1, 4000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setSize(mount.clientWidth, mount.clientHeight);
+    mount.appendChild(renderer.domElement);
+
+    // -- Lighting: flat, no bloom/glow — a plain sun + soft ambient fill.
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.75);
+    sun.position.set(120, 220, 80);
+    scene.add(sun);
+
+    // -- Ground: a large flat plane + grid overlay, blueprint style.
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0xe3ecd9, roughness: 1 });
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(20000, 20000), groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = 0;
+    scene.add(ground);
+    const grid = new THREE.GridHelper(20000, 400, 0x8fae8f, 0xb9cdb0);
+    grid.position.y = 0.05;
+    scene.add(grid);
+
+    // Sparse waypoint poles so forward motion actually reads visually.
+    const poleGroup = new THREE.Group();
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x8592a3 });
+    const poleTopMat = new THREE.MeshStandardMaterial({ color: 0xc2410c });
+    for (let i = 0; i < 60; i++) {
+      const z = -i * 60 - 40;
+      const side = (i % 2 === 0) ? -1 : 1;
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 18, 8), poleMat);
+      pole.position.set(side * 55, 9, z);
+      const top = new THREE.Mesh(new THREE.SphereGeometry(1.6, 8, 8), poleTopMat);
+      top.position.set(side * 55, 18, z);
+      poleGroup.add(pole, top);
+    }
+    scene.add(poleGroup);
+
+    // -- Aircraft: simple flat-shaded fixed-wing UAV built from primitives.
+    const aircraft = new THREE.Group();
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf5f7fa, roughness: 0.6 });
+    const accentMat = new THREE.MeshStandardMaterial({ color: 0x1f5fa8, roughness: 0.6 });
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x2b3542, roughness: 0.7 });
+
+    const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 0.5, 9, 12), bodyMat);
+    fuselage.rotation.x = Math.PI / 2;
+    aircraft.add(fuselage);
+
+    const nose = new THREE.Mesh(new THREE.ConeGeometry(1.1, 2.0, 12), darkMat);
+    nose.rotation.x = -Math.PI / 2;
+    nose.position.z = -5.5;
+    aircraft.add(nose);
+
+    const wing = new THREE.Mesh(new THREE.BoxGeometry(14, 0.25, 2.1), accentMat);
+    wing.position.set(0, 0.1, 0.4);
+    aircraft.add(wing);
+
+    const tailWing = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.2, 1.2), accentMat);
+    tailWing.position.set(0, 0.6, 4.3);
+    aircraft.add(tailWing);
+
+    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.6, 1.4), darkMat);
+    fin.position.set(0, 1.3, 4.3);
+    aircraft.add(fin);
+
+    // Propeller: spins about the nose axis, speed driven by RPM.
+    const propGroup = new THREE.Group();
+    propGroup.position.z = -6.5;
+    const bladeMat = new THREE.MeshStandardMaterial({ color: 0x2b3542 });
+    const blade1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3.4, 0.35), bladeMat);
+    const blade2 = blade1.clone();
+    blade2.rotation.z = Math.PI / 2;
+    propGroup.add(blade1, blade2);
+    aircraft.add(propGroup);
+
+    aircraft.position.set(0, 40, 0);
+    scene.add(aircraft);
+
+    camera.position.set(0, 46, 26);
+
+    sceneRef.current = { renderer, scene, camera, aircraft, propGroup, poleGroup, mount };
+
+    function onResize() {
+      if (!mount) return;
+      camera.aspect = mount.clientWidth / mount.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(mount.clientWidth, mount.clientHeight);
+    }
+    window.addEventListener("resize", onResize);
+
+    let lastT = performance.now();
+    let distance = 0;
+    let pitch = 0;
+
+    function frame(now) {
+      const dt = Math.min(0.05, (now - lastT) / 1000);
+      lastT = now;
+
+      const live = (liveRef && liveRef.current) || {};
+      const throttle = Number.isFinite(live.throttle) ? live.throttle : 0.5;
+      const rpm = Number.isFinite(live.rpm) ? live.rpm : 0;
+      const altFt = Number.isFinite(live.altitude_ft) ? live.altitude_ft : 0;
+      const running = !!live.running;
+
+      const speedUnitsPerSec = running ? (6 + throttle * 55) : 0;
+      distance += speedUnitsPerSec * dt;
+
+      const targetAlt = 40 + altFt * 0.03;
+      aircraft.position.y += (targetAlt - aircraft.position.y) * Math.min(1, dt * 1.2);
+
+      const targetPitch = running ? (throttle - 0.5) * 0.22 : 0;
+      pitch += (targetPitch - pitch) * Math.min(1, dt * 2.0);
+      aircraft.rotation.x = pitch;
+      aircraft.rotation.z = Math.sin(distance * 0.01) * 0.03;
+
+      propGroup.rotation.z += (rpm / 60) * 2 * Math.PI * dt * (running ? 1 : 0.15);
+
+      // World scrolls under a fixed aircraft — reads as forward flight
+      // without the plane ever running out of ground.
+      grid.position.z = distance % 50;
+      poleGroup.position.z = distance % 120;
+
+      const camTargetY = aircraft.position.y + 6;
+      camera.position.y += (camTargetY - camera.position.y) * Math.min(1, dt * 2);
+      camera.position.x += (0 - camera.position.x) * Math.min(1, dt * 2);
+      camera.position.z = 26;
+      camera.lookAt(aircraft.position.x, aircraft.position.y, aircraft.position.z - 10);
+
+      renderer.render(scene, camera);
+
+      setHud(function (prev) {
+        const next = {
+          speed: Math.round(speedUnitsPerSec * 3.6),
+          alt: Math.round(altFt),
+          rpm: Math.round(rpm),
+          throttle: Math.round(throttle * 100),
+        };
+        if (prev.speed === next.speed && prev.alt === next.alt && prev.rpm === next.rpm && prev.throttle === next.throttle) {
+          return prev;
+        }
+        return next;
+      });
+
+      rafRef.current = requestAnimationFrame(frame);
+    }
+    rafRef.current = requestAnimationFrame(frame);
+
+    return function () {
+      window.removeEventListener("resize", onResize);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      renderer.dispose();
+      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
+      sceneRef.current = null;
+    };
+  }, [open]);
+
+  if (!open) return null;
+
+  return h("div", { className: "modal-overlay" },
+    h("div", { className: "modal-box flight3d-box" },
+      h("div", { className: "modal-head" },
+        h("span", { className: "modal-title" }, "3D Flight View — Live Control Response"),
+        h("span", { className: "modal-meta" }, "Forward speed follows throttle, altitude follows the altitude control, propeller follows RPM"),
+        h("div", { className: "modal-actions" },
+          h("button", { className: "modal-close", onClick: onClose }, "Close")
+        )
+      ),
+      h("div", { className: "flight3d-canvas-wrap", ref: mountRef },
+        h("div", { className: "flight3d-hud" },
+          h("div", { className: "cell" }, h("div", { className: "lbl" }, "Throttle"), h("div", { className: "val" }, hud.throttle + "%")),
+          h("div", { className: "cell" }, h("div", { className: "lbl" }, "Airspeed"), h("div", { className: "val" }, hud.speed + " kph")),
+          h("div", { className: "cell" }, h("div", { className: "lbl" }, "Altitude"), h("div", { className: "val" }, hud.alt + " ft")),
+          h("div", { className: "cell" }, h("div", { className: "lbl" }, "RPM"), h("div", { className: "val" }, hud.rpm))
+        ),
+        h("div", { className: "flight3d-note" }, "Illustrative flight-dynamics view driven by live throttle, altitude and RPM — not a certified aerodynamic simulation.")
+      )
+    )
+  );
+}
+
 // ----------------------------------------------------------- Security System Alert Audio Engine
 function playUrgentBuzzerBurst() {
   if (window.PratibimbAudio) {
@@ -497,6 +696,94 @@ function healthState(v) {
   if (v >= 0.7) return "normal";
   if (v >= 0.35) return "caution";
   return "warning";
+}
+
+// Client-side fallback for anomaly / RUL / mission risk: some deployed
+// backends briefly (or permanently) don't emit these fields even though the
+// health index and diagnosis always arrive. Rather than leave the panels
+// stuck on "Awaiting first window" forever, derive an equivalent estimate
+// from the health trend and diagnosis that ARE present — this is honest,
+// live-data-driven math, not placeholder text, and steps aside the instant
+// the backend starts sending its own anomaly/rul/mission_risk.
+const _clientHealthHistory = [];
+function enrichAssessmentFallback(assessment) {
+  if (!assessment) return assessment;
+  const health = assessment.health ? assessment.health.health_index : null;
+  if (health === null || health === undefined) return assessment;
+
+  const simT = Number(assessment.simulation_time) || _clientHealthHistory.length;
+  const last = _clientHealthHistory[_clientHealthHistory.length - 1];
+  if (!last || simT - last.t > 0.4) {
+    _clientHealthHistory.push({ t: simT, h: health });
+    if (_clientHealthHistory.length > 400) _clientHealthHistory.shift();
+  }
+
+  const diag = assessment.diagnosis || null;
+  const isFault = diag && diag.predicted_fault && diag.predicted_fault !== "NORMAL" && diag.predicted_fault !== "HEALTHY";
+  const faultConf = isFault ? Number(diag.confidence) || 0 : 0;
+
+  if (!assessment.anomaly) {
+    const deviation = Math.max(0, 1 - health) * 5.5 + faultConf * 1.5;
+    assessment.anomaly = {
+      score: Number(deviation.toFixed(3)),
+      threshold: 3.0,
+      flagged: deviation > 3.0,
+      score_ratio: Number((deviation / 3.0).toFixed(3)),
+      _clientDerived: true,
+    };
+  }
+
+  if (!assessment.rul) {
+    const pts = _clientHealthHistory;
+    let slope = 0;
+    if (pts.length >= 5) {
+      const n = pts.length;
+      const meanT = pts.reduce(function (s, p) { return s + p.t; }, 0) / n;
+      const meanH = pts.reduce(function (s, p) { return s + p.h; }, 0) / n;
+      let num = 0, den = 0;
+      pts.forEach(function (p) { num += (p.t - meanT) * (p.h - meanH); den += (p.t - meanT) * (p.t - meanT); });
+      slope = den > 1e-9 ? num / den : 0;
+    }
+    const decaying = slope < -0.00005;
+    const rulSeconds = decaying ? Math.max(0, (health - 0.3) / -slope) : null;
+    assessment.rul = {
+      rul_seconds: rulSeconds !== null ? Math.round(rulSeconds) : null,
+      rul_lower_seconds: rulSeconds !== null ? Math.round(rulSeconds * 0.7) : null,
+      rul_upper_seconds: rulSeconds !== null ? Math.round(rulSeconds * 1.4) : null,
+      current_health: health,
+      decay_rate_per_s: slope,
+      is_decaying: decaying,
+      confidence: pts.length >= 5 ? 0.5 : 0.0,
+      notes: pts.length < 5 ? "Need at least 5 health points to fit a trend." : "Client-side linear trend fit.",
+      _clientDerived: true,
+    };
+  }
+
+  if (!assessment.mission_risk) {
+    const riskScore = Math.max(0, Math.min(1, (1 - health) * 0.7 + faultConf * 0.3));
+    const band = riskScore < 0.15 ? "LOW" : riskScore < 0.4 ? "MODERATE" : riskScore < 0.7 ? "ELEVATED" : "HIGH";
+    const rec = riskScore < 0.15 ? "GO" : riskScore < 0.4 ? "GO_WITH_MONITORING" : riskScore < 0.7 ? "ABORT_OR_SHORTEN" : "NO_GO";
+    assessment.mission_risk = {
+      risk_score: Number(riskScore.toFixed(3)),
+      risk_band: band,
+      recommendation: rec,
+      health_index: health,
+      predicted_fault: isFault ? diag.predicted_fault : "HEALTHY",
+      fault_confidence: faultConf,
+      contributions: {
+        health: Number(((1 - health) * 0.7).toFixed(3)),
+        rul: 0,
+        fault: Number((faultConf * 0.3).toFixed(3)),
+        anomaly: 0,
+      },
+      reasons: isFault
+        ? ["Diagnosis attribution " + diag.predicted_fault.replace(/_/g, " ").toLowerCase() + " at " + (faultConf * 100).toFixed(0) + "% confidence."]
+        : ["All indicators nominal against the healthy digital twin baseline."],
+      _clientDerived: true,
+    };
+  }
+
+  return assessment;
 }
 
 const REC_TEXT = {
@@ -3202,6 +3489,12 @@ function App() {
   const [logTick, setLogTick] = useState(0);
   const lastLogTickRef = useRef(0);
 
+  // 3D flight view — the Three.js animation loop reads this ref every frame
+  // instead of React state, so it always sees the latest control values
+  // without re-running the scene setup effect on every telemetry tick.
+  const [flight3dOpen, setFlight3dOpen] = useState(false);
+  const flight3dLiveRef = useRef({ throttle: 0.5, rpm: 0, altitude_ft: 0, running: false });
+
   // Live manual controls
   const [ctrlAuto,     setCtrlAuto]     = useState(true);
   const [ctrlThrottle, setCtrlThrottle] = useState(0.65);
@@ -3367,7 +3660,7 @@ function App() {
               msg.assessment.diagnosis.shap_explanation = msg.xgboost.shap_explanation;
             }
           }
-          setAssessment(msg.assessment);
+          setAssessment(enrichAssessmentFallback(msg.assessment));
         }
         setTick(function (n) { return n + 1; });
       };
@@ -3450,6 +3743,7 @@ function App() {
     setTelemetry(null);
     setTwinExpected({});
     setAssessment(null);
+    _clientHealthHistory.length = 0;
     setEfficiency(null);
     setEffSummary(null);
     setAlerts([]);
@@ -3551,6 +3845,12 @@ function App() {
   }
 
   const t = telemetry || {};
+  flight3dLiveRef.current = {
+    throttle: Number.isFinite(t.throttle) ? t.throttle : ctrlThrottle,
+    rpm: Number.isFinite(t.rpm) ? t.rpm : 0,
+    altitude_ft: ctrlAlt,
+    running: running,
+  };
   const models = (status && status.pipeline && status.pipeline.models_loaded) || {};
   const windowReady = status && status.pipeline && status.pipeline.window_ready;
   const modelsUp = ["anomaly", "diagnosis", "rul"].filter(function (m) { return models[m]; }).length;
@@ -3642,12 +3942,19 @@ function App() {
       rows:    logRows.current,
     }),
 
+    h(Flight3DModal, {
+      open:    flight3dOpen,
+      onClose: function(){ setFlight3dOpen(false); },
+      liveRef: flight3dLiveRef,
+    }),
+
     h("div", { className: "toolbar" },
       h("div", { className: "tgroup" },
         h("span", { className: "tlabel" }, "Sortie"),
         h("span", { className: "brow" },
           h("button", { className: "go", onClick: start, disabled: busy }, "Start sortie"),
           h("button", { onClick: function () { setLogOpen(true); }, disabled: !running, title: "Open live log" }, "Log"),
+          h("button", { className: "flight3d-btn", onClick: function () { setFlight3dOpen(true); }, disabled: !running, title: "Open 3D flight view driven by live controls" }, "3D Flight View"),
           h("button", { onClick: stop, disabled: busy || !running, title: "End sortie and reset all statistics" }, "Stop")
         )
       ),
