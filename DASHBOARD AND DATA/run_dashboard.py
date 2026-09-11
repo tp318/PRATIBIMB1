@@ -46,9 +46,10 @@ if __name__ == "__main__":
     print("  Press Ctrl+C to stop.")
     print()
 
+    port = int(os.environ.get("PORT", 8001))
     uvicorn.run(
         "AeroTwin.api.server:app",
         host="0.0.0.0",
-        port=8001,
+        port=port,
         reload=False,  # reload=True breaks the background simulation task
     )
