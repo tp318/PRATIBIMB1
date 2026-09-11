@@ -1,28 +1,50 @@
-# PRATIBIMB: AI-Enabled Physics-Informed Digital Twin for Aero Piston Engines
+# PRATIBIMB (AeroTwin-4)
+### AI-Enabled Physics-Informed Digital Twin for Aero Piston Engines
 
-Smart India Hackathon 2026 | Problem Statement 26054  
-Ministry of Defence | DRDO / Department of Defence Production (IDEX)  
-*Health Monitoring, Fault Prediction, and Mission Reliability Enhancement for Aero Piston Engines in MALE UAVs.*
+**Smart India Hackathon 2026 | Problem Statement 26054**  
+**Ministry of Defence | Defence Research & Development Organisation (DRDO) / IDEX**  
+*Health Monitoring, Fault Prediction, and Mission Reliability Enhancement of Aero Piston Engines used in MALE UAVs.*
 
-[System Overview](#system-overview) | [System Architecture](#system-architecture) | [Physics and Mathematical Foundation](#physics-and-mathematical-foundation) | [Machine Learning and Diagnostics](#machine-learning-and-diagnostics) | [Compliance Matrix](#compliance-matrix) | [Installation and Quick Start](#installation-and-quick-start) | [Prototype Demonstration](#prototype-demonstration) | [Demonstration Video](#demonstration-video) | [Repository Structure](#repository-structure)
+<div align="center">
+
+[![Live Web Application](https://img.shields.io/badge/Live%20Demo-pratibimb--1.vercel.app-blue?style=for-the-badge&logo=vercel&logoColor=white)](https://pratibimb-1.vercel.app/)
+[![Cloud Backend](https://img.shields.io/badge/Cloud%20API-Render%20Live-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://pratibimb1-3.onrender.com/docs)
+
+[![Python](https://img.shields.io/badge/Python-3.9+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.2+-EE4C2C.svg?style=flat&logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-2.0+-green.svg?style=flat)](https://xgboost.readthedocs.io/)
+[![SHAP](https://img.shields.io/badge/XAI-TreeSHAP-orange.svg?style=flat)](https://github.com/slundberg/shap)
+[![Standard](https://img.shields.io/badge/Compliance-DFSA--26054-red.svg?style=flat)]()
+
+</div>
 
 ---
 
-## System Overview
+## Live Deployment & Access Points
 
-Medium Altitude Long Endurance (MALE) Unmanned Aerial Vehicles rely heavily on turbocharged four-cylinder piston engines (such as the Rotax 914) to maintain sustained patrol endurance. Traditional health monitoring relies on static redline thresholds (for example, Cylinder Head Temperature exceeding 105 degrees Celsius or vibration amplitude exceeding 1.2 g). 
+The complete PRATIBIMB digital twin system is deployed and accessible online:
 
-In operational flight, static thresholds introduce two major drawbacks:
-1. **Environmental ambiguity:** Ambient temperature changes between low-altitude loiter (+40 deg C) and ceiling altitude (7,600 m, -34 deg C under ISA standard lapse rates) shift baseline temperatures significantly, causing false alarms or masking genuine cooling failures.
-2. **Reactive warning:** Static thresholds trigger only after thermal or mechanical limits have been violated, leaving minimal time for tactical recovery.
+- **Live Tactical Ground Station (Web):** [https://pratibimb-1.vercel.app/](https://pratibimb-1.vercel.app/)
+- **Live Cloud Backend API (Render):** [https://pratibimb1-3.onrender.com](https://pratibimb1-3.onrender.com)
+- **Interactive OpenAPI / Swagger Documentation:** [https://pratibimb1-3.onrender.com/docs](https://pratibimb1-3.onrender.com/docs)
+- **High-Rate Cloud Telemetry Stream:** `wss://pratibimb1-3.onrender.com/ws/telemetry`
 
-PRATIBIMB addresses this by running a **condition-matched counterfactual healthy digital twin** in real time alongside live telemetry. Both the aircraft engine and the computational twin receive identical inputs: throttle command, airspeed, altitude, and ISA atmospheric conditions. The residual difference between the observed engine parameters and the healthy twin predictions isolates mechanical degradation from environmental variations:
+*(For local execution instructions, see [Local Development & Setup](#local-development--setup)).*
 
-```
-Residual r_i(t) = y_observed_i(t) - y_twin_i(Throttle(t), Altitude(t), Ambient(t))
-```
+---
 
-Evaluating residuals rather than raw telemetry eliminates altitude and temperature drift, allowing machine learning models to detect subtle degradation long before critical thresholds are reached.
+## Executive Overview
+
+Conventional unmanned aerial vehicle (UAV) engine monitoring relies on static redline thresholds (e.g., Cylinder Head Temperature > 105 °C or vibration > 1.2 g). In operational flight regimes, static thresholds exhibit critical blind spots:
+1. **Environmental Blind Spots:** Changes in ambient conditions between low-altitude desert loiter (+40 °C) and ceiling altitude (7,600 m, -34 °C under ISA lapse rates) induce large temperature shifts. Static redlines cannot distinguish between atmospheric shifts and genuine mechanical cooling jacket failure.
+2. **Reactive Failure Warning:** Static alarms trigger only after component degradation has breached safety limits, leaving zero margin for preemptive mission aborts.
+
+**PRATIBIMB** resolves this by operating a **condition-matched counterfactual healthy digital twin** in real time alongside observed engine telemetry. Both the live engine and the digital twin share identical throttle commands, flight velocity, altitude, and ISA atmospheric conditions. Subtracting the twin prediction from observed telemetry yields **9 physical residual channels**:
+
+$$r_i(t) = y_i^{\text{observed}}(t) - y_i^{\text{twin}}\left(\text{Throttle}(t), \text{Altitude}(t), \text{ISA}(t)\right)$$
+
+By evaluating **residuals instead of raw sensor values**, environmental weather shifts produce zero baseline drift, turning incipient mechanical faults into sharp, high-contrast diagnostic signatures.
 
 ---
 
@@ -34,16 +56,16 @@ Evaluating residuals rather than raw telemetry eliminates altitude and temperatu
                                            |  50-100 Hz Raw Telemetry
                                            v
 +----------------------------------------------------------------------------------------+
-| 1. TELEMETRY & SIGNAL CONDITIONING LAYER                                                |
-|    - Signal conditioning and anti-glitch filtering (stuck sensor detection)            |
-|    - Safety boundary screening (amber and redline checks)                              |
-|    - Data validation and channel isolation                                            |
+| 1. TELEMETRY & SIGNAL CONDITIONING LAYER (< 1.0 ms latency)                            |
+|    - Anti-glitch and stuck-sensor filtering                                            |
+|    - Hardware safety boundary screening (amber and redline limits)                     |
+|    - Channel isolation and telemetry downsampling                                      |
 +----------------------------------------------------------------------------------------+
                                            |
                                            v
 +----------------------------------------------------------------------------------------+
 | 2. DIGITAL TWIN CORE (Mean Value Engine Model)                                         |
-|    - Coupled 4-cylinder rotational dynamics: J * domega/dt = T_comb - T_load - T_fric   |
+|    - 4-Cylinder coupled crank dynamics: J * domega/dt = T_comb - T_load - T_fric       |
 |    - International Standard Atmosphere (ISA) model (0 to 7,600 m ceiling)              |
 |    - Condition-matched counterfactual healthy reference generator                      |
 |    - 9 Physical residual channels (RPM, CHT, EGT, Oil P, Oil T, Fuel, Vib, Volt, Inj)  |
@@ -53,86 +75,59 @@ Evaluating residuals rather than raw telemetry eliminates altitude and temperatu
 +----------------------------------------------------------------------------------------+
 | 3. DIAGNOSTICS & PROGNOSTICS LAYER                                                     |
 |    - Unsupervised Anomaly Detection: PyTorch LSTM Autoencoder (reconstruction error)   |
-|    - 9-Class Fault Attribution: CNN-BiLSTM & XGBoost Classifier                        |
-|    - Remaining Useful Life (RUL): Physics-Informed Neural Network (PINN-LSTM)          |
-|    - Explainable AI: TreeSHAP real-time feature attribution                            |
+|    - 9-Class Fault Classification: CNN-BiLSTM & XGBoost Classifier (98.82% accuracy)   |
+|    - Remaining Useful Life (RUL): Physics-Informed Neural Network (0.0 to 50.0 hours)   |
+|    - Explainable AI: Real-time TreeSHAP feature attribution bar plots                  |
 +----------------------------------------------------------------------------------------+
                                            |
                                            v
 +----------------------------------------------------------------------------------------+
 | 4. MISSION RELIABILITY & TACTICAL DECISION SUPPORT                                     |
 |    - Pre-flight dispatch clearance engine (GO / CAUTION / NO-GO status)                |
-|    - Actionable maintenance recommendations linked to subsystem procedures             |
-|    - Form DFSA-26054 official sortie debrief report generator (native PDF)             |
-|    - 50 Hz blackbox flight replay and operational scenario scrubber                    |
+|    - Actionable maintenance advisor linked to standard aircraft maintenance manuals    |
+|    - Form DFSA-26054 official sortie debrief report generator (native A4 PDF export)   |
+|    - 50 Hz flight blackbox scrubber and operational military preset scenarios          |
 +----------------------------------------------------------------------------------------+
 ```
 
 ---
 
-## Physics and Mathematical Foundation
+## Physics & Mathematical Foundation
 
 The physics core models the Rotax 914 four-stroke, four-cylinder turbocharged piston engine using coupled ordinary differential equations (ODEs):
 
 1. **Rotational Dynamics:**
-   The crankshaft angular velocity `omega` is governed by:
-   `J * (domega / dt) = T_comb(throttle, manifold_p, lambda) - T_prop(omega, airspeed, rho) - T_friction(omega, oil_viscosity)`
-   where `J` is the combined rotational inertia of the crank, flywheel, and propeller.
+   The crankshaft angular velocity $\omega$ is modeled by:
+   $$J \frac{d\omega}{dt} = T_{\text{comb}}(\text{throttle}, P_{\text{manifold}}, \lambda) - T_{\text{prop}}(\omega, V_{\text{air}}, \rho) - T_{\text{fric}}(\omega, \mu_{\text{oil}})$$
+   where $J$ is the rotational inertia of the assembly.
 
-2. **Thermodynamic & Heat Balance:**
-   Cylinder Head Temperature (CHT) and Exhaust Gas Temperature (EGT) are derived from fuel energy input and heat dissipation:
-   `C_thermal * (dCHT / dt) = Q_combustion(fuel_flow, AF_ratio) - h_cooling(airspeed, rho_ambient) * (CHT - T_ambient)`
-   
+2. **Thermodynamics & Heat Balance:**
+   Cylinder Head Temperature (CHT) and Exhaust Gas Temperature (EGT) are derived from fuel combustion energy and convection heat dissipation:
+   $$C_{\text{thermal}} \frac{d\text{CHT}}{dt} = \dot{Q}_{\text{combustion}}(\dot{m}_f, \text{AFR}) - h_{\text{cooling}}(V_{\text{air}}, \rho_{\text{ambient}}) \cdot (\text{CHT} - T_{\text{ambient}})$$
+
 3. **Atmospheric Modeling (ISA):**
-   Ambient temperature and pressure vary with geometric altitude `h` according to the International Standard Atmosphere model up to the troposphere boundary (11,000 m):
-   - `T(h) = T_0 - L * h`, where `T_0 = 288.15 K` and lapse rate `L = 0.0065 K/m`.
-   - `P(h) = P_0 * (1 - L * h / T_0)^(g_0 / (R * L))`.
+   Ambient conditions adjust with geometric altitude $h$ according to the International Standard Atmosphere model up to the troposphere boundary:
+   - $T(h) = T_0 - L \cdot h$, with $T_0 = 288.15\,\text{K}$ and lapse rate $L = 0.0065\,\text{K/m}$.
+   - $P(h) = P_0 \left(1 - \frac{L \cdot h}{T_0}\right)^{\frac{g_0}{R \cdot L}}$.
 
-4. **Residual Generation:**
-   Nine continuous residual channels are tracked:
-   - RPM residual (`Delta RPM`)
-   - Cylinder Head Temperature residual (`Delta CHT`)
-   - Exhaust Gas Temperature residual (`Delta EGT`)
-   - Oil Pressure residual (`Delta Oil_P`)
-   - Oil Temperature residual (`Delta Oil_T`)
-   - Fuel Flow residual (`Delta Fuel_Rate`)
-   - Vibration RMS residual (`Delta Vib`)
-   - Bus Voltage residual (`Delta Volt`)
-   - Fuel Injector Pulse Width residual (`Delta Inj_PW`)
-
----
-
-## Machine Learning and Diagnostics
-
-The diagnostic pipeline combines unsupervised anomaly detection, supervised fault classification, and prognostic estimation:
-
-1. **Unsupervised Anomaly Detection:**
-   A PyTorch-based LSTM Autoencoder models normal flight dynamics over rolling 30-second temporal windows. When engine degradation causes the reconstruction error to exceed an empirically calibrated 3-sigma threshold, an anomaly alert is raised.
-
-2. **9-Class Fault Classification:**
-   The classification engine categorizes operational status into 9 distinct classes:
-   - Normal Operation
-   - Cooling System Degradation
-   - Lubrication System Failure
-   - Spark / Ignition Misfire
-   - Fuel Injector Abnormality
-   - Sensor Drift / Failure
-   - Turbocharger / Manifold Leak
-   - Structural / Bearing Vibration
-   - Severe Overheating Trend
-
-3. **Explainable AI (TreeSHAP):**
-   Predictions are accompanied by real-time SHAP feature importance values, identifying the specific physical sensors driving the model's decision (for example, isolating whether an alert is driven by cooling jacket failure or oil pressure loss).
-
-4. **Remaining Useful Life (RUL) Prognostics:**
-   A Physics-Informed LSTM regressor predicts the remaining safe flight hours (0.0 to 50.0 hours) before critical maintenance intervention is mandatory.
+4. **Residual Extraction:**
+   Nine continuous residual channels decouple environmental variations from physical faults:
+   - $\Delta \text{RPM}$ (Speed discrepancy)
+   - $\Delta \text{CHT}$ (Thermal dissipation anomaly)
+   - $\Delta \text{EGT}$ (Combustion energy deviation)
+   - $\Delta P_{\text{oil}}$ (Lubrication gallery pressure drop)
+   - $\Delta T_{\text{oil}}$ (Oil friction thermal rise)
+   - $\Delta \dot{m}_{\text{fuel}}$ (Fuel flow rate anomaly)
+   - $\Delta \text{Vib}$ (Vibrational RMS & kurtosis shift)
+   - $\Delta V_{\text{bus}}$ (Alternator / electrical bus load)
+   - $\Delta \text{PW}_{\text{inj}}$ (Injector pulse width compensation)
 
 ---
 
-## Compliance Matrix
+## Problem Statement Compliance Matrix
 
-| Problem Statement Requirement | System Implementation | Verification Status |
-| :--- | :--- | :--- |
+| Problem Statement Requirement | Technical Implementation | Status |
+| :--- | :--- | :---: |
 | Real-Time Digital Twin System | 100 Hz Mean Value Engine Model with 10 Hz WebSocket telemetry streaming | Complete |
 | Health Monitoring & Residuals | 9-channel physical residual generator isolating mechanical wear from ambient conditions | Complete |
 | Anomaly Detection Beyond Thresholds | PyTorch LSTM Autoencoder identifying deviations before static redline violations | Complete |
@@ -151,11 +146,10 @@ The diagnostic pipeline combines unsupervised anomaly detection, supervised faul
 
 ---
 
-## Benchmarks and Validation
+## Benchmarks & Validation Results
 
-### 1. Anomaly Detection Performance (Held-Out Test Engines)
-
-Evaluating residuals instead of raw telemetry removes ambient environmental drift, reducing false alarms while maximizing detection rate:
+### 1. Anomaly Detection Ablation (Held-Out Test Engines)
+Evaluating residuals instead of raw telemetry removes ambient environmental drift, reducing false alarms to zero while maximizing detection recall:
 
 | Input Feature Set | Evaluation Model | Precision | Recall | F1 Score | False Positive Rate | ROC-AUC |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -165,75 +159,39 @@ Evaluating residuals instead of raw telemetry removes ambient environmental drif
 | **Twin Residuals** | **PyTorch Autoencoder** | **1.0000** | **0.8690** | **0.9299** | **0.0000** | **1.0000** |
 | **Twin Residuals** | **XGBoost Classifier** | **0.9942** | **0.9882** | **0.9912** | **0.0012** | **0.9998** |
 
-### 2. Multi-Class Fault Classification (Unseen Test Engines)
-Trained across 42 engines, validated on 9 engines, and evaluated on 9 completely held-out engines:
-- **Test Accuracy:** 98.82%
+### 2. Multi-Class Fault Classification (9 Completely Held-Out Engines)
+- **Overall Test Accuracy:** 98.82%
 - **Macro-Averaged F1:** 0.9854
 - **Inference Latency:** < 3.8 ms per 30-second rolling window
 
 ---
 
-## Installation and Quick Start
+## Prototype Walkthrough Guide
 
-### Prerequisites
-- Python 3.9, 3.10, or 3.11
-- Modern web browser (Chrome, Edge, Firefox, Safari)
+Follow these steps on either the [Live Vercel Deployment](https://pratibimb-1.vercel.app/) or a local instance:
 
-### Setup Instructions
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/tp318/PRATIBIMB1.git
-cd PRATIBIMB1
-
-# 2. Set up virtual environment
-python -m venv .venv
-# On Linux / macOS:
-source .venv/bin/activate
-# On Windows:
-# .venv\Scripts\activate
-
-# 3. Install required dependencies
-pip install -r requirements.txt
-
-# 4. Start the dashboard server
-cd "DASHBOARD AND DATA"
-python run_dashboard.py
-```
-
-### Access URLs
-- **Operator Dashboard:** [http://localhost:8001/](http://localhost:8001/)
-- **Interactive API Documentation:** [http://localhost:8001/docs](http://localhost:8001/docs)
-- **Real-Time Telemetry WebSocket:** `ws://localhost:8001/ws/telemetry`
+1. **Initialize Engine Simulation:**  
+   Click **"Start simulation"** on the dashboard. The Rotax 914 model initializes, streaming telemetry at 10 Hz across primary flight instruments and digital twin comparison plots.
+2. **Observe Digital Twin Residual Overlays:**  
+   The solid blue line indicates observed telemetry, while the dashed gray line indicates the condition-matched healthy twin baseline.
+3. **Verify Environmental Invariance (Altitude Scaling):**  
+   Move the altitude slider to **7,500 m**. Notice how ambient temperature and pressure adjust according to the ISA model. Cylinder temperatures drop as expected, yet residuals remain centered around zero, demonstrating that weather changes do not produce false alarms.
+4. **Inject In-Flight Mechanical Fault:**  
+   Click **"Inject fault"** and select **"COOLING SYSTEM FAILURE"** (Severity 0.75).
+   - Cylinder Head Temperature departs from the healthy twin baseline.
+   - The anomaly detector flags the deviation.
+   - The 9-class classifier shifts from `NORMAL` to `OVERHEATING`.
+   - TreeSHAP feature importance displays `cht` (+45.8%) and `oil_temperature_slope` (+24.9%) as primary risk drivers.
+5. **Generate Official Sortie Debrief (Form DFSA-26054):**  
+   Navigate to the **"Mission report"** tab and click **"Generate Flight Debrief (PDF)"**. A standardized military maintenance debrief document generates with vector SVG health degradation curves, dispatch airworthiness status, and 3-party maintenance sign-off blocks. Use the browser print button to save as a PDF.
+6. **Airworthiness Clearance & 50 Hz Blackbox Replay:**  
+   Navigate to the **"Replay & Simulation"** tab to inspect the GO / CAUTION / NO-GO dispatch clearance calculations, test military flight scenarios (Desert Loiter, High Altitude), or scrub through 50 Hz recorded blackbox data.
 
 ---
 
-## Prototype Demonstration
+## Demonstration Walkthrough Recording
 
-Follow these steps to evaluate the system:
-
-1. **Start Engine Simulation:**  
-   Click "Start simulation" on the dashboard. The Rotax 914 engine model will initialize, streaming live telemetry at 10 Hz across the primary gauges and digital twin comparison plots.
-2. **Examine Twin Residual Overlays:**  
-   The solid blue line indicates observed telemetry, while the dashed gray line indicates the condition-matched healthy twin. Notice how closely the values track during normal operation.
-3. **Evaluate Altitude Scaling:**  
-   Move the altitude slider to 7,500 m. The ambient temperature and pressure will adjust according to the ISA model. Cylinder temperatures decrease as expected, but residuals remain centered around zero, confirming that environmental changes do not trigger false alarms.
-4. **Inject Mechanical Fault:**  
-   Click "Inject fault" and choose "COOLING SYSTEM FAILURE" with severity 0.75.
-   - Cylinder Head Temperature will begin diverging from the healthy twin baseline.
-   - The anomaly detector will flag the deviation.
-   - The fault classifier will transition from "NORMAL" to "OVERHEATING".
-   - TreeSHAP feature importance will update, displaying `cht` and `oil_temperature_slope` as the primary risk contributors.
-5. **Generate Flight Debrief:**  
-   Navigate to the "Mission report" tab and click "Generate Flight Debrief (PDF)". The system generates a standardized Form DFSA-26054 military maintenance record containing the health degradation curve, TreeSHAP diagnostic attribution, dispatch recommendation, and engineering sign-off fields. Use the browser print function to save the document as a PDF.
-6. **Airworthiness Clearance and Flight Replay:**  
-   Navigate to the "Replay & Simulation" tab to review the GO / CAUTION / NO-GO dispatch clearance calculations, run preset operational profiles (such as Desert Loiter or High-Altitude Patrol), or replay recorded 50 Hz blackbox data.
-
----
-
-## Demonstration Video
-
-A demonstration recording showcasing the live prototype, digital twin tracking, fault injection, explainability, and report generation is available in the repository:
+A demonstration recording showcasing the live prototype, digital twin tracking, fault injection, explainable AI, and official debrief generation is embedded below:
 
 <div align="center">
 
@@ -243,16 +201,16 @@ A demonstration recording showcasing the live prototype, digital twin tracking, 
 
 </div>
 
-- **Walkthrough Media File in Repository:** [`docs/media/demo_prototype_walkthrough.webp`](docs/media/demo_prototype_walkthrough.webp)
+- **Walkthrough Media File:** [`docs/media/demo_prototype_walkthrough.webp`](docs/media/demo_prototype_walkthrough.webp)
 
 ---
 
-## Repository Structure
+## Repository & Module Directory
 
 | Directory / File | Description | Link |
 | :--- | :--- | :--- |
-| **DASHBOARD AND DATA/** | FastApi backend server, WebSocket pipeline, and embedded operator interface | [`DASHBOARD AND DATA/`](DASHBOARD%20AND%20DATA/README.md) |
-| **frontend/** | Standalone ground control station web client and audio alert engine | [`frontend/`](frontend/) |
+| **frontend/** | Standalone ground control station web client deployed on Vercel | [`frontend/`](frontend/) |
+| **DASHBOARD AND DATA/** | FastAPI backend, WebSockets, and integrated operator interface | [`DASHBOARD AND DATA/`](DASHBOARD%20AND%20DATA/README.md) |
 | **DT CORE/** | 100 Hz Mean Value Engine Model solving coupled rotational and thermal ODEs | [`DT CORE/`](DT%20CORE/README.md) |
 | **ANOMALY DETECTION/** | PyTorch LSTM Autoencoders for unsupervised novelty detection | [`ANOMALY DETECTION/`](ANOMALY%20DETECTION/README.md) |
 | **FAULT DETECTION/** | 9-Class fault classifier with TreeSHAP feature attribution | [`FAULT DETECTION/`](FAULT%20DETECTION/README.md) |
@@ -260,15 +218,49 @@ A demonstration recording showcasing the live prototype, digital twin tracking, 
 | **REPLAY AND SIMULATION/** | 50 Hz flight blackbox scrubber and SQLite mission database | [`REPLAY AND SIMULATION/`](REPLAY%20AND%20SIMULATION/README.md) |
 | **HEALTH MONITORING/** | Health score calculation modules and sensor cross-validation | [`HEALTH MONITORING/`](HEALTH%20MONITORING/README.md) |
 | **MISSION_SIMULATOR/** | Standalone real-time MVEM streaming simulator | [`MISSION_SIMULATOR/`](MISSION_SIMULATOR/README.md) |
-| **README_INTEGRATION.md** | Architecture guide for multi-service execution and pipelines | [`README_INTEGRATION.md`](README_INTEGRATION.md) |
+| **README_INTEGRATION.md** | Multi-service orchestration guide and data pipeline documentation | [`README_INTEGRATION.md`](README_INTEGRATION.md) |
 | **DASHBOARD AND DATA/docs/** | Detailed mathematical specifications and validation reports | [`DASHBOARD AND DATA/docs/`](DASHBOARD%20AND%20DATA/docs/) |
 
 ---
 
-## Airworthiness & Engineering Note
+## Local Development & Setup
 
-PRATIBIMB is a physics-informed reduced-order digital twin calibrated against published technical data for the Rotax 914 aircraft piston engine. Dispatch thresholds, maintenance recommendations, and degradation models are implemented to demonstrate algorithmic integrity and mathematical self-consistency for research and demonstration purposes.
+### Prerequisites
+- Python 3.9, 3.10, or 3.11
+- Modern web browser (Chrome, Edge, Firefox, Safari)
+
+### Setup & Launch
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/tp318/PRATIBIMB1.git
+cd PRATIBIMB1
+
+# 2. Create and activate virtual environment
+python -m venv .venv
+source .venv/bin/activate    # On Windows: .venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Start the local server (Port 8001)
+cd "DASHBOARD AND DATA"
+python run_dashboard.py
+```
+
+### Local URLs
+- Local Operator Dashboard: `http://localhost:8001/`
+- Local API Documentation: `http://localhost:8001/docs`
+- Local Telemetry WebSocket: `ws://localhost:8001/ws/telemetry`
 
 ---
 
-Smart India Hackathon 2026 | Defence Research & Development Organisation (DRDO)
+## Airworthiness & Engineering Disclaimer
+
+PRATIBIMB is a physics-informed reduced-order digital twin calibrated against published technical data for the Rotax 914 aircraft piston engine. Dispatch thresholds, maintenance recommendations, and degradation models are implemented to demonstrate algorithmic integrity and mathematical self-consistency for research and evaluation purposes.
+
+---
+
+<div align="center">
+<b>Project PRATIBIMB | Smart India Hackathon 2026 | Defence Research & Development Organisation (DRDO)</b>
+</div>
