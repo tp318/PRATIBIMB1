@@ -244,8 +244,8 @@ class AlertLog:
                 sev = Severity.WARNING if conf >= 0.6 else Severity.CAUTION
                 self._emit(
                     sim_time, sev, "Diagnosis",
-                    f"{fault.title()} fault indicated",
-                    f"Confidence {conf:.0%}, runner-up {diagnosis.get('runner_up', 'n/a')}.",
+                    f"{fault.replace('_', ' ').title()} fault indicated",
+                    f"Confidence {conf:.0%}, runner-up {str(diagnosis.get('runner_up', 'n/a')).replace('_', ' ').lower()}.",
                 )
         if fault:
             self._last_state["fault"] = fault

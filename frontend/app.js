@@ -1918,7 +1918,8 @@ function DigitalTwinTab(props) {
   const isCoolingFault = Boolean(isEngineRunning && effFault && (effFault.includes("COOL") || effFault.includes("TEMP") || effFault.includes("LEAK")));
   const isLubFault = Boolean(isEngineRunning && effFault && (effFault.includes("OIL") || effFault.includes("LUB")));
   const isMisfireFault = Boolean(isEngineRunning && effFault && (effFault.includes("MISFIRE") || effFault.includes("CYL")));
-  const isBearingFault = Boolean(isEngineRunning && effFault && (effFault.includes("BEARING") || effFault.includes("VIB")));
+  const isBearingFault = Boolean(isEngineRunning && effFault && !isMisfireFault && (effFault.includes("BEARING") || effFault.includes("VIB")));
+  const isSensorFault = Boolean(isEngineRunning && effFault && (effFault.includes("SENSOR") || effFault === "SENSOR"));
 
   let misfireCyl = 3;
   if (faultComponent) {
@@ -2076,7 +2077,7 @@ function DigitalTwinTab(props) {
             "DEMONSTRATING ACTIVE FAULT: " + effFault + (faultSeverity ? " (Severity " + Number(faultSeverity).toFixed(2) + ")" : "")
           ),
           h("span", { style: { fontSize: "11px", background: "var(--warning)", color: "#fff", padding: "2px 8px", borderRadius: "3px", fontWeight: "700" } },
-            isCoolingFault ? "THERMAL OVERHEAT" : (isLubFault ? "PRESSURE LOSS" : (isMisfireFault ? "CYL " + misfireCyl + " MISFIRE" : "BEARING WEAR"))
+            isCoolingFault ? "THERMAL OVERHEAT" : (isLubFault ? "PRESSURE LOSS" : (isMisfireFault ? "CYL " + misfireCyl + " MISFIRE" : (isBearingFault ? "BEARING WEAR" : (isSensorFault ? "SENSOR INSTRUMENTATION FAULT" : "FAULT DETECTED"))))
           )
         ) : h("div", {
           style: {
@@ -3763,13 +3764,14 @@ function App() {
               { id: "BEARING",     label: "Bearing Wear" },
               { id: "COOLING",     label: "Cooling Failure" },
               { id: "LUBRICATION", label: "Lubrication Issue" },
+              { id: "SENSOR",      label: "Sensor Failure" },
             ].map(function(f) {
               return h("button", {
                 key: f.id,
                 className: cls("fault-type-btn", faultType === f.id && "selected"),
                 onClick: function() { setFaultType(f.id); setFaultComponent(""); },
                 disabled: faultBusy,
-                title: f.label,
+                title: f.id === "SENSOR" ? "Instrumentation fault: engine stays mechanically healthy, only the reported EGT reading drifts from truth" : f.label,
               }, f.label);
             })
           )

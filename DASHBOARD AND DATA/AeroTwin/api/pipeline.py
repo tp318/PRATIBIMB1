@@ -183,11 +183,15 @@ class LiveAssessmentPipeline:
             and self._samples_seen % SCORE_STRIDE_SAMPLES == 0
         )
         if due:
-            assessment = self.assess_current_window()
-            out["assessment"] = assessment
-            if assessment:
-                self.alerts.evaluate(assessment)
-                self.report.update(assessment)
+            out["assessment"] = self.assess_current_window()
+        # Note: alerts.evaluate() / report.update() are NOT called here. This
+        # pipeline's own diagnosis/anomaly stage only ever sees real physics
+        # residuals, so a sensor-only fault (which never touches the twin)
+        # would be invisible to it. The caller (server.py) drives self.alerts
+        # and self.report from the fully-merged assessment - which also
+        # carries the live XGBoost diagnosis - once per scored window, so
+        # every fault family (including instrumentation/sensor faults) is
+        # actually observable in the alert log and mission report.
         return out
 
     # ------------------------------------------------------------------ scoring

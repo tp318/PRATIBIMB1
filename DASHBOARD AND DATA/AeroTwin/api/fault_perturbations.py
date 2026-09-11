@@ -35,6 +35,7 @@ FAULT_TYPE_TO_CLASS = {
     "BEARING":  8,    # ABNORMAL_VIBRATION
     "COOLING":  7,    # OVERHEATING (cooling system fault = overheating)
     "LUBRICATION": 4, # LUBRICATION_ISSUE
+    "SENSOR":   5,    # SENSOR_DRIFT_FAILURE — instrumentation fault, engine stays healthy
 }
 
 # Calibrated noise stds — MUST match generate_dataset.py exactly

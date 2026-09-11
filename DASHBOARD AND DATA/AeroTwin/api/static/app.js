@@ -161,8 +161,8 @@ function SortieLogModal(props) {
             className: "btn-dl",
             onClick: function() { downloadLogCSV(rows); },
             title: "Download recorded sortie logs as CSV",
-          }, "⬇ Download CSV"),
-          h("button", { className: "modal-close", onClick: onClose }, "✕ Close")
+          }, "Download CSV"),
+          h("button", { className: "modal-close", onClick: onClose }, "Close")
         )
       ),
       h("div", { className: "modal-table-wrap", ref: tbodyRef },
@@ -214,53 +214,39 @@ function playUrgentBuzzerBurst() {
 }
 
 
-// ----------------------------------------------------------- Apple Blur Hero Overlay (Minimalist Typography)
-const HERO_TEXT = "PROJECT PRATIBIMB: A Physics Informed Digital Twin For Health Monitoring and Predictive Maintenance of MALE UAVs";
+// ----------------------------------------------------------- Welcome Panel
+const HERO_TEXT = "A physics-informed digital twin for health monitoring and predictive maintenance of MALE UAV powerplants.";
 
 function HeroOverlay(props) {
   const { onStartDemo, onSkip } = props;
-  const [typedIndex, setTypedIndex] = useState(0);
   const [unblurring, setUnblurring] = useState(false);
-
-  useEffect(function() {
-    if (typedIndex < HERO_TEXT.length) {
-      const timer = setTimeout(function() {
-        setTypedIndex(function(prev) { return prev + 1; });
-      }, 22);
-      return function() { clearTimeout(timer); };
-    }
-  }, [typedIndex]);
 
   function handleStart() {
     setUnblurring(true);
     setTimeout(function() {
       onStartDemo();
-    }, 450);
+    }, 200);
   }
 
   function handleSkip() {
     setUnblurring(true);
     setTimeout(function() {
       onSkip();
-    }, 450);
+    }, 200);
   }
 
   return h("div", { className: cls("pratibimb-hero-overlay", unblurring && "unblurring") },
     h("div", { className: "hero-minimal-wrap" },
       h("div", { className: "hero-reflection-wrap" },
-        h("h1", { className: "hero-apple-title" }, "PRATIBIMB"),
-        h("div", { className: "hero-reflection-mirror", "aria-hidden": "true" }, "PRATIBIMB")
+        h("h1", { className: "hero-apple-title" }, "PRATIBIMB")
       ),
-      h("p", { className: "hero-typewriter-line" },
-        HERO_TEXT.slice(0, typedIndex),
-        typedIndex < HERO_TEXT.length ? h("span", { className: "typewriter-cursor" }) : null
-      ),
+      h("p", { className: "hero-typewriter-line" }, HERO_TEXT),
       h("div", { className: "hero-actions" },
         h("button", {
           className: "hero-minimal-btn",
           onClick: handleStart,
           id: "hero-start-demo-btn",
-        }, "Start Interactive Demo →"),
+        }, "Start Interactive Demo"),
         h("button", {
           className: "hero-minimal-skip",
           onClick: handleSkip,
@@ -435,8 +421,8 @@ function TutorialOverlay(props) {
           ),
           h("div", { className: "tutorial-nav" },
             h("button", { onClick: onSkip, className: "hero-skip-btn" }, "Skip Tour"),
-            step > 0 ? h("button", { onClick: onPrev }, "← Previous") : null,
-            h("button", { className: "go", onClick: isLast ? onClose : onNext }, isLast ? "✓ Finish Tour" : "Next Section →")
+            step > 0 ? h("button", { onClick: onPrev }, "Previous") : null,
+            h("button", { className: "go", onClick: isLast ? onClose : onNext }, isLast ? "Finish Tour" : "Next Section")
           )
         )
       )
@@ -473,7 +459,7 @@ function SubsystemStrip(props) {
       onClick: onToggleAudio,
       title: isBuzzerActive ? "Mute active continuous avionics buzzer" : "Toggle avionics fault warning buzzer",
     },
-      isBuzzerActive ? "🚨 Alarm Active (Mute)" : (audioEnabled ? "🔊 Alarm: ON" : "🔇 Alarm: MUTED")
+      isBuzzerActive ? "Alarm Active — Mute" : (audioEnabled ? "Alarm: ON" : "Alarm: MUTED")
     )
   );
 }
@@ -1073,7 +1059,7 @@ function generateOfficialSortieDebrief(report, assessment, status) {
       const featVal = d.feature_value !== undefined ? d.feature_value : "—";
       const shapVal = d.shap_value !== undefined ? ("+" + d.shap_value.toFixed(4)) : "+0.000";
       const pctVal = d.impact_pct ? (" (" + d.impact_pct + "%)") : "";
-      posRows += '<tr><td><strong>' + d.feature + '</strong></td><td style="font-family: monospace;">' + featVal + '</td><td class="tag-pos">' + shapVal + pctVal + '</td><td class="tag-pos">▲ RISK-INCREASING (ANOMALY DRIVER)</td></tr>';
+      posRows += '<tr><td><strong>' + d.feature + '</strong></td><td style="font-family: monospace;">' + featVal + '</td><td class="tag-pos">' + shapVal + pctVal + '</td><td class="tag-pos">RISK-INCREASING (ANOMALY DRIVER)</td></tr>';
     });
   }
 
@@ -1083,12 +1069,12 @@ function generateOfficialSortieDebrief(report, assessment, status) {
       const featVal = d.feature_value !== undefined ? d.feature_value : "—";
       const shapVal = d.shap_value !== undefined ? d.shap_value.toFixed(4) : "-0.000";
       const pctVal = d.impact_pct ? (" (" + d.impact_pct + "%)") : "";
-      negRows += '<tr><td><strong>' + d.feature + '</strong></td><td style="font-family: monospace;">' + featVal + '</td><td class="tag-neg">' + shapVal + pctVal + '</td><td class="tag-neg">▼ RISK-SUPPRESSING (STABILIZING)</td></tr>';
+      negRows += '<tr><td><strong>' + d.feature + '</strong></td><td style="font-family: monospace;">' + featVal + '</td><td class="tag-neg">' + shapVal + pctVal + '</td><td class="tag-neg">RISK-SUPPRESSING (STABILIZING)</td></tr>';
     });
   }
 
   if (!posRows && !negRows) {
-    posRows = '<tr><td colspan="4" style="text-align: center; color: #16a34a; font-weight: 700; padding: 10px;">✓ All physical residual vectors (RPM, CHT, EGT, Oil Pressure, Vibration) conform to the healthy Digital Twin baseline within 3σ tolerance.</td></tr>';
+    posRows = '<tr><td colspan="4" style="text-align: center; color: #16a34a; font-weight: 700; padding: 10px;">All physical residual vectors (RPM, CHT, EGT, Oil Pressure, Vibration) conform to the healthy Digital Twin baseline within 3&sigma; tolerance.</td></tr>';
   }
 
   const html = `<!DOCTYPE html>
@@ -1318,8 +1304,8 @@ function generateOfficialSortieDebrief(report, assessment, status) {
     <span style="margin-left: 12px; font-size: 12px; opacity: 0.85;">Form DFSA-26054 (A4 Optimized)</span>
   </div>
   <div>
-    <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
-    <button class="btn-close" onclick="window.close()" style="margin-left: 8px;">✕ Close</button>
+    <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
+    <button class="btn-close" onclick="window.close()" style="margin-left: 8px;">Close</button>
   </div>
 </div>
 
@@ -1512,24 +1498,23 @@ function ReportTab(props) {
         className: "btn btn-primary",
         id: "btn-generate-debrief-pdf",
         style: {
-          background: "linear-gradient(135deg, #0b6bc7 0%, #034b8c 100%)",
+          background: "var(--accent)",
           color: "#ffffff",
           fontWeight: "700",
           fontSize: "13px",
           padding: "9px 18px",
-          borderRadius: "6px",
+          borderRadius: "4px",
           cursor: "pointer",
-          border: "none",
+          border: "1px solid var(--accent)",
           display: "inline-flex",
           alignItems: "center",
           gap: "8px",
-          boxShadow: "0 2px 10px rgba(11, 107, 199, 0.35)",
           letterSpacing: "0.2px"
         },
         onClick: function () {
           generateOfficialSortieDebrief(r, assessment, status);
         }
-      }, "🖨️ Generate Flight Debrief (PDF)"),
+      }, "Generate Flight Debrief (PDF)"),
       r ? h("div", { style: { textAlign: "right" } },
         h("div", { className: "report-sub" }, "Elapsed " + clockFrom(r.elapsed_s)),
         h("div", { className: "report-sub" }, r.windows_assessed + " windows assessed")
@@ -1719,7 +1704,7 @@ function XGBoostTab(props) {
               return h("div", { key: clsItem.name, style: { marginBottom: "11px" } },
                 h("div", { style: { display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "3px" } },
                   h("span", { style: { fontWeight: isPred ? "700" : "500", color: isPred ? clsItem.color : "#2c3e50" } },
-                    (isPred ? "▶ " : "") + clsItem.label + " (" + clsItem.name + ")"
+                    clsItem.label + " (" + clsItem.name + ")"
                   ),
                   h("span", { className: "mono", style: { fontWeight: "700", color: isPred ? clsItem.color : "#606f7b" } },
                     (p * 100).toFixed(1) + "%"
@@ -1764,7 +1749,7 @@ function XGBoostTab(props) {
                   h("td", { className: "num" }, "0.6981")
                 ),
                 h("tr", { style: { background: "#e8f4fd", fontWeight: "600" } },
-                  h("td", null, "★ Model C: Physics Digital Twin (Active)"),
+                  h("td", null, "Model C: Physics Digital Twin (Active)"),
                   h("td", { className: "num" }, "60"),
                   h("td", { className: "num", style: { color: "#1b8a5a" } }, "89.70%"),
                   h("td", { className: "num", style: { color: "#1b8a5a" } }, "0.9040")
@@ -1834,7 +1819,7 @@ function XGBoostTab(props) {
             // Positive drivers
             h("div", null,
               h("div", { className: "shap-col-title pos" },
-                h("span", null, isFault ? "▲ Fault-Inducing Risk Drivers (Pushing Toward Fault)" : "▲ Dominant Attributions (Pushing Toward Diagnosis)"),
+                h("span", null, isFault ? "Fault-Inducing Risk Drivers (Pushing Toward Fault)" : "Dominant Attributions (Pushing Toward Diagnosis)"),
                 h("span", null, "φ > 0")
               ),
               posList.length ?
@@ -1856,7 +1841,7 @@ function XGBoostTab(props) {
             // Negative suppressors
             h("div", null,
               h("div", { className: "shap-col-title neg" },
-                h("span", null, "▼ Nominal Envelope Factors (Anchoring Normal Baseline)"),
+                h("span", null, "Nominal Envelope Factors (Anchoring Normal Baseline)"),
                 h("span", null, "φ < 0")
               ),
               negList.length ?
@@ -1933,7 +1918,8 @@ function DigitalTwinTab(props) {
   const isCoolingFault = Boolean(isEngineRunning && effFault && (effFault.includes("COOL") || effFault.includes("TEMP") || effFault.includes("LEAK")));
   const isLubFault = Boolean(isEngineRunning && effFault && (effFault.includes("OIL") || effFault.includes("LUB")));
   const isMisfireFault = Boolean(isEngineRunning && effFault && (effFault.includes("MISFIRE") || effFault.includes("CYL")));
-  const isBearingFault = Boolean(isEngineRunning && effFault && (effFault.includes("BEARING") || effFault.includes("VIB")));
+  const isBearingFault = Boolean(isEngineRunning && effFault && !isMisfireFault && (effFault.includes("BEARING") || effFault.includes("VIB")));
+  const isSensorFault = Boolean(isEngineRunning && effFault && (effFault.includes("SENSOR") || effFault === "SENSOR"));
 
   let misfireCyl = 3;
   if (faultComponent) {
@@ -2040,7 +2026,7 @@ function DigitalTwinTab(props) {
 
   // Dynamic CHT thermal color
   const chtWarning = isCoolingFault || cht > 115.0;
-  const chtColor = chtWarning ? "#ef4444" : (cht > 95.0 ? "#f97316" : "#38bdf8");
+  const chtColor = chtWarning ? "#a32c22" : (cht > 95.0 ? "#c2410c" : "#1f5fa8");
 
   return h("div", null,
     // Top digital twin summary metrics
@@ -2069,112 +2055,112 @@ function DigitalTwinTab(props) {
         h("div", { className: "twin-schematic-title" },
           h("span", null, "Virtual Engine Digital Twin — Real-Time 4-Stroke Cutaway"),
           h("span", { className: cls("badge", effFault ? "warn" : (isEngineRunning ? "live" : "")) },
-            effFault ? "⚠️ FAULT DEMO ACTIVE" : (isEngineRunning ? "PHYSICS LIVE SYNCHRONIZED" : "STANDBY / ENGINE STOPPED")
+            effFault ? "FAULT DEMO ACTIVE" : (isEngineRunning ? "PHYSICS LIVE SYNCHRONIZED" : "STANDBY / ENGINE STOPPED")
           )
         ),
 
         // Prominent Fault Injection Demonstration Banner
         effFault ? h("div", {
           style: {
-            background: "rgba(239, 68, 68, 0.15)",
-            border: "1px solid rgba(239, 68, 68, 0.45)",
+            background: "var(--warning-bg)",
+            border: "1px solid #dfaba5",
             borderRadius: "4px",
             padding: "8px 14px",
             marginBottom: "12px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            color: "#fca5a5",
+            color: "var(--warning)",
           }
         },
           h("span", { style: { fontWeight: "700", fontSize: "13px" } },
-            "⚠️ DEMONSTRATING ACTIVE FAULT: " + effFault + (faultSeverity ? " (Severity " + Number(faultSeverity).toFixed(2) + ")" : "")
+            "DEMONSTRATING ACTIVE FAULT: " + effFault + (faultSeverity ? " (Severity " + Number(faultSeverity).toFixed(2) + ")" : "")
           ),
-          h("span", { style: { fontSize: "11px", background: "#ef4444", color: "#fff", padding: "2px 8px", borderRadius: "3px", fontWeight: "700" } },
-            isCoolingFault ? "THERMAL OVERHEAT" : (isLubFault ? "PRESSURE LOSS" : (isMisfireFault ? "CYL " + misfireCyl + " MISFIRE" : "BEARING WEAR"))
+          h("span", { style: { fontSize: "11px", background: "var(--warning)", color: "#fff", padding: "2px 8px", borderRadius: "3px", fontWeight: "700" } },
+            isCoolingFault ? "THERMAL OVERHEAT" : (isLubFault ? "PRESSURE LOSS" : (isMisfireFault ? "CYL " + misfireCyl + " MISFIRE" : (isBearingFault ? "BEARING WEAR" : (isSensorFault ? "SENSOR INSTRUMENTATION FAULT" : "FAULT DETECTED"))))
           )
         ) : h("div", {
           style: {
-            background: isEngineRunning ? "rgba(14, 165, 233, 0.12)" : "rgba(100, 116, 139, 0.12)",
-            border: isEngineRunning ? "1px solid rgba(14, 165, 233, 0.3)" : "1px solid rgba(100, 116, 139, 0.25)",
+            background: isEngineRunning ? "var(--accent-bg)" : "var(--surface-2)",
+            border: isEngineRunning ? "1px solid #c2d8ee" : "1px solid var(--border)",
             borderRadius: "4px",
             padding: "7px 14px",
             marginBottom: "12px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            color: isEngineRunning ? "#7dd3fc" : "#94a3b8",
+            color: isEngineRunning ? "var(--accent)" : "var(--ink-3)",
           }
         },
           h("span", { style: { fontWeight: "600", fontSize: "12.5px" } },
-            isEngineRunning ? "● Virtual Digital Twin Synchronized With Real Engine Telemetry" : "○ Virtual Engine Standby — Click 'Start simulation' to ignite 4-stroke cycle"
+            isEngineRunning ? "Virtual Digital Twin Synchronized With Real Engine Telemetry" : "Virtual Engine Standby — Click 'Start simulation' to ignite 4-stroke cycle"
           ),
-          h("span", { style: { fontSize: "11px", color: isEngineRunning ? "#38bdf8" : "#94a3b8", fontWeight: "700" } }, isEngineRunning ? "4-STROKE CYCLE NOMINAL" : "ENGINE RESTING")
+          h("span", { style: { fontSize: "11px", color: isEngineRunning ? "var(--accent)" : "var(--ink-3)", fontWeight: "700" } }, isEngineRunning ? "4-STROKE CYCLE NOMINAL" : "ENGINE RESTING")
         ),
 
         h("svg", {
           viewBox: "0 0 720 365",
           className: "schematic-svg",
-          style: { width: "100%", height: "auto", background: "#090d14", borderRadius: "4px" }
+          style: { width: "100%", height: "auto", background: "#f5f8fc", borderRadius: "4px" }
         },
           h("defs", null,
             h("pattern", { id: "schemGrid", width: "20", height: "20", patternUnits: "userSpaceOnUse" },
-              h("path", { d: "M 20 0 L 0 0 0 20", fill: "none", stroke: "#161f30", strokeWidth: "0.5" })
+              h("path", { d: "M 20 0 L 0 0 0 20", fill: "none", stroke: "#e1e8f2", strokeWidth: "0.5" })
             ),
             h("linearGradient", { id: "egtPipe", x1: "0%", y1: "0%", x2: "100%", y2: "0%" },
               h("stop", { offset: "0%", stopColor: "#c2410c" }),
               h("stop", { offset: "100%", stopColor: egtGlow })
             ),
             h("linearGradient", { id: "pistonGrad", x1: "0%", y1: "0%", x2: "0%", y2: "100%" },
-              h("stop", { offset: "0%", stopColor: "#64748b" }),
-              h("stop", { offset: "100%", stopColor: "#334155" })
+              h("stop", { offset: "0%", stopColor: "#e2e8f0" }),
+              h("stop", { offset: "100%", stopColor: "#94a3b8" })
             )
           ),
           h("rect", { width: "720", height: "365", fill: "url(#schemGrid)" }),
 
           // Air Intake with dynamic airflow stream
-          h("polygon", { points: "15,65 52,78 52,112 15,125", fill: "#1e293b", stroke: "#38bdf8", strokeWidth: "1.5" }),
-          h("text", { x: "20", y: "98", fill: "#38bdf8", fontSize: "9", fontFamily: "var(--mono)", fontWeight: "700" }, "AIR IN"),
-          h("path", { d: "M 10 95 L 50 95", stroke: "#38bdf8", strokeWidth: "2", strokeDasharray: "4 3" }),
+          h("polygon", { points: "15,65 52,78 52,112 15,125", fill: "#eef4fb", stroke: "#1f5fa8", strokeWidth: "1.5" }),
+          h("text", { x: "20", y: "98", fill: "#1f5fa8", fontSize: "9", fontFamily: "var(--mono)", fontWeight: "700" }, "AIR IN"),
+          h("path", { d: "M 10 95 L 50 95", stroke: "#1f5fa8", strokeWidth: "2", strokeDasharray: "4 3" }),
 
           // Throttle Body rotating dynamically with actual throttle %
-          h("rect", { x: "52", y: "84", width: "42", height: "22", fill: "#1e293b", stroke: "#64748b", strokeWidth: "1.5" }),
+          h("rect", { x: "52", y: "84", width: "42", height: "22", fill: "#eef2f7", stroke: "#8592a3", strokeWidth: "1.5" }),
           h("line", {
             x1: "73", y1: "85",
             x2: String(73 + 10 * Math.cos(thr * Math.PI * 0.45)),
             y2: String(95 + 10 * Math.sin(thr * Math.PI * 0.45)),
-            stroke: "#38bdf8", strokeWidth: "3"
+            stroke: "#1f5fa8", strokeWidth: "3"
           }),
-          h("text", { x: "53", y: "78", fill: "#94a3b8", fontSize: "8", fontFamily: "var(--mono)" }, "THROTTLE " + (thr * 100).toFixed(0) + "%"),
+          h("text", { x: "53", y: "78", fill: "#5b6472", fontSize: "8", fontFamily: "var(--mono)" }, "THROTTLE " + (thr * 100).toFixed(0) + "%"),
 
           // Intake Manifold runner
           h("path", {
             d: "M 94 95 L 135 95 L 135 110 L 490 110",
-            fill: "none", stroke: "#0284c7", strokeWidth: "6", strokeLinecap: "round"
+            fill: "none", stroke: "#1f5fa8", strokeWidth: "6", strokeLinecap: "round"
           }),
-          h("text", { x: "155", y: "103", fill: "#7dd3fc", fontSize: "9", fontFamily: "var(--mono)" }, "INTAKE MANIFOLD: " + air.p_man_kpa + " kPa"),
+          h("text", { x: "155", y: "103", fill: "#1f5fa8", fontSize: "9", fontFamily: "var(--mono)" }, "INTAKE MANIFOLD: " + air.p_man_kpa + " kPa"),
 
           // Common Rail Fuel Delivery Line
-          h("line", { x1: "155", y1: "118", x2: "485", y2: "118", stroke: "#eab308", strokeWidth: "2.5" }),
-          h("text", { x: "492", y: "121", fill: "#fde047", fontSize: "8", fontFamily: "var(--mono)" }, "FUEL RAIL (" + fuel.toFixed(1) + " L/h)"),
+          h("line", { x1: "155", y1: "118", x2: "485", y2: "118", stroke: "#9a6508", strokeWidth: "2.5" }),
+          h("text", { x: "492", y: "121", fill: "#9a6508", fontSize: "8", fontFamily: "var(--mono)" }, "FUEL RAIL (" + fuel.toFixed(1) + " L/h)"),
 
           // Engine Cast Cylinder Head
           h("rect", {
             x: "150", y: "124", width: "340", height: "18", rx: "3",
-            fill: "#1e293b", stroke: "#475569", strokeWidth: "1.5"
+            fill: "#dde3ec", stroke: "#8592a3", strokeWidth: "1.5"
           }),
-          h("text", { x: "155", y: "136", fill: "#94a3b8", fontSize: "8", fontFamily: "var(--mono)" }, "DOHC CYLINDER HEAD"),
+          h("text", { x: "155", y: "136", fill: "#5b6472", fontSize: "8", fontFamily: "var(--mono)" }, "DOHC CYLINDER HEAD"),
 
           // Coolant Jacket Surrounding Cylinders
           h("rect", {
             x: "150", y: "142", width: "340", height: "92", rx: "4",
-            fill: isCoolingFault ? "rgba(239, 68, 68, 0.22)" : "rgba(14, 165, 233, 0.08)",
-            stroke: isCoolingFault ? "#ef4444" : "#0ea5e9",
+            fill: isCoolingFault ? "rgba(163, 44, 34, 0.12)" : "rgba(31, 95, 168, 0.06)",
+            stroke: isCoolingFault ? "#a32c22" : "#1f5fa8",
             strokeWidth: isCoolingFault ? "2.5" : "1",
             strokeDasharray: isCoolingFault ? "6 3" : "none",
           }),
-          isCoolingFault ? h("text", { x: "180", y: "139", fill: "#ef4444", fontSize: "9", fontWeight: "800", fontFamily: "var(--mono)" },
-            "⚠️ COOLANT LEAK / THERMAL RUNAWAY (CHT: " + cht.toFixed(1) + "°C)"
+          isCoolingFault ? h("text", { x: "180", y: "139", fill: "#a32c22", fontSize: "9", fontWeight: "800", fontFamily: "var(--mono)" },
+            "COOLANT LEAK / THERMAL RUNAWAY (CHT: " + cht.toFixed(1) + "°C)"
           ) : null,
 
           // 4 Cylinders with animated Poppet Valves, Spark Plugs, Pistons & Cycles
@@ -2218,9 +2204,9 @@ function DigitalTwinTab(props) {
             return h("g", { key: idx },
               // Cylinder Liner Wall
               h("rect", {
-                x: cx - 26, y: 142, width: "52", height: "88",
-                fill: "#0f172a",
-                stroke: isAfflictedMisfire ? "#ef4444" : (isCoolingFault ? "#f97316" : "#475569"),
+                x: cx - 26, y: 142, width: "52", height: "88", rx: "2",
+                fill: "#2b3542",
+                stroke: isAfflictedMisfire ? "#a32c22" : (isCoolingFault ? "#c2410c" : "#5b6472"),
                 strokeWidth: isAfflictedMisfire ? "2.5" : "2"
               }),
 
@@ -2228,27 +2214,27 @@ function DigitalTwinTab(props) {
               h("line", {
                 x1: cx - 14, y1: 124,
                 x2: cx - 14, y2: intakeValveOpen ? 146 : 142,
-                stroke: "#38bdf8", strokeWidth: "2"
+                stroke: "#1f5fa8", strokeWidth: "2"
               }),
               h("polygon", {
                 points: (cx - 19) + "," + (intakeValveOpen ? 146 : 142) + " " + (cx - 9) + "," + (intakeValveOpen ? 146 : 142) + " " + (cx - 14) + "," + (intakeValveOpen ? 149 : 144),
-                fill: intakeValveOpen ? "#38bdf8" : "#64748b"
+                fill: intakeValveOpen ? "#1f5fa8" : "#8592a3"
               }),
 
               // Center: Spark Plug with Ceramic Insulator
-              h("rect", { x: cx - 2.5, y: 122, width: "5", height: "12", fill: "#f8fafc" }),
-              h("rect", { x: cx - 3.5, y: 130, width: "7", height: "4", fill: "#94a3b8" }),
-              h("line", { x1: cx, y1: 134, x2: cx, y2: 142, stroke: "#cbd5e1", strokeWidth: "1.5" }),
+              h("rect", { x: cx - 2.5, y: 122, width: "5", height: "12", fill: "#ffffff", stroke: "#8592a3", strokeWidth: "0.75" }),
+              h("rect", { x: cx - 3.5, y: 130, width: "7", height: "4", fill: "#5b6472" }),
+              h("line", { x1: cx, y1: 134, x2: cx, y2: 142, stroke: "#8592a3", strokeWidth: "1.5" }),
 
               // Right: Exhaust Poppet Valve
               h("line", {
                 x1: cx + 14, y1: 124,
                 x2: cx + 14, y2: exhaustValveOpen ? 146 : 142,
-                stroke: "#fb923c", strokeWidth: "2"
+                stroke: "#c2410c", strokeWidth: "2"
               }),
               h("polygon", {
                 points: (cx + 9) + "," + (exhaustValveOpen ? 146 : 142) + " " + (cx + 19) + "," + (exhaustValveOpen ? 146 : 142) + " " + (cx + 14) + "," + (exhaustValveOpen ? 149 : 144),
-                fill: exhaustValveOpen ? "#fb923c" : "#64748b"
+                fill: exhaustValveOpen ? "#c2410c" : "#8592a3"
               }),
 
               // Combustion Spark / Flame Effect
@@ -2259,29 +2245,29 @@ function DigitalTwinTab(props) {
 
               // Misfire Warning Callout
               isAfflictedMisfire ? h("g", null,
-                h("text", { x: cx - 12, y: "155", fill: "#ef4444", fontSize: "13", fontWeight: "800", fontFamily: "var(--mono)" }, "⚡✕"),
-                h("text", { x: cx - 22, y: "168", fill: "#f87171", fontSize: "7", fontWeight: "700", fontFamily: "var(--mono)" }, "MISFIRE")
+                h("text", { x: cx - 8, y: "155", fill: "#ffffff", fontSize: "13", fontWeight: "800", fontFamily: "var(--mono)" }, "X"),
+                h("text", { x: cx - 22, y: "168", fill: "#a32c22", fontSize: "7", fontWeight: "700", fontFamily: "var(--mono)" }, "MISFIRE")
               ) : null,
 
               // Reciprocating Piston Head
               h("rect", {
                 x: cx - 24, y: py, width: "48", height: "18", rx: "2",
                 fill: isAfflictedMisfire ? "#7f1d1d" : "url(#pistonGrad)",
-                stroke: isAfflictedMisfire ? "#ef4444" : "#94a3b8",
+                stroke: isAfflictedMisfire ? "#a32c22" : "#5b6472",
                 strokeWidth: "1.5"
               }),
               // Piston Rings
-              h("line", { x1: cx - 22, y1: py + 4, x2: cx + 22, y2: py + 4, stroke: "#475569", strokeWidth: "1" }),
-              h("line", { x1: cx - 22, y1: py + 8, x2: cx + 22, y2: py + 8, stroke: "#475569", strokeWidth: "1" }),
+              h("line", { x1: cx - 22, y1: py + 4, x2: cx + 22, y2: py + 4, stroke: "#5b6472", strokeWidth: "1" }),
+              h("line", { x1: cx - 22, y1: py + 8, x2: cx + 22, y2: py + 8, stroke: "#5b6472", strokeWidth: "1" }),
               // Gudgeon Wrist Pin
-              h("circle", { cx: cx, cy: py + 10, r: "3", fill: "#cbd5e1" }),
+              h("circle", { cx: cx, cy: py + 10, r: "3", fill: "#5b6472" }),
 
               // Connecting Rod
               h("line", {
                 x1: cx, y1: py + 10,
                 x2: String(cx + 14 * Math.cos(rad + idx * Math.PI * 0.5)),
                 y2: String(265 + 14 * Math.sin(rad + idx * Math.PI * 0.5)),
-                stroke: isAfflictedMisfire ? "#ef4444" : "#94a3b8",
+                stroke: isAfflictedMisfire ? "#a32c22" : "#5b6472",
                 strokeWidth: "3.5", strokeLinecap: "round"
               }),
 
@@ -2289,7 +2275,7 @@ function DigitalTwinTab(props) {
               h("circle", {
                 cx: String(cx + 14 * Math.cos(rad + idx * Math.PI * 0.5)),
                 cy: String(265 + 14 * Math.sin(rad + idx * Math.PI * 0.5)),
-                r: "5", fill: isBearingFault && idx === 2 ? "#ef4444" : "#cbd5e1"
+                r: "5", fill: isBearingFault && idx === 2 ? "#a32c22" : "#5b6472"
               }),
 
               // Cylinder Number & Live CHT
@@ -2300,12 +2286,12 @@ function DigitalTwinTab(props) {
               // 4-Stroke Phase Tag Badge
               h("rect", {
                 x: cx - 26, y: "223", width: "52", height: "13", rx: "2",
-                fill: isAfflictedMisfire ? "#450a0a" : (phase === "POWER" ? "#451a03" : "#1e293b"),
-                stroke: isAfflictedMisfire ? "#ef4444" : (phase === "POWER" ? "#f59e0b" : "#475569")
+                fill: isAfflictedMisfire ? "var(--warning-bg)" : (phase === "POWER" ? "#fef3c7" : "var(--surface-2)"),
+                stroke: isAfflictedMisfire ? "#a32c22" : (phase === "POWER" ? "#c2860a" : "var(--border-2)")
               }),
               h("text", {
                 x: cx - 22, y: "232",
-                fill: isAfflictedMisfire ? "#fca5a5" : (phase === "POWER" ? "#fbbf24" : "#94a3b8"),
+                fill: isAfflictedMisfire ? "#a32c22" : (phase === "POWER" ? "#92400e" : "#5b6472"),
                 fontSize: "6.5", fontWeight: "700", fontFamily: "var(--mono)"
               },
                 isAfflictedMisfire ? "MISFIRE" : phase
@@ -2315,41 +2301,41 @@ function DigitalTwinTab(props) {
 
           // Bearing Vibration Shockwaves on Journal #3
           isBearingFault ? h("g", null,
-            h("circle", { cx: "365", cy: "265", r: "18", fill: "none", stroke: "#ef4444", strokeWidth: "2", strokeDasharray: "4 2", opacity: "0.9" }),
-            h("circle", { cx: "365", cy: "265", r: "28", fill: "none", stroke: "#f97316", strokeWidth: "1.5", strokeDasharray: "6 3", opacity: "0.7" }),
-            h("text", { x: "270", y: "254", fill: "#f87171", fontSize: "9", fontWeight: "700", fontFamily: "var(--mono)" },
-              "⚠️ JOURNAL BEARING WEAR & HIGH VIBRATION"
+            h("circle", { cx: "365", cy: "265", r: "18", fill: "none", stroke: "#a32c22", strokeWidth: "2", strokeDasharray: "4 2", opacity: "0.9" }),
+            h("circle", { cx: "365", cy: "265", r: "28", fill: "none", stroke: "#c2410c", strokeWidth: "1.5", strokeDasharray: "6 3", opacity: "0.7" }),
+            h("text", { x: "270", y: "254", fill: "#a32c22", fontSize: "9", fontWeight: "700", fontFamily: "var(--mono)" },
+              "JOURNAL BEARING WEAR & HIGH VIBRATION"
             )
           ) : null,
 
           // Crankshaft Main Beam
-          h("line", { x1: "135", y1: "265", x2: "510", y2: "265", stroke: isBearingFault ? "#ef4444" : "#94a3b8", strokeWidth: "5" }),
-          h("text", { x: "135", y: "280", fill: "#94a3b8", fontSize: "8.5", fontFamily: "var(--mono)" }, "CRANKSHAFT (J=0.185)"),
+          h("line", { x1: "135", y1: "265", x2: "510", y2: "265", stroke: isBearingFault ? "#a32c22" : "#5b6472", strokeWidth: "5" }),
+          h("text", { x: "135", y: "280", fill: "#5b6472", fontSize: "8.5", fontFamily: "var(--mono)" }, "CRANKSHAFT (J=0.185)"),
 
           // Flywheel & Output Shaft
-          h("circle", { cx: "525", cy: "265", r: "24", fill: "#1e293b", stroke: "#38bdf8", strokeWidth: "3" }),
+          h("circle", { cx: "525", cy: "265", r: "24", fill: "#2b3542", stroke: "#1f5fa8", strokeWidth: "3" }),
           h("line", {
             x1: "525", y1: "265",
             x2: String(525 + 22 * Math.cos(rad)),
             y2: String(265 + 22 * Math.sin(rad)),
-            stroke: "#38bdf8", strokeWidth: "2.5"
+            stroke: "#7fb2e8", strokeWidth: "2.5"
           }),
-          h("text", { x: "505", y: "302", fill: "#38bdf8", fontSize: "9", fontWeight: "700", fontFamily: "var(--mono)" }, rpm.toFixed(0) + " RPM"),
+          h("text", { x: "505", y: "302", fill: "#1f5fa8", fontSize: "9", fontWeight: "700", fontFamily: "var(--mono)" }, rpm.toFixed(0) + " RPM"),
 
           // Propeller Hub & Spinning Blades
-          h("rect", { x: "555", y: "260", width: "16", height: "10", fill: "#64748b" }),
-          h("polygon", { points: "571,257 590,265 571,273", fill: "#0284c7" }),
+          h("rect", { x: "555", y: "260", width: "16", height: "10", fill: "#5b6472" }),
+          h("polygon", { points: "571,257 590,265 571,273", fill: "#1f5fa8" }),
           // Propeller spinning motion blur disc
-          h("ellipse", { cx: "582", cy: "265", rx: "10", ry: "65", fill: "rgba(56,189,248,0.15)", stroke: "#38bdf8", strokeWidth: "1", strokeDasharray: "4 3" }),
+          h("ellipse", { cx: "582", cy: "265", rx: "10", ry: "65", fill: "rgba(31,95,168,0.07)", stroke: "#1f5fa8", strokeWidth: "1", strokeDasharray: "4 3" }),
           // Rotating blades
           h("line", {
             x1: String(582 - 55 * Math.sin(rad)),
             y1: String(265 - 55 * Math.cos(rad)),
             x2: String(582 + 55 * Math.sin(rad)),
             y2: String(265 + 55 * Math.cos(rad)),
-            stroke: "#94a3b8", strokeWidth: "4.5", strokeLinecap: "round"
+            stroke: "#5b6472", strokeWidth: "4.5", strokeLinecap: "round"
           }),
-          h("text", { x: "596", y: "270", fill: "#7dd3fc", fontSize: "8", fontFamily: "var(--mono)", fontWeight: "600" }, "PROPELLER"),
+          h("text", { x: "596", y: "270", fill: "#1f5fa8", fontSize: "8", fontFamily: "var(--mono)", fontWeight: "600" }, "PROPELLER"),
 
           // Exhaust Manifold & Pipe
           h("path", {
@@ -2361,27 +2347,27 @@ function DigitalTwinTab(props) {
           // Oil Sump with Submerged Oil Pickup & Strainer
           h("rect", {
             x: "150", y: "295", width: "340", height: "26", rx: "3",
-            fill: isLubFault ? "#451a03" : "#172554",
-            stroke: isLubFault ? "#ef4444" : "#1d4ed8",
+            fill: isLubFault ? "var(--warning-bg)" : "#e2ecfb",
+            stroke: isLubFault ? "#a32c22" : "#1d4ed8",
             strokeWidth: isLubFault ? "2" : "1.5"
           }),
           // Oil Pickup Tube dipping into oil sump
-          h("path", { d: "M 320 270 L 320 306 L 310 312", fill: "none", stroke: "#94a3b8", strokeWidth: "3" }),
+          h("path", { d: "M 320 270 L 320 306 L 310 312", fill: "none", stroke: "#5b6472", strokeWidth: "3" }),
           // Submerged Strainer Mesh
-          h("circle", { cx: "310", cy: "312", r: "5", fill: "#334155", stroke: "#64748b", strokeWidth: "1" }),
+          h("circle", { cx: "310", cy: "312", r: "5", fill: "#8592a3", stroke: "#5b6472", strokeWidth: "1" }),
           h("text", {
             x: "165", y: "312",
-            fill: isLubFault ? "#fca5a5" : "#93c5fd",
-            fontSize: "8.5", fontWeight: isLubFault ? "700" : "500",
+            fill: isLubFault ? "#a32c22" : "#1d4ed8",
+            fontSize: "8.5", fontWeight: isLubFault ? "700" : "600",
             fontFamily: "var(--mono)"
           },
             isLubFault
-              ? "⚠️ OIL PRESSURE DROP: " + oilP.toFixed(2) + " bar — LUBRICATION COLLAPSE"
+              ? "OIL PRESSURE DROP: " + oilP.toFixed(2) + " bar — LUBRICATION COLLAPSE"
               : "OIL SUMP: " + oilP.toFixed(2) + " bar (" + (oilP * 14.5038).toFixed(1) + " psi) | " + oilT.toFixed(1) + "°C"
           ),
 
           // CHT Sensor Marker
-          h("circle", { cx: "365", cy: "135", r: "4", fill: chtColor, stroke: "#fff", strokeWidth: "1" }),
+          h("circle", { cx: "365", cy: "135", r: "4", fill: chtColor, stroke: "#ffffff", strokeWidth: "1.5" }),
           h("text", { x: "375", y: "138", fill: chtColor, fontSize: "8.5", fontWeight: "700", fontFamily: "var(--mono)" }, "CHT: " + cht.toFixed(1) + "°C")
         )
       ),
@@ -2740,6 +2726,7 @@ function ReplaySimulationTab(props) {
   const [scenarios, setScenarios] = useState([]);
   const [scenarioLoading, setScenarioLoading] = useState(false);
   const [scenarioMsg, setScenarioMsg] = useState(null);
+  const [scenarioMsgOk, setScenarioMsgOk] = useState(true);
 
   // 3. 50 Hz Flight Replayer State
   const [engines, setEngines] = useState([]);
@@ -2841,15 +2828,18 @@ function ReplaySimulationTab(props) {
       });
       const data = await res.json();
       if (res.ok) {
-        setScenarioMsg("✅ Scenario '" + sc.display_name + "' initiated! Telemetry live streaming.");
+        setScenarioMsgOk(true);
+        setScenarioMsg("Scenario '" + sc.display_name + "' initiated. Telemetry live streaming.");
         if (onRunScenarioSuccess) {
           setTimeout(onRunScenarioSuccess, 600);
         }
       } else {
-        setScenarioMsg("❌ " + (data.detail || "Failed to start scenario"));
+        setScenarioMsgOk(false);
+        setScenarioMsg(data.detail || "Failed to start scenario");
       }
     } catch (e) {
-      setScenarioMsg("❌ Error: " + String(e));
+      setScenarioMsgOk(false);
+      setScenarioMsg("Error: " + String(e));
     } finally {
       setScenarioLoading(false);
     }
@@ -2892,15 +2882,15 @@ function ReplaySimulationTab(props) {
           onClick: function() { fetchClearance(profile); },
           disabled: clearanceLoading,
           style: { padding: "6px 12px", fontSize: "12px" }
-        }, clearanceLoading ? "Evaluating…" : "🔄 Refresh")
+        }, clearanceLoading ? "Evaluating…" : "Refresh")
       ),
 
       clearance ? h("div", {
         className: cls("clearance-status-pill", clearance.status)
       },
-        clearance.status === "GO" ? "✅ FLIGHT STATUS: GO" :
-        clearance.status === "CAUTION_GO" ? "⚠️ STATUS: CAUTION GO" :
-        "⛔ FLIGHT STATUS: NO-GO"
+        clearance.status === "GO" ? "FLIGHT STATUS: GO" :
+        clearance.status === "CAUTION_GO" ? "STATUS: CAUTION GO" :
+        "FLIGHT STATUS: NO-GO"
       ) : null,
 
       clearance ? h("div", { className: "clearance-metrics" },
@@ -2941,8 +2931,8 @@ function ReplaySimulationTab(props) {
     // 2. Operational Mission Scenarios Presets
     h("div", null,
       h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "12px", flexWrap: "wrap", gap: "8px" } },
-        h("h3", { style: { margin: 0, fontSize: "16px", fontWeight: "800", color: "var(--ink)" } }, "⚡ Tactical Mission Simulation Presets"),
-        scenarioMsg ? h("span", { style: { fontSize: "13px", fontWeight: "600", color: scenarioMsg.startsWith("✅") ? "var(--normal)" : "var(--warning)" } }, scenarioMsg) : null
+        h("h3", { style: { margin: 0, fontSize: "16px", fontWeight: "800", color: "var(--ink)" } }, "Tactical Mission Simulation Presets"),
+        scenarioMsg ? h("span", { style: { fontSize: "13px", fontWeight: "600", color: scenarioMsgOk ? "var(--normal)" : "var(--warning)" } }, scenarioMsg) : null
       ),
       h("div", { className: "scenarios-grid" },
         scenarios.map(function(sc) {
@@ -2976,7 +2966,7 @@ function ReplaySimulationTab(props) {
               className: "scenario-btn",
               onClick: function() { runScenario(sc); },
               disabled: scenarioLoading
-            }, scenarioLoading ? "Initializing…" : "▶ Run Scenario Mission")
+            }, scenarioLoading ? "Initializing…" : "Run Scenario Mission")
           );
         })
       )
@@ -2987,13 +2977,13 @@ function ReplaySimulationTab(props) {
       h("div", { className: "player-header" },
         h("div", { className: "player-title" },
           "50 Hz Flight Replayer (Blackbox Scrub & Playback)",
-          h("span", { style: { fontSize: "12px", background: "rgba(56,189,248,0.15)", color: "#38bdf8", padding: "2px 8px", borderRadius: "3px" } }, "50 SAMPLES/SEC")
+          h("span", { style: { fontSize: "12px", background: "var(--accent-bg)", color: "var(--accent)", padding: "2px 8px", borderRadius: "3px" } }, "50 SAMPLES/SEC")
         ),
         h("div", { className: "player-controls" },
-          h("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Select Engine:"),
+          h("span", { style: { fontSize: "12px", color: "var(--ink-3)" } }, "Select Engine:"),
           h("select", {
             className: "fault-select",
-            style: { width: "260px", background: "#1e293b", color: "#f8fafc", borderColor: "#334155" },
+            style: { width: "260px" },
             value: selectedEngineId,
             onChange: function(e) {
               const id = parseInt(e.target.value);
@@ -3008,11 +2998,11 @@ function ReplaySimulationTab(props) {
           h("button", {
             className: cls("player-btn", isPlaying ? null : "play"),
             onClick: function() { setIsPlaying(!isPlaying); }
-          }, isPlaying ? "⏸ Pause" : "▶ Play 50Hz"),
+          }, isPlaying ? "Pause" : "Play 50Hz"),
           h("button", {
             className: "player-btn",
             onClick: function() { setSampleIdx(0); setIsPlaying(false); }
-          }, "⏮ Rewind"),
+          }, "Rewind"),
           [1, 2, 5].map(function(sp) {
             return h("button", {
               key: sp,
@@ -3039,7 +3029,7 @@ function ReplaySimulationTab(props) {
           h("span", null, "Time: T+" + currSec.toFixed(2) + "s / T+" + maxSec.toFixed(2) + "s (Step " + (currentSample ? currentSample.step : 0) + ")"),
           h("span", null,
             "Active Classification: ",
-            h("b", { style: { color: currentSample && currentSample.fault_name !== "Normal" ? "#f87171" : "#34d399" } },
+            h("b", { style: { color: currentSample && currentSample.fault_name !== "Normal" ? "var(--warning)" : "var(--normal)" } },
               (currentSample ? currentSample.fault_name : "Normal") +
               (currentSample && currentSample.rul_hours ? " • RUL: " + (currentSample.rul_hours * 60).toFixed(1) + " min" : "")
             )
@@ -3543,18 +3533,18 @@ function App() {
         if (ft === "CLEAR") {
           setActiveFault(null);
           setIsFaultActive(false);
-          setFaultStatus("✅ Fault cleared — engine back to healthy baseline.");
+          setFaultStatus("Fault cleared — engine back to healthy baseline.");
         } else {
           setActiveFault(ft);
           setIsFaultActive(true);
           const tStr = d.injected_at_sim_time != null ? " @ T+" + d.injected_at_sim_time.toFixed(0) + "s" : "";
-          setFaultStatus("⚠️ " + ft + " fault injected" + tStr + " (sev " + Number(faultSeverity).toFixed(2) + ", " + faultTrajectory + ")");
+          setFaultStatus(ft + " fault injected" + tStr + " (sev " + Number(faultSeverity).toFixed(2) + ", " + faultTrajectory + ")");
         }
       } else {
-        setFaultStatus("❌ " + (d.detail || "Injection failed"));
+        setFaultStatus(d.detail || "Injection failed");
       }
     } catch(e) {
-      setFaultStatus("❌ " + String(e));
+      setFaultStatus(String(e));
     } finally {
       setFaultBusy(false);
     }
@@ -3657,7 +3647,7 @@ function App() {
         h("span", { className: "tlabel" }, "Sortie"),
         h("span", { className: "brow" },
           h("button", { className: "go", onClick: start, disabled: busy }, "Start sortie"),
-          h("button", { onClick: function () { setLogOpen(true); }, disabled: !running, title: "Open live log" }, "📋 Log"),
+          h("button", { onClick: function () { setLogOpen(true); }, disabled: !running, title: "Open live log" }, "Log"),
           h("button", { onClick: stop, disabled: busy || !running, title: "End sortie and reset all statistics" }, "Stop")
         )
       ),
@@ -3758,10 +3748,10 @@ function App() {
     // ---- Fault Injection Panel (live, no mission reset) ----
     (running || (tutorialActive && tutorialStep === 7)) ? h("div", { className: "fault-panel", id: "tour-fault-injection" },
       h("div", { className: "fault-panel-head" },
-        h("span", { className: "fault-panel-title" }, "⚡ Live Fault Injection"),
+        h("span", { className: "fault-panel-title" }, "Live Fault Injection"),
         activeFault
-          ? h("span", { className: "fault-badge active" }, "● " + activeFault + " ACTIVE")
-          : h("span", { className: "fault-badge clear" }, "● ENGINE HEALTHY")
+          ? h("span", { className: "fault-badge active" }, activeFault + " ACTIVE")
+          : h("span", { className: "fault-badge clear" }, "ENGINE HEALTHY")
       ),
       h("div", { className: "fault-panel-body" },
 
@@ -3770,18 +3760,19 @@ function App() {
           h("span", { className: "fault-sublabel" }, "Fault Type"),
           h("div", { className: "fault-type-btns" },
             [
-              { id: "CYLINDER",    icon: "🔴", label: "Cylinder Misfire" },
-              { id: "BEARING",     icon: "🔵", label: "Bearing Wear" },
-              { id: "COOLING",     icon: "🟠", label: "Cooling Failure" },
-              { id: "LUBRICATION", icon: "🟡", label: "Lubrication Issue" },
+              { id: "CYLINDER",    label: "Cylinder Misfire" },
+              { id: "BEARING",     label: "Bearing Wear" },
+              { id: "COOLING",     label: "Cooling Failure" },
+              { id: "LUBRICATION", label: "Lubrication Issue" },
+              { id: "SENSOR",      label: "Sensor Failure" },
             ].map(function(f) {
               return h("button", {
                 key: f.id,
                 className: cls("fault-type-btn", faultType === f.id && "selected"),
                 onClick: function() { setFaultType(f.id); setFaultComponent(""); },
                 disabled: faultBusy,
-                title: f.label,
-              }, f.icon + " " + f.label);
+                title: f.id === "SENSOR" ? "Instrumentation fault: engine stays mechanically healthy, only the reported EGT reading drifts from truth" : f.label,
+              }, f.label);
             })
           )
         ),
@@ -3839,13 +3830,13 @@ function App() {
             onClick: function() { inject(); },
             disabled: faultBusy || !running,
             title: "Inject fault into the live running sortie (no restart)",
-          }, faultBusy ? "Injecting…" : "⚡ Inject Fault Now"),
+          }, faultBusy ? "Injecting…" : "Inject Fault Now"),
           h("button", {
             className: "fault-clear-btn",
             onClick: function() { inject("CLEAR"); },
             disabled: faultBusy || !running || !activeFault,
             title: "Clear active fault and restore healthy baseline",
-          }, "✅ Clear Fault"),
+          }, "Clear Fault"),
           faultStatus ? h("span", { className: "fault-status" }, faultStatus) : null
         )
       )

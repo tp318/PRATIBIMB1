@@ -501,6 +501,7 @@ class SimulationService:
                         self.runner.set_throttle(self._manual_throttle)
 
                 payload = None
+                window_assessment = None
                 for _ in range(frames_per_broadcast):
                     telemetry, _gt = self.injector.step()
                     tel_dict = telemetry.to_dict()
@@ -509,11 +510,18 @@ class SimulationService:
                     payload = result
                     if self.latest_assessment is None:
                         self.latest_assessment = {"simulation_time": payload.get("simulation_time", 0.0)}
-                    
-                    # Merge all pipeline outputs
-                    for k in ("anomaly", "rul", "mission_risk", "maintenance"):
-                        if k in result:
-                            self.latest_assessment[k] = result[k]
+                    else:
+                        self.latest_assessment["simulation_time"] = payload.get("simulation_time", 0.0)
+
+                    # Pipeline.ingest() only nests the scored window under "assessment"
+                    # (it stays None until the first 5 s window completes) - the
+                    # anomaly/rul/mission_risk/maintenance/health keys live inside that
+                    # dict, not on the top-level ingest() result.
+                    if result.get("assessment"):
+                        window_assessment = result["assessment"]
+                        for k in ("anomaly", "rul", "mission_risk", "maintenance"):
+                            if k in window_assessment:
+                                self.latest_assessment[k] = window_assessment[k]
 
                 # Run XGBoost 9-class physics diagnosis
                 xgb_diag = self.xgboost_adapter.ingest_frame(
@@ -537,10 +545,13 @@ class SimulationService:
                         "shap_explanation": xgb_diag.get("shap_explanation"),
                     }
 
-                # Compute rigorous physics-informed health index
+                # Compute rigorous physics-informed health index, blended with the
+                # pipeline's own ML health estimate when a window was just scored
+                # (window_assessment["health"], NOT the never-present top-level
+                # payload["health"] - ingest() only nests it under "assessment").
                 ml_h = None
-                if payload and payload.get("health"):
-                    ml_h = payload["health"].get("health_index")
+                if window_assessment and window_assessment.get("health"):
+                    ml_h = window_assessment["health"].get("health_index")
 
                 physics_health = compute_physics_health_index(
                     self.latest_telemetry or {},
@@ -553,6 +564,15 @@ class SimulationService:
                 self.latest_assessment["health"] = physics_health
                 if "mission_risk" in self.latest_assessment and isinstance(self.latest_assessment["mission_risk"], dict):
                     self.latest_assessment["mission_risk"]["health_index"] = physics_health["health_index"]
+
+                # Drive the alert log and mission report from the fully-merged,
+                # authoritative assessment (this is what the dashboard actually
+                # shows) once per scored window - not from the pipeline's own
+                # secondary diagnoser, which never sees instrumentation/sensor
+                # faults since those never perturb the real physics twin.
+                if window_assessment:
+                    self.pipeline.alerts.evaluate(self.latest_assessment)
+                    self.pipeline.report.update(self.latest_assessment)
 
                 subsystems = get_subsystems_status(self.running, payload["simulation_time"])
                 physics_state = compute_physics_equations_state(
@@ -656,7 +676,7 @@ class ControlsRequest(BaseModel):
 
 
 class InjectFaultRequest(BaseModel):
-    fault_type: str = Field(..., description="CYLINDER | BEARING | COOLING | LUBRICATION | CLEAR")
+    fault_type: str = Field(..., description="CYLINDER | BEARING | COOLING | LUBRICATION | SENSOR | CLEAR")
     severity: float = Field(0.8, ge=0.0, le=1.0)
     component: Optional[str] = Field(None, description="e.g. CYLINDER_3; defaults per family")
     trajectory: str = Field("CONSTANT", description="CONSTANT | LINEAR | STEP | EXPONENTIAL")
@@ -814,6 +834,39 @@ async def inject_fault(req: InjectFaultRequest):
         service.xgboost_adapter.clear_fault()   # stop applying perturbations
         service.xgboost_adapter.buffer.clear()  # flush stale fault-tainted frames
         return {"running": True, "fault_type": "CLEAR", "note": "Fault cleared; engine restored to healthy baseline."}
+
+    # --- SENSOR path: instrumentation-only fault, no physical degradation ---
+    # A dead/drifting sensor is not a mechanical fault: the engine keeps running
+    # exactly as modelled, only the reported measurement goes bad. So the physics
+    # injector is (re)set to healthy - the twin's real physics must stay nominal -
+    # while the live XGBoost adapter accumulates a synthetic sensor-drift bias
+    # (class 5 / SENSOR_DRIFT_FAILURE) on top of the true EGT reading. Because the
+    # digital twin still expects the true value, the growing measured-vs-twin
+    # residual is exactly what should flag the fault and drive an alert, even
+    # though the underlying engine health stays intact.
+    if req.fault_type.upper() == "SENSOR":
+        service.injector.config = DegradationConfig.healthy()
+        current_sim_time = service.runner.clock.simulation_time
+        tel_sim_time = (
+            service.latest_telemetry.get("simulation_time", current_sim_time)
+            if service.latest_telemetry else current_sim_time
+        )
+        service.xgboost_adapter.buffer.clear()
+        service.xgboost_adapter.set_active_fault(
+            fault_type="SENSOR",
+            severity=req.severity,
+            sim_time=tel_sim_time,
+            ramp_duration_s=req.ramp_duration_s,
+        )
+        return {
+            "running": True,
+            "fault_type": "SENSOR",
+            "component": req.component or "EGT_SENSOR",
+            "severity": req.severity,
+            "trajectory": req.trajectory,
+            "injected_at_sim_time": tel_sim_time,
+            "note": "Sensor instrumentation fault injected - the engine remains mechanically healthy; only the reported measurement drifts from truth.",
+        }
 
     # --- parse fault type ---
     try:
