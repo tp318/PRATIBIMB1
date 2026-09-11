@@ -144,7 +144,7 @@ function SortieLogModal(props) {
 
   if (!open) return null;
 
-  return h("div", { className: "modal-overlay", onClick: function(e){ if(e.target===e.currentTarget) onClose(); } },
+  return h("div", { className: "modal-overlay" },
     h("div", { className: "modal-box" },
       h("div", { className: "modal-head" },
         h("span", { className: "modal-title" }, "Sortie Live Log — Real Engine vs Digital Twin"),
@@ -1447,8 +1447,32 @@ function DigitalTwinTab(props) {
     oil_press_calc_bar: isLubFault ? "1.42" : oilP.toFixed(2),
   };
 
-  // Synchronized crankshaft angle (720 degrees full 4-stroke cycle)
-  const crankCycleDeg = ((rpm / 60) * tick * 45) % 720;
+  // Silky smooth 60 FPS continuous crankshaft & piston animation
+  const [animAngle, setAnimAngle] = useState(0);
+  const animRef = useRef(null);
+  const lastTimeRef = useRef(performance.now());
+  const angleRef = useRef(0);
+
+  useEffect(function() {
+    let active = true;
+    function frame(now) {
+      if (!active) return;
+      const dt = Math.min(0.08, (now - lastTimeRef.current) / 1000);
+      lastTimeRef.current = now;
+      const currentRpm = Number.isFinite(rpm) && rpm > 200 ? rpm : 4500;
+      const speed = Math.max(0.6, Math.min(3.5, currentRpm / 1800));
+      angleRef.current = (angleRef.current + speed * 360 * dt) % 720;
+      setAnimAngle(angleRef.current);
+      animRef.current = requestAnimationFrame(frame);
+    }
+    animRef.current = requestAnimationFrame(frame);
+    return function() {
+      active = false;
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+  }, [rpm]);
+
+  const crankCycleDeg = animAngle;
   const crankDeg = crankCycleDeg % 360;
   const rad = (crankDeg * Math.PI) / 180;
 
@@ -1463,7 +1487,7 @@ function DigitalTwinTab(props) {
   // Piston heights (140 to 184 px)
   const pHeights = cylAngles.map(function(ang, idx) {
     const r = (ang * Math.PI) / 180;
-    const jitter = (isMisfireFault && idx + 1 === misfireCyl) ? Math.sin(tick * 5) * 3 : 0;
+    const jitter = (isMisfireFault && idx + 1 === misfireCyl) ? Math.sin((animAngle * Math.PI) / 30) * 3.5 : 0;
     return 162 - 20 * Math.cos(r) + jitter;
   });
 
@@ -2737,7 +2761,6 @@ function App() {
           push("fuel", eff.fuel_flow_lph);
         }
         if (msg.assessment) setAssessment(msg.assessment);
-        setTick(function (n) { return n + 1; });
       };
       ws.onclose = function () { setConnected(false); retry = setTimeout(connect, 1500); };
       ws.onerror = function () { ws.close(); };
@@ -2756,8 +2779,13 @@ function App() {
       try {
         const st = await (await fetch("/api/status")).json();
         if (stop) return;
-        setStatus(st);
-        setRunning(!!st.running);
+        if (st) {
+          setStatus(st);
+          // Only sync running from HTTP poll if WS is not actively driving the session
+          if (!wsRef.current || wsRef.current.readyState !== 1) {
+            setRunning(!!st.running);
+          }
+        }
         if (st.running) {
           const [al, ef, rp] = await Promise.all([
             fetch("/api/alerts?limit=80").then(function (r) { return r.json(); }),
@@ -2823,7 +2851,6 @@ function App() {
     setFaultStatus(null);
     setIsFaultActive(false);
     setPhysicsState(null);
-    setLogOpen(false);
     if (window.PratibimbAudio) {
       window.PratibimbAudio.stopContinuousBeep();
     }
