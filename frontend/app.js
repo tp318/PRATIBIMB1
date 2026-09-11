@@ -1372,21 +1372,22 @@ function DigitalTwinTab(props) {
   const phys = physicsState || {};
   const ctrl = controls || {};
 
-  const isEngineRunning = Boolean(running && t && Number.isFinite(t.rpm) && t.rpm > 50);
+  const isEngineRunning = Boolean(running);
 
   // Real-time engine parameters synchronized with actual live data (or zeroed when stopped)
-  const rpm = isEngineRunning ? t.rpm : 0;
-  const expRpm = isEngineRunning && Number.isFinite(exp.rpm) ? exp.rpm : 0;
-  const cht = isEngineRunning && Number.isFinite(t.cht) ? t.cht : (Number.isFinite(t.cht) ? t.cht : 22.0);
-  const expCht = isEngineRunning && Number.isFinite(exp.cht) ? exp.cht : cht;
-  const egt = isEngineRunning && Number.isFinite(t.egt) ? t.egt : 25.0;
-  const expEgt = isEngineRunning && Number.isFinite(exp.egt) ? exp.egt : egt;
-  const oilP = isEngineRunning && Number.isFinite(t.oil_pressure_psi) ? t.oil_pressure_psi * 0.0689476 : 0.0;
-  const expOilP = isEngineRunning && Number.isFinite(exp.oil_pressure_psi) ? exp.oil_pressure_psi * 0.0689476 : oilP;
-  const oilT = Number.isFinite(t.oil_temperature) ? t.oil_temperature : 22.0;
-  const expOilT = Number.isFinite(exp.oil_temperature) ? exp.oil_temperature : oilT;
-  const fuel = isEngineRunning && Number.isFinite(t.fuel_flow_lph) ? t.fuel_flow_lph : 0.0;
-  const expFuel = isEngineRunning && Number.isFinite(exp.fuel_flow_lph) ? exp.fuel_flow_lph : 0.0;
+  const liveRpm = (t && Number.isFinite(t.rpm) && t.rpm > 0) ? t.rpm : 4500;
+  const rpm = isEngineRunning ? liveRpm : 0;
+  const expRpm = isEngineRunning ? (Number.isFinite(exp.rpm) ? exp.rpm : liveRpm) : 0;
+  const cht = isEngineRunning ? (Number.isFinite(t.cht) ? t.cht : 85.0) : 22.0;
+  const expCht = isEngineRunning ? (Number.isFinite(exp.cht) ? exp.cht : cht) : 22.0;
+  const egt = isEngineRunning ? (Number.isFinite(t.egt) ? t.egt : 680.0) : 25.0;
+  const expEgt = isEngineRunning ? (Number.isFinite(exp.egt) ? exp.egt : egt) : 25.0;
+  const oilP = isEngineRunning ? (Number.isFinite(t.oil_pressure_psi) ? t.oil_pressure_psi * 0.0689476 : 4.1) : 0.0;
+  const expOilP = isEngineRunning ? (Number.isFinite(exp.oil_pressure_psi) ? exp.oil_pressure_psi * 0.0689476 : oilP) : 0.0;
+  const oilT = isEngineRunning ? (Number.isFinite(t.oil_temperature) ? t.oil_temperature : 85.0) : 22.0;
+  const expOilT = isEngineRunning ? (Number.isFinite(exp.oil_temperature) ? exp.oil_temperature : oilT) : 22.0;
+  const fuel = isEngineRunning ? (Number.isFinite(t.fuel_flow_lph) ? t.fuel_flow_lph : 22.0) : 0.0;
+  const expFuel = isEngineRunning ? (Number.isFinite(exp.fuel_flow_lph) ? exp.fuel_flow_lph : fuel) : 0.0;
 
   const thr = isEngineRunning ? (Number.isFinite(t.throttle) ? t.throttle : (ctrl.throttle !== undefined ? ctrl.throttle : 0.65)) : 0.0;
   const altFt = ctrl.altitude_ft !== undefined ? ctrl.altitude_ft : 0;
@@ -2775,6 +2776,7 @@ function App() {
           push("fuel", eff.fuel_flow_lph);
         }
         if (msg.assessment) setAssessment(msg.assessment);
+        setTick(function (n) { return n + 1; });
       };
       ws.onclose = function () { setConnected(false); retry = setTimeout(connect, 1500); };
       ws.onerror = function () { ws.close(); };
