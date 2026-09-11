@@ -179,7 +179,7 @@ function SortieLogModal(props) {
             )
           ),
           h("tbody", null,
-            rows.slice(-400).map(function(row, i) {
+            rows.slice(-80).map(function(row, i) {
               return h("tr", { key: i },
                 h("td", { className: "mono" }, fmt(row.t, 1)),
                 h("td", { className: "mono" }, fmt(row.thr, 2)),
@@ -2586,6 +2586,7 @@ function App() {
   const [logOpen, setLogOpen] = useState(false);
   const logRows = useRef([]);
   const [logTick, setLogTick] = useState(0);
+  const lastLogTickRef = useRef(0);
 
   // Live manual controls
   const [ctrlAuto,     setCtrlAuto]     = useState(true);
@@ -2721,7 +2722,11 @@ function App() {
             },
           });
           if (logRows.current.length > 6000) logRows.current.shift();
-          setLogTick(function(n){ return n+1; });
+          const now = Date.now();
+          if (now - lastLogTickRef.current > 350) {
+            lastLogTickRef.current = now;
+            setLogTick(function(n){ return n+1; });
+          }
         }
         if (eff) {
           setEfficiency(eff);

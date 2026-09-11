@@ -81,7 +81,7 @@ except Exception as _err:
 
 # Telemetry is generated at 100 Hz; broadcasting every frame would flood clients
 # for no benefit, so the stream is decimated to this rate.
-STREAM_HZ = 10.0
+STREAM_HZ = 5.0
 SIM_DT = 0.01
 
 
@@ -408,13 +408,13 @@ class SimulationService:
         self.latest_xgboost_diagnosis = None
 
     async def start(self, **kwargs):
-        await self.stop()
+        await self.stop(broadcast_stopped=False)
         self.build(**kwargs)
         self.running = True
         self.started_at = time.time()
         self._task = asyncio.create_task(self._loop())
 
-    async def stop(self):
+    async def stop(self, broadcast_stopped: bool = True):
         self.running = False
         if self._task is not None:
             self._task.cancel()
@@ -436,12 +436,13 @@ class SimulationService:
         if self.xgboost_adapter:
             self.xgboost_adapter.reset()
 
-        # Broadcast mission_stopped event to immediately reset all client stats
-        await self._broadcast({
-            "type": "mission_stopped",
-            "running": False,
-            "message": "Mission terminated by operator. All statistics reset to baseline."
-        })
+        if broadcast_stopped:
+            # Broadcast mission_stopped event to immediately reset all client stats
+            await self._broadcast({
+                "type": "mission_stopped",
+                "running": False,
+                "message": "Mission terminated by operator. All statistics reset to baseline."
+            })
 
     # ------------------------------------------------------------------- loop
 
