@@ -1,0 +1,5 @@
+{
+ "q_scale": 0.6,
+ "recovery": 2.0,
+ "n_val_runs": 14
+}

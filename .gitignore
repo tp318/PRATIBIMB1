@@ -51,3 +51,6 @@ Desktop.ini
 *.swp
 *.swo
 *~
+
+# RUL Estimation generated data/outputs (too large for git)
+RUL ESTIMATION/outputs/data/
