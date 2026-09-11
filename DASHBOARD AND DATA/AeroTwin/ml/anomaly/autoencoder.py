@@ -10,12 +10,22 @@ import os
 import json
 import numpy as np
 import pandas as pd
-import torch
-import torch.nn as nn
-import torch.optim as optim
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    TORCH_AVAILABLE = True
+except ImportError:
+    torch = None
+    nn = None
+    optim = None
+    TORCH_AVAILABLE = False
 
 
-class AutoencoderNet(nn.Module):
+_BaseModule = nn.Module if TORCH_AVAILABLE else object
+
+
+class AutoencoderNet(_BaseModule):
     """
     Compact Feed-Forward Autoencoder Network.
     """
@@ -59,7 +69,11 @@ class AutoencoderAnomalyDetector:
         self.lr = lr
         self.epochs = epochs
         self.batch_size = batch_size
-        self.random_seed = random_seed
+        if not TORCH_AVAILABLE:
+            raise ImportError(
+                "PyTorch is required for AutoencoderAnomalyDetector. "
+                "Install torch or use StatisticalAnomalyDetector."
+            )
 
         torch.manual_seed(self.random_seed)
         np.random.seed(self.random_seed)

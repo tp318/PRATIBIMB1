@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "",
+  "buildCommand": "mkdir -p _site && cp -r \"DASHBOARD AND DATA/AeroTwin/api/static/\"* _site/",
+  "outputDirectory": "_site",
+  "rewrites": [
+    { "source": "/static/:path*", "destination": "/:path*" }
+  ]
+}
