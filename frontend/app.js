@@ -1366,27 +1366,29 @@ function MathFrac(num, den) {
 
 // -------------------------------------------------------------------- DigitalTwinTab
 function DigitalTwinTab(props) {
-  const { telemetry, expected, physicsState, tick, controls, activeFault, faultComponent, faultSeverity, assessment } = props;
+  const { running, telemetry, expected, physicsState, tick, controls, activeFault, faultComponent, faultSeverity, assessment } = props;
   const t = telemetry || {};
   const exp = expected || {};
   const phys = physicsState || {};
   const ctrl = controls || {};
 
-  // Real-time engine parameters synchronized with actual live data
-  const rpm = Number.isFinite(t.rpm) ? t.rpm : 4500;
-  const expRpm = Number.isFinite(exp.rpm) ? exp.rpm : rpm;
-  const cht = Number.isFinite(t.cht) ? t.cht : 85.0;
-  const expCht = Number.isFinite(exp.cht) ? exp.cht : cht;
-  const egt = Number.isFinite(t.egt) ? t.egt : 680.0;
-  const expEgt = Number.isFinite(exp.egt) ? exp.egt : egt;
-  const oilP = Number.isFinite(t.oil_pressure_psi) ? t.oil_pressure_psi * 0.0689476 : 4.1;
-  const expOilP = Number.isFinite(exp.oil_pressure_psi) ? exp.oil_pressure_psi * 0.0689476 : oilP;
-  const oilT = Number.isFinite(t.oil_temperature) ? t.oil_temperature : 85.0;
-  const expOilT = Number.isFinite(exp.oil_temperature) ? exp.oil_temperature : oilT;
-  const fuel = Number.isFinite(t.fuel_flow_lph) ? t.fuel_flow_lph : 22.0;
-  const expFuel = Number.isFinite(exp.fuel_flow_lph) ? exp.fuel_flow_lph : fuel;
+  const isEngineRunning = Boolean(running && t && Number.isFinite(t.rpm) && t.rpm > 50);
 
-  const thr = Number.isFinite(t.throttle) ? t.throttle : (ctrl.throttle !== undefined ? ctrl.throttle : 0.65);
+  // Real-time engine parameters synchronized with actual live data (or zeroed when stopped)
+  const rpm = isEngineRunning ? t.rpm : 0;
+  const expRpm = isEngineRunning && Number.isFinite(exp.rpm) ? exp.rpm : 0;
+  const cht = isEngineRunning && Number.isFinite(t.cht) ? t.cht : (Number.isFinite(t.cht) ? t.cht : 22.0);
+  const expCht = isEngineRunning && Number.isFinite(exp.cht) ? exp.cht : cht;
+  const egt = isEngineRunning && Number.isFinite(t.egt) ? t.egt : 25.0;
+  const expEgt = isEngineRunning && Number.isFinite(exp.egt) ? exp.egt : egt;
+  const oilP = isEngineRunning && Number.isFinite(t.oil_pressure_psi) ? t.oil_pressure_psi * 0.0689476 : 0.0;
+  const expOilP = isEngineRunning && Number.isFinite(exp.oil_pressure_psi) ? exp.oil_pressure_psi * 0.0689476 : oilP;
+  const oilT = Number.isFinite(t.oil_temperature) ? t.oil_temperature : 22.0;
+  const expOilT = Number.isFinite(exp.oil_temperature) ? exp.oil_temperature : oilT;
+  const fuel = isEngineRunning && Number.isFinite(t.fuel_flow_lph) ? t.fuel_flow_lph : 0.0;
+  const expFuel = isEngineRunning && Number.isFinite(exp.fuel_flow_lph) ? exp.fuel_flow_lph : 0.0;
+
+  const thr = isEngineRunning ? (Number.isFinite(t.throttle) ? t.throttle : (ctrl.throttle !== undefined ? ctrl.throttle : 0.65)) : 0.0;
   const altFt = ctrl.altitude_ft !== undefined ? ctrl.altitude_ft : 0;
   const ambC = ctrl.ambient_c !== undefined ? ctrl.ambient_c : 15.0;
 
@@ -1397,10 +1399,10 @@ function DigitalTwinTab(props) {
     (assessment && assessment.diagnosis && assessment.diagnosis.predicted_fault !== "NORMAL" && assessment.diagnosis.predicted_fault !== "HEALTHY" && assessment.diagnosis.predicted_fault) ||
     null;
 
-  const isCoolingFault = Boolean(effFault && (effFault.includes("COOL") || effFault.includes("TEMP") || effFault.includes("LEAK")));
-  const isLubFault = Boolean(effFault && (effFault.includes("OIL") || effFault.includes("LUB")));
-  const isMisfireFault = Boolean(effFault && (effFault.includes("MISFIRE") || effFault.includes("CYL")));
-  const isBearingFault = Boolean(effFault && (effFault.includes("BEARING") || effFault.includes("VIB")));
+  const isCoolingFault = Boolean(isEngineRunning && effFault && (effFault.includes("COOL") || effFault.includes("TEMP") || effFault.includes("LEAK")));
+  const isLubFault = Boolean(isEngineRunning && effFault && (effFault.includes("OIL") || effFault.includes("LUB")));
+  const isMisfireFault = Boolean(isEngineRunning && effFault && (effFault.includes("MISFIRE") || effFault.includes("CYL")));
+  const isBearingFault = Boolean(isEngineRunning && effFault && (effFault.includes("BEARING") || effFault.includes("VIB")));
 
   let misfireCyl = 3;
   if (faultComponent) {
@@ -1454,25 +1456,31 @@ function DigitalTwinTab(props) {
   const angleRef = useRef(0);
 
   useEffect(function() {
+    if (!isEngineRunning || rpm <= 50) {
+      setAnimAngle(0);
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+      return;
+    }
     let active = true;
     function frame(now) {
       if (!active) return;
       const dt = Math.min(0.08, (now - lastTimeRef.current) / 1000);
       lastTimeRef.current = now;
-      const currentRpm = Number.isFinite(rpm) && rpm > 200 ? rpm : 4500;
+      const currentRpm = Math.max(200, rpm);
       const speed = Math.max(0.6, Math.min(3.5, currentRpm / 1800));
       angleRef.current = (angleRef.current + speed * 360 * dt) % 720;
       setAnimAngle(angleRef.current);
       animRef.current = requestAnimationFrame(frame);
     }
+    lastTimeRef.current = performance.now();
     animRef.current = requestAnimationFrame(frame);
     return function() {
       active = false;
       if (animRef.current) cancelAnimationFrame(animRef.current);
     };
-  }, [rpm]);
+  }, [isEngineRunning, rpm]);
 
-  const crankCycleDeg = animAngle;
+  const crankCycleDeg = isEngineRunning ? animAngle : 0;
   const crankDeg = crankCycleDeg % 360;
   const rad = (crankDeg * Math.PI) / 180;
 
@@ -1484,8 +1492,9 @@ function DigitalTwinTab(props) {
     (crankCycleDeg + 540) % 720,
   ];
 
-  // Piston heights (140 to 184 px)
+  // Piston heights (140 to 184 px, resting at 162 when stopped)
   const pHeights = cylAngles.map(function(ang, idx) {
+    if (!isEngineRunning) return 162;
     const r = (ang * Math.PI) / 180;
     const jitter = (isMisfireFault && idx + 1 === misfireCyl) ? Math.sin((animAngle * Math.PI) / 30) * 3.5 : 0;
     return 162 - 20 * Math.cos(r) + jitter;
@@ -1494,7 +1503,7 @@ function DigitalTwinTab(props) {
   const cylX = [185, 275, 365, 455];
 
   // Dynamic EGT glowing gradient
-  const egtNorm = Math.min(1.0, Math.max(0.0, (egt - 450) / 450));
+  const egtNorm = isEngineRunning ? Math.min(1.0, Math.max(0.0, (egt - 450) / 450)) : 0.0;
   const egtGlow = egtNorm > 0.65 ? "#ef4444" : (egtNorm > 0.35 ? "#f97316" : "#c2410c");
 
   // Dynamic CHT thermal color
@@ -1507,19 +1516,19 @@ function DigitalTwinTab(props) {
       h("div", { className: "stat" },
         h("div", { className: "stat-l" }, "Digital Twin Core"),
         h("div", { className: "stat-v", style: { fontSize: "18px", color: "#1f5fa8" } }, "4-Cyl 4-Stroke MVEM"),
-        h("div", { className: "stat-n" }, "Coupled Rotational ODE + Poppet Valve Timing")),
+        h("div", { className: "stat-n" }, isEngineRunning ? "Coupled Rotational ODE + Poppet Valve Timing" : "Rotational ODE Standby / Engine Off")),
       h("div", { className: "stat" },
         h("div", { className: "stat-l" }, "Throttle / Manifold"),
         h("div", { className: "stat-v" }, (thr * 100).toFixed(1) + "% / " + air.p_man_kpa + " kPa"),
-        h("div", { className: "stat-n" }, "Volumetric Eff: " + air.eta_v + " | ṁ_air: " + air.m_dot_air_kgs + " kg/s")),
+        h("div", { className: "stat-n" }, "Volumetric Eff: " + (isEngineRunning ? air.eta_v : "0.000") + " | ṁ_air: " + (isEngineRunning ? air.m_dot_air_kgs : "0.0000") + " kg/s")),
       h("div", { className: "stat" },
         h("div", { className: "stat-l" }, "Fuel Delivery"),
         h("div", { className: "stat-v" }, fuel.toFixed(1) + " L/h"),
-        h("div", { className: "stat-n" }, "Target AFR: " + fuelSys.afr_target + " (λ " + fuelSys.lambda_val + ")")),
+        h("div", { className: "stat-n" }, "Target AFR: " + fuelSys.afr_target + " (λ " + (isEngineRunning ? fuelSys.lambda_val : "0.000") + ")")),
       h("div", { className: "stat" },
         h("div", { className: "stat-l" }, "Engine Speed"),
-        h("div", { className: "stat-v" }, rpm.toFixed(0) + " RPM"),
-        h("div", { className: "stat-n" }, "ω: " + crank.omega_rads + " rad/s | Propeller Synchronized"))
+        h("div", { className: "stat-v" }, isEngineRunning ? rpm.toFixed(0) + " RPM" : "0 RPM (STOPPED)"),
+        h("div", { className: "stat-n" }, isEngineRunning ? "ω: " + crank.omega_rads + " rad/s | Propeller Synchronized" : "Engine Standby (Click 'Start simulation')"))
     ),
 
     h("div", { className: "dt-tab-grid", style: { marginTop: "14px" } },
@@ -1527,8 +1536,8 @@ function DigitalTwinTab(props) {
       h("div", { className: "twin-schematic-box", id: "tour-virtual-engine" },
         h("div", { className: "twin-schematic-title" },
           h("span", null, "Virtual Engine Digital Twin — Real-Time 4-Stroke Cutaway"),
-          h("span", { className: cls("badge", effFault && "warn") },
-            effFault ? "⚠️ FAULT DEMO ACTIVE" : "PHYSICS LIVE SYNCHRONIZED"
+          h("span", { className: cls("badge", effFault ? "warn" : (isEngineRunning ? "live" : "")) },
+            effFault ? "⚠️ FAULT DEMO ACTIVE" : (isEngineRunning ? "PHYSICS LIVE SYNCHRONIZED" : "STANDBY / ENGINE STOPPED")
           )
         ),
 
@@ -1554,21 +1563,21 @@ function DigitalTwinTab(props) {
           )
         ) : h("div", {
           style: {
-            background: "rgba(14, 165, 233, 0.12)",
-            border: "1px solid rgba(14, 165, 233, 0.3)",
+            background: isEngineRunning ? "rgba(14, 165, 233, 0.12)" : "rgba(100, 116, 139, 0.12)",
+            border: isEngineRunning ? "1px solid rgba(14, 165, 233, 0.3)" : "1px solid rgba(100, 116, 139, 0.25)",
             borderRadius: "4px",
             padding: "7px 14px",
             marginBottom: "12px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            color: "#7dd3fc",
+            color: isEngineRunning ? "#7dd3fc" : "#94a3b8",
           }
         },
           h("span", { style: { fontWeight: "600", fontSize: "12.5px" } },
-            "● Virtual Digital Twin Synchronized With Real Engine Telemetry"
+            isEngineRunning ? "● Virtual Digital Twin Synchronized With Real Engine Telemetry" : "○ Virtual Engine Standby — Click 'Start simulation' to ignite 4-stroke cycle"
           ),
-          h("span", { style: { fontSize: "11px", color: "#38bdf8", fontWeight: "700" } }, "4-STROKE CYCLE NOMINAL")
+          h("span", { style: { fontSize: "11px", color: isEngineRunning ? "#38bdf8" : "#94a3b8", fontWeight: "700" } }, isEngineRunning ? "4-STROKE CYCLE NOMINAL" : "ENGINE RESTING")
         ),
 
         h("svg", {
@@ -1649,7 +1658,12 @@ function DigitalTwinTab(props) {
             let exhaustValveOpen = false;
             let isSparking = false;
 
-            if (ang < 180) {
+            if (!isEngineRunning) {
+              phase = "STANDBY";
+              intakeValveOpen = false;
+              exhaustValveOpen = false;
+              isSparking = false;
+            } else if (ang < 180) {
               phase = "POWER";
               isSparking = ang < 45;
             } else if (ang < 360) {
@@ -3224,6 +3238,7 @@ function App() {
     h("div", { className: "panelwrap" },
       tab === "monitoring" ? h(MonitoringTab, { hist: hist.current, telemetry: t, tick: tick, assessment: assessment }) :
       tab === "twin_physics" ? h(DigitalTwinTab, {
+        running: running,
         telemetry: t,
         expected: (assessment && assessment.expected) || {},
         physicsState: physicsState,
