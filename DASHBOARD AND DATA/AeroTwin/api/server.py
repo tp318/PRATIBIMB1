@@ -563,6 +563,7 @@ class SimulationService:
                 await self._broadcast(
                     {
                         "type": "telemetry",
+                        "running": True,
                         "telemetry": self.latest_telemetry,
                         "twin": {
                             "simulation_time": payload["simulation_time"],

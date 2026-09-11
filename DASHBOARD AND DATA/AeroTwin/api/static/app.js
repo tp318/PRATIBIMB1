@@ -203,57 +203,13 @@ function SortieLogModal(props) {
   );
 }
 
-// ----------------------------------------------------------- Avionics Urgent Warning Buzzer Synthesizer
-let _audioCtx = null;
+// ----------------------------------------------------------- Security System Alert Audio Engine
 function playUrgentBuzzerBurst() {
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    if (!_audioCtx) {
-      _audioCtx = new AudioCtx();
-    }
-    if (_audioCtx.state === "suspended") {
-      _audioCtx.resume();
-    }
-    const now = _audioCtx.currentTime;
-
-    // Avionics Master Warning Buzzer:
-    // Triple rapid dissonant burst: 780 Hz & 980 Hz sawtooth waveforms (dissonant harmonic buzz)
-    const bursts = [0.0, 0.11, 0.22];
-    bursts.forEach(function(offset) {
-      const tStart = now + offset;
-      const tEnd = tStart + 0.085;
-
-      // Tone 1: 780 Hz sawtooth
-      const osc1 = _audioCtx.createOscillator();
-      const gain1 = _audioCtx.createGain();
-      osc1.type = "sawtooth";
-      osc1.frequency.setValueAtTime(780, tStart);
-      gain1.gain.setValueAtTime(0.001, tStart);
-      gain1.gain.linearRampToValueAtTime(0.22, tStart + 0.008);
-      gain1.gain.exponentialRampToValueAtTime(0.001, tEnd);
-      osc1.connect(gain1);
-      gain1.connect(_audioCtx.destination);
-      osc1.start(tStart);
-      osc1.stop(tEnd);
-
-      // Tone 2: 980 Hz sawtooth
-      const osc2 = _audioCtx.createOscillator();
-      const gain2 = _audioCtx.createGain();
-      osc2.type = "sawtooth";
-      osc2.frequency.setValueAtTime(980, tStart);
-      gain2.gain.setValueAtTime(0.001, tStart);
-      gain2.gain.linearRampToValueAtTime(0.20, tStart + 0.008);
-      gain2.gain.exponentialRampToValueAtTime(0.001, tEnd);
-      osc2.connect(gain2);
-      gain2.connect(_audioCtx.destination);
-      osc2.start(tStart);
-      osc2.stop(tEnd);
-    });
-  } catch (e) {
-    console.warn("AudioContext error:", e);
+  if (window.PratibimbAudio) {
+    window.PratibimbAudio.playChime();
   }
 }
+
 
 // ----------------------------------------------------------- Apple Blur Hero Overlay (Minimalist Typography)
 const HERO_TEXT = "PROJECT PRATIBIMB: A Physics Informed Digital Twin For Health Monitoring and Predictive Maintenance of MALE UAVs";
@@ -1459,10 +1415,12 @@ function DigitalTwinTab(props) {
   useEffect(function() {
     if (!isEngineRunning || rpm <= 50) {
       setAnimAngle(0);
+      angleRef.current = 0;
       if (animRef.current) cancelAnimationFrame(animRef.current);
       return;
     }
     let active = true;
+    lastTimeRef.current = performance.now();
     function frame(now) {
       if (!active) return;
       const dt = Math.min(0.08, (now - lastTimeRef.current) / 1000);
@@ -1473,7 +1431,6 @@ function DigitalTwinTab(props) {
       setAnimAngle(angleRef.current);
       animRef.current = requestAnimationFrame(frame);
     }
-    lastTimeRef.current = performance.now();
     animRef.current = requestAnimationFrame(frame);
     return function() {
       active = false;
@@ -2620,6 +2577,8 @@ function App() {
   // Subsystems & Physics state from backend
   const [subsystems, setSubsystems] = useState(null);
   const [physicsState, setPhysicsState] = useState(null);
+  const [twinExpected, setTwinExpected] = useState({});
+  const [sessionKey, setSessionKey] = useState(0);
 
   // Sortie live log dialogue
   const [logOpen, setLogOpen] = useState(false);
@@ -2650,7 +2609,7 @@ function App() {
     if (isFaultActive && audioEnabled) {
       if (window.PratibimbAudio) {
         window.PratibimbAudio.setMuted(false);
-        window.PratibimbAudio.startContinuousBeep(720);
+        window.PratibimbAudio.startContinuousBeep(600);
       }
     } else {
       if (window.PratibimbAudio) {
@@ -2697,6 +2656,8 @@ function App() {
         }
         if (msg.type !== "telemetry") return;
 
+        setRunning(true);
+
         if (msg.subsystems) setSubsystems(msg.subsystems);
         if (msg.physics_equations) setPhysicsState(msg.physics_equations);
 
@@ -2711,6 +2672,7 @@ function App() {
 
         const t = msg.telemetry;
         const exp = (msg.twin && msg.twin.expected) || {};
+        setTwinExpected(exp);
         const eff = msg.efficiency || null;
         // Sync slider positions from server-authoritative controls (so auto-mode animates them)
         if (msg.controls) {
@@ -2797,12 +2759,12 @@ function App() {
         if (stop) return;
         if (st) {
           setStatus(st);
-          // Only sync running from HTTP poll if WS is not actively driving the session
-          if (!wsRef.current || wsRef.current.readyState !== 1) {
-            setRunning(!!st.running);
+          // Sync running from authoritative server status
+          if (st.running !== undefined) {
+            setRunning(Boolean(st.running));
           }
         }
-        if (st.running) {
+        if (st && st.running) {
           const [al, ef, rp] = await Promise.all([
             fetch("/api/alerts?limit=80").then(function (r) { return r.json(); }),
             fetch("/api/efficiency?limit=1").then(function (r) { return r.json(); }),
@@ -2855,6 +2817,7 @@ function App() {
   function resetAllStats() {
     setRunning(false);
     setTelemetry(null);
+    setTwinExpected({});
     setAssessment(null);
     setEfficiency(null);
     setEffSummary(null);
@@ -2862,6 +2825,7 @@ function App() {
     setAlertCounts({});
     setReport(null);
     clearHist();
+    setTick(function (n) { return n + 1; });
     logRows.current = [];
     setActiveFault(null);
     setFaultStatus(null);
@@ -2872,12 +2836,23 @@ function App() {
     }
   }
 
-  function start() {
+  async function start() {
+    setBusy(true);
     resetAllStats();
-    setRunning(true);
-    setLogOpen(true);
-    setCtrlAuto(true);   // new sortie always starts in auto mode
-    post("/api/sim/start", { seed: 42, mission_duration_s: Number(missionS) });
+    setSessionKey(function(k) { return k + 1; });
+    try {
+      const ok = await post("/api/sim/start", { seed: 42, mission_duration_s: Number(missionS) });
+      if (ok) {
+        setRunning(true);
+        setLogOpen(true);
+        setCtrlAuto(true);   // new sortie always starts in auto mode
+      }
+    } catch (e) {
+      console.error("[Pratibimb] Start error:", e);
+      setBanner("Failed to start sortie: " + String(e));
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function stop() {
@@ -2885,6 +2860,7 @@ function App() {
     try {
       await post("/api/sim/stop");
       resetAllStats();
+      setSessionKey(function(k) { return k + 1; });
     } catch (e) {
       console.error("[Pratibimb] Stop error:", e);
       resetAllStats();
@@ -3240,9 +3216,10 @@ function App() {
     h("div", { className: "panelwrap" },
       tab === "monitoring" ? h(MonitoringTab, { hist: hist.current, telemetry: t, tick: tick, assessment: assessment }) :
       tab === "twin_physics" ? h(DigitalTwinTab, {
+        key: "twin_" + sessionKey,
         running: running,
         telemetry: t,
-        expected: (assessment && assessment.expected) || {},
+        expected: twinExpected,
         physicsState: physicsState,
         tick: tick,
         controls: { throttle: ctrlThrottle, altitude_ft: ctrlAlt, ambient_c: ctrlAmb },
