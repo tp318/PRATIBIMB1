@@ -17,6 +17,9 @@ const MAX_POINTS = 300;
 // ----------------------------------------------------------- Backend Config
 // Supports single-host deployment (Render / Local) AND split deployment (Vercel + Render).
 function getBackendBaseUrl() {
+  if (typeof location !== "undefined" && (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "0.0.0.0")) {
+    return "";
+  }
   if (window.PRATIBIMB_BACKEND_URL && window.PRATIBIMB_BACKEND_URL.trim()) {
     return window.PRATIBIMB_BACKEND_URL.trim().replace(/\/$/, "");
   }
@@ -232,14 +235,14 @@ function HeroOverlay(props) {
     setUnblurring(true);
     setTimeout(function() {
       onStartDemo();
-    }, 550);
+    }, 450);
   }
 
   function handleSkip() {
     setUnblurring(true);
     setTimeout(function() {
       onSkip();
-    }, 380);
+    }, 450);
   }
 
   return h("div", { className: cls("pratibimb-hero-overlay", unblurring && "unblurring") },
@@ -402,34 +405,39 @@ function TutorialOverlay(props) {
     };
   }, [step, curr]);
 
-  return h("div", { className: "tutorial-overlay" },
+  return h("div", { className: "tutorial-root", style: { position: "fixed", inset: 0, zIndex: 10010, pointerEvents: "none" } },
     spotlightRect ? h("div", {
       className: "tour-spotlight-box",
       style: {
+        position: "fixed",
         top: Math.max(0, spotlightRect.top - 6) + "px",
         left: Math.max(0, spotlightRect.left - 6) + "px",
         width: Math.min(window.innerWidth - 8, spotlightRect.width + 12) + "px",
         height: Math.min(window.innerHeight - 8, spotlightRect.height + 12) + "px",
+        zIndex: 10015,
+        pointerEvents: "none",
       }
-    }) : h("div", { className: "tour-backdrop-dim" }),
+    }) : h("div", { className: "tour-backdrop-dim", style: { position: "fixed", inset: 0, zIndex: 10015, pointerEvents: "none" } }),
 
-    h("div", { className: "tutorial-card" },
-      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" } },
-        h("span", { className: "tutorial-step-tag" }, curr.tag + " • Step " + (step + 1) + " of " + TUTORIAL_STEPS.length),
-        curr.tab ? h("span", { style: { fontSize: "11px", fontWeight: "700", fontFamily: "var(--mono)", background: "#f1f5f9", border: "1px solid #cbd5e1", padding: "2px 8px", borderRadius: "3px", color: "#475569" } }, "Active Section: " + curr.tab) : null
-      ),
-      h("h2", { className: "tutorial-step-title" }, curr.title),
-      h("p", { className: "tutorial-step-desc" }, curr.desc),
-      h("div", { className: "tutorial-footer" },
-        h("div", { className: "tutorial-dots" },
-          TUTORIAL_STEPS.map(function(_, idx) {
-            return h("div", { key: idx, className: cls("tutorial-dot", idx === step && "active") });
-          })
+    h("div", { className: "tutorial-overlay", style: { position: "fixed", inset: 0, zIndex: 10030, display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: "28px", pointerEvents: "none" } },
+      h("div", { className: "tutorial-card", style: { pointerEvents: "auto", position: "relative", zIndex: 10040, background: "#ffffff", color: "#0f172a", filter: "none", WebkitFilter: "none", backdropFilter: "none", WebkitBackdropFilter: "none", isolation: "isolate" } },
+        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" } },
+          h("span", { className: "tutorial-step-tag" }, curr.tag + " • Step " + (step + 1) + " of " + TUTORIAL_STEPS.length),
+          curr.tab ? h("span", { style: { fontSize: "11px", fontWeight: "700", fontFamily: "var(--mono)", background: "#f1f5f9", border: "1px solid #cbd5e1", padding: "2px 8px", borderRadius: "3px", color: "#475569" } }, "Active Section: " + curr.tab) : null
         ),
-        h("div", { className: "tutorial-nav" },
-          h("button", { onClick: onSkip, className: "hero-skip-btn" }, "Skip Tour"),
-          step > 0 ? h("button", { onClick: onPrev }, "← Previous") : null,
-          h("button", { className: "go", onClick: isLast ? onClose : onNext }, isLast ? "✓ Finish Tour" : "Next Section →")
+        h("h2", { className: "tutorial-step-title" }, curr.title),
+        h("p", { className: "tutorial-step-desc" }, curr.desc),
+        h("div", { className: "tutorial-footer" },
+          h("div", { className: "tutorial-dots" },
+            TUTORIAL_STEPS.map(function(_, idx) {
+              return h("div", { key: idx, className: cls("tutorial-dot", idx === step && "active") });
+            })
+          ),
+          h("div", { className: "tutorial-nav" },
+            h("button", { onClick: onSkip, className: "hero-skip-btn" }, "Skip Tour"),
+            step > 0 ? h("button", { onClick: onPrev }, "← Previous") : null,
+            h("button", { className: "go", onClick: isLast ? onClose : onNext }, isLast ? "✓ Finish Tour" : "Next Section →")
+          )
         )
       )
     )
@@ -575,23 +583,28 @@ function Trace(props) {
     let span = 1;
     series.forEach(function (s) { span = Math.max(span, s.length - 1); });
 
-    function draw(data, stroke, dashed) {
+    function draw(data, stroke, dashed, width) {
       if (!data || data.length < 2) return;
       ctx.beginPath();
       ctx.strokeStyle = stroke;
-      ctx.lineWidth = dashed ? 1.25 : 1.6;
-      ctx.setLineDash(dashed ? [3, 3] : []);
+      ctx.lineWidth = width || (dashed ? 1.8 : 1.5);
+      ctx.setLineDash(dashed ? [4, 3] : []);
+      let started = false;
       for (let i = 0; i < data.length; i++) {
+        const val = data[i];
+        if (!Number.isFinite(val)) continue;
         const x = (i / span) * w;
-        const y = hh - ((data[i] - lo) / (hi - lo)) * hh;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        const y = hh - ((val - lo) / (hi - lo)) * hh;
+        if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
       }
       ctx.stroke();
       ctx.setLineDash([]);
     }
 
-    draw(expected, ACCENT, true);
-    draw(observed, INK, false);
+    // Draw observed real-engine telemetry first (dark solid line)
+    draw(observed, INK, false, 1.5);
+    // Draw digital twin expected baseline ON TOP (vivid blue dashed line)
+    draw(expected, "#0284c7", true, 1.9);
   }, [observed, expected, tick]);
 
   const last = observed && observed.length ? observed[observed.length - 1] : null;
@@ -1113,11 +1126,34 @@ const FAULT_9_CLASSES = [
 ];
 
 function XGBoostTab(props) {
+  const [liveDiag, setLiveDiag] = useState(null);
+
+  useEffect(function () {
+    let active = true;
+    function fetchDiag() {
+      fetch(apiUrl("/api/diagnose/xgboost"))
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (active && data) {
+            setLiveDiag(data);
+          }
+        })
+        .catch(function () {});
+    }
+    fetchDiag();
+    const interval = setInterval(fetchDiag, 1200);
+    return function () {
+      active = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   const a = props.assessment;
-  const xgb = (a && (a.xgboost || a.diagnosis)) || null;
-  const probs = (xgb && xgb.probabilities) || {};
-  const topDevs = (xgb && xgb.top_deviations) || [];
-  const shap = xgb && xgb.shap_explanation;
+  const xgb = (a && a.xgboost) || (liveDiag) || (a && a.diagnosis && a.diagnosis.shap_explanation ? a.diagnosis : null) || (props.status && props.status.xgboost && props.status.xgboost.latest) || (a && a.diagnosis) || null;
+  const probs = (xgb && xgb.probabilities) || (liveDiag && liveDiag.probabilities) || {};
+  const topDevs = (xgb && xgb.top_deviations) || (liveDiag && liveDiag.top_deviations) || [];
+  const shap = (xgb && xgb.shap_explanation) || (liveDiag && liveDiag.shap_explanation) || (a && a.diagnosis && a.diagnosis.shap_explanation) || (props.status && props.status.xgboost && props.status.xgboost.latest && props.status.xgboost.latest.shap_explanation) || null;
+  const isFault = Boolean(xgb && xgb.predicted_fault && xgb.predicted_fault !== "NORMAL" && xgb.predicted_fault !== "HEALTHY");
 
   return h("div", null,
     h("div", { className: "stat-row" },
@@ -1255,57 +1291,66 @@ function XGBoostTab(props) {
           h("b", null, "Diagnostic Attribution: "),
           shap.summary || "Attributions nominal.",
           h("span", { style: { marginLeft: "14px", color: "var(--ink-3)", fontFamily: "var(--mono)", fontSize: "11px" } },
-            "Base Expected E[f(x)]: " + (shap.base_value !== undefined ? shap.base_value.toFixed(3) : "0.000") +
-            " | Output Margin f(x): " + (shap.output_margin !== undefined ? shap.output_margin.toFixed(3) : "0.000")
+            "Base Expected E[f(x)]: " + (Number.isFinite(shap.base_value) ? shap.base_value.toFixed(3) : "0.000") +
+            " | Output Margin f(x): " + (Number.isFinite(shap.output_margin) ? shap.output_margin.toFixed(3) : "0.000")
           )
         ),
-        h("div", { key: "bars", className: "shap-bars-grid" },
-          // Positive drivers
-          h("div", null,
-            h("div", { className: "shap-col-title pos" },
-              h("span", null, "▲ Risk-Increasing Feature Drivers (Pushing Toward Fault)"),
-              h("span", null, "φ > 0")
+        (function() {
+          const posList = (shap.positive_drivers && shap.positive_drivers.length) ? shap.positive_drivers :
+            ((shap.top_attributions || []).filter(function(a) { return a.shap_value > 0; }));
+          const negList = (shap.negative_suppressors && shap.negative_suppressors.length) ? shap.negative_suppressors :
+            ((shap.top_attributions || []).filter(function(a) { return a.shap_value < 0; }));
+
+          return h("div", { key: "bars", className: "shap-bars-grid" },
+            // Positive drivers
+            h("div", null,
+              h("div", { className: "shap-col-title pos" },
+                h("span", null, isFault ? "▲ Fault-Inducing Risk Drivers (Pushing Toward Fault)" : "▲ Dominant Attributions (Pushing Toward Diagnosis)"),
+                h("span", null, "φ > 0")
+              ),
+              posList.length ?
+                posList.map(function(item, idx) {
+                  const sv = Number.isFinite(item.shap_value) ? item.shap_value : 0;
+                  const absVal = Math.min(1.0, Math.abs(sv) * 1.5);
+                  return h("div", { key: idx, className: "shap-bar-item" },
+                    h("span", { className: "shap-feat-name", title: item.feature }, item.feature),
+                    h("div", { className: "shap-track" },
+                      h("div", { className: "shap-fill-pos", style: { width: Math.max(6, absVal * 100) + "%" } })
+                    ),
+                    h("span", { className: "shap-val-text", style: { color: "var(--warning)" } },
+                      (sv >= 0 ? "+" : "") + sv.toFixed(3)
+                    )
+                  );
+                }) :
+                h("div", { className: "empty" }, isFault ? "Awaiting positive anomaly gradient accumulation..." : "All 60 features operating within nominal baseline; zero anomaly risk detected.")
             ),
-            (shap.positive_drivers && shap.positive_drivers.length) ?
-              shap.positive_drivers.map(function(item, idx) {
-                const absVal = Math.min(1.0, Math.abs(item.shap_value) * 1.5);
-                return h("div", { key: idx, className: "shap-bar-item" },
-                  h("span", { className: "shap-feat-name", title: item.feature }, item.feature),
-                  h("div", { className: "shap-track" },
-                    h("div", { className: "shap-fill-pos", style: { width: Math.max(6, absVal * 100) + "%" } })
-                  ),
-                  h("span", { className: "shap-val-text", style: { color: "var(--warning)" } },
-                    "+" + item.shap_value.toFixed(3)
-                  )
-                );
-              }) :
-              h("div", { className: "empty" }, "No positive anomaly drivers in current window.")
-          ),
-          // Negative suppressors
-          h("div", null,
-            h("div", { className: "shap-col-title neg" },
-              h("span", null, "▼ Nominal Envelope Factors (Anchoring Normal Baseline)"),
-              h("span", null, "φ < 0")
-            ),
-            (shap.negative_suppressors && shap.negative_suppressors.length) ?
-              shap.negative_suppressors.map(function(item, idx) {
-                const absVal = Math.min(1.0, Math.abs(item.shap_value) * 1.5);
-                return h("div", { key: idx, className: "shap-bar-item" },
-                  h("span", { className: "shap-feat-name", title: item.feature }, item.feature),
-                  h("div", { className: "shap-track" },
-                    h("div", { className: "shap-fill-neg", style: { width: Math.max(6, absVal * 100) + "%" } })
-                  ),
-                  h("span", { className: "shap-val-text", style: { color: "var(--accent)" } },
-                    item.shap_value.toFixed(3)
-                  )
-                );
-              }) :
-              h("div", { className: "empty" }, "No significant negative suppressor attributions.")
-          )
-        ),
+            // Negative suppressors
+            h("div", null,
+              h("div", { className: "shap-col-title neg" },
+                h("span", null, "▼ Nominal Envelope Factors (Anchoring Normal Baseline)"),
+                h("span", null, "φ < 0")
+              ),
+              negList.length ?
+                negList.map(function(item, idx) {
+                  const sv = Number.isFinite(item.shap_value) ? item.shap_value : 0;
+                  const absVal = Math.min(1.0, Math.abs(sv) * 1.5);
+                  return h("div", { key: idx, className: "shap-bar-item" },
+                    h("span", { className: "shap-feat-name", title: item.feature }, item.feature),
+                    h("div", { className: "shap-track" },
+                      h("div", { className: "shap-fill-neg", style: { width: Math.max(6, absVal * 100) + "%" } })
+                    ),
+                    h("span", { className: "shap-val-text", style: { color: "var(--accent)" } },
+                      sv.toFixed(3)
+                    )
+                  );
+                }) :
+                h("div", { className: "empty" }, "All feature vectors balanced within calibrated operating margin.")
+            )
+          );
+        })(),
         h("div", { key: "math-note", className: "hint", style: { marginTop: "12px", borderTop: "1px solid var(--border)", paddingTop: "8px" } },
           "TreeSHAP computes exact polynomial-time Shapley values (Lundberg et al.) attributing the contribution of each physics residual and trend feature to the final classification: f(x) = E[f(x)] + Σ φ_i. " +
-          "Features with positive φ_i directly pushed the model toward " + (xgb.predicted_fault || "FAULT") + ", while negative φ_i anchored the diagnosis toward healthy nominal operation."
+          "Features with positive φ_i directly pushed the model toward " + (xgb ? (xgb.predicted_fault || "FAULT") : "FAULT") + ", while negative φ_i anchored the diagnosis toward healthy nominal operation."
         )
       ] : h("div", { className: "empty" }, "Accumulating feature window to calculate TreeSHAP Shapley attributions...")
     )
@@ -2566,8 +2611,60 @@ function App() {
 
   // Hero & Interactive Tutorial state
   const [heroVisible, setHeroVisible] = useState(true);
+  const heroVisibleRef = useRef(true);
   const [tutorialActive, setTutorialActive] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
+
+  function updateHeroVisible(val) {
+    heroVisibleRef.current = val;
+    setHeroVisible(val);
+  }
+
+  // Auto-start background preview sortie for the duration of the opening hero screen
+  const heroPreviewRef = useRef(false);
+  useEffect(function() {
+    if (heroVisibleRef.current && !heroPreviewRef.current) {
+      heroPreviewRef.current = true;
+      fetch(apiUrl("/api/sim/start"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ seed: 42, mission_duration_s: 600 }),
+      }).then(function(r) {
+        if (r.ok) {
+          setRunning(true);
+          setLogOpen(false); // keep log modal closed during preview
+        }
+      }).catch(function(e) {
+        console.warn("[Pratibimb] Hero preview start error:", e);
+      });
+    }
+  }, []);
+
+  // Frame the dashboard during hero opening screen: scroll till the very below
+  useEffect(function() {
+    if (heroVisible) {
+      function scrollVeryBelow() {
+        const maxScroll = Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight
+        );
+        window.scrollTo({ top: maxScroll, behavior: "smooth" });
+      }
+
+      scrollVeryBelow();
+      const t1 = setTimeout(scrollVeryBelow, 150);
+      const t2 = setTimeout(scrollVeryBelow, 450);
+      const t3 = setTimeout(scrollVeryBelow, 1000);
+      const t4 = setTimeout(scrollVeryBelow, 1800);
+
+      return function() {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+        clearTimeout(t4);
+      };
+    }
+  }, [heroVisible, running]);
 
   // Audio alert state (continuous urgent avionics buzzer when fault detected)
   const [audioEnabled, setAudioEnabled] = useState(true);
@@ -2668,7 +2765,7 @@ function App() {
           (msg.xgboost && msg.xgboost.is_anomaly) ||
           (msg.telemetry && msg.telemetry.fault_type)
         );
-        setIsFaultActive(hasFault);
+        setIsFaultActive(hasFault && !heroVisibleRef.current);
 
         const t = msg.telemetry;
         const exp = (msg.twin && msg.twin.expected) || {};
@@ -2683,11 +2780,17 @@ function App() {
         }
         if (t) {
           setTelemetry(t);
-          push("rpm", t.rpm); push("rpm_exp", exp.rpm);
-          push("cht", t.cht); push("cht_exp", exp.cht);
-          push("egt", t.egt); push("egt_exp", exp.egt);
-          push("oil", t.oil_pressure_psi); push("oil_exp", exp.oil_pressure_psi);
-          push("vib", t.vibration); push("vib_exp", exp.vibration);
+          const eRpm = (exp && exp.rpm != null) ? exp.rpm : t.rpm;
+          const eCht = (exp && exp.cht != null) ? exp.cht : t.cht;
+          const eEgt = (exp && exp.egt != null) ? exp.egt : t.egt;
+          const eOil = (exp && exp.oil_pressure_psi != null) ? exp.oil_pressure_psi : t.oil_pressure_psi;
+          const eVib = (exp && exp.vibration != null) ? exp.vibration : t.vibration;
+
+          push("rpm", t.rpm); push("rpm_exp", eRpm);
+          push("cht", t.cht); push("cht_exp", eCht);
+          push("egt", t.egt); push("egt_exp", eEgt);
+          push("oil", t.oil_pressure_psi); push("oil_exp", eOil);
+          push("vib", t.vibration); push("vib_exp", eVib);
 
           // Append to sortie live log (real vs DT, using AeroTwin twin expected as DT)
           const liveAlt = (msg.controls && msg.controls.altitude_ft != null) ? msg.controls.altitude_ft : 0;
@@ -2737,7 +2840,16 @@ function App() {
           push("bpen", eff.bsfc_penalty_pct);
           push("fuel", eff.fuel_flow_lph);
         }
-        if (msg.assessment) setAssessment(msg.assessment);
+        if (msg.assessment) {
+          if (msg.xgboost) {
+            msg.assessment.xgboost = msg.xgboost;
+            if (!msg.assessment.diagnosis) msg.assessment.diagnosis = {};
+            if (msg.xgboost.shap_explanation) {
+              msg.assessment.diagnosis.shap_explanation = msg.xgboost.shap_explanation;
+            }
+          }
+          setAssessment(msg.assessment);
+        }
         setTick(function (n) { return n + 1; });
       };
       ws.onclose = function () { setConnected(false); retry = setTimeout(connect, 1500); };
@@ -2869,6 +2981,17 @@ function App() {
     }
   }
 
+  async function stopHeroPreviewAndReset() {
+    try {
+      await fetch(apiUrl("/api/sim/stop"), { method: "POST" });
+    } catch (e) {
+      console.warn("[Pratibimb] Stop preview err:", e);
+    }
+    resetAllStats();
+    setSessionKey(function(k) { return k + 1; });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   async function inject(faultTypeOverride) {
     // Inject fault into the ONGOING sortie — no reset of mission state.
     const ft = faultTypeOverride || faultType;
@@ -2923,14 +3046,16 @@ function App() {
 
   return h("div", { className: "app" },
     // Apple-style natural blur hero overlay
-    heroVisible ? h(HeroOverlay, {
-      onStartDemo: function() {
-        setHeroVisible(false);
+    (heroVisible && !tutorialActive) ? h(HeroOverlay, {
+      onStartDemo: async function() {
+        await stopHeroPreviewAndReset();
+        updateHeroVisible(false);
         setTutorialActive(true);
         goToTutorialStep(0);
       },
-      onSkip: function() {
-        setHeroVisible(false);
+      onSkip: async function() {
+        await stopHeroPreviewAndReset();
+        updateHeroVisible(false);
       }
     }) : null,
 

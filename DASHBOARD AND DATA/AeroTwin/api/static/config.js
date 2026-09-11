@@ -6,4 +6,4 @@
 // 2. You can also configure or change this anytime directly in the UI!
 // =============================================================================
 
-window.PRATIBIMB_BACKEND_URL = "https://pratibimb1-3.onrender.com";
+window.PRATIBIMB_BACKEND_URL = "";

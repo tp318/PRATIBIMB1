@@ -78,11 +78,18 @@ class LiveXGBoostAdapter:
         # Stable RNG seeded once per sortie — keeps perturbations deterministic
         self._rng = np.random.Generator(np.random.PCG64(12345))
 
+        self._baseline_shap = None
         if XGBoostFaultPredictor is not None and os.path.exists(model_path) and os.path.exists(meta_path):
             try:
                 self.predictor = XGBoostFaultPredictor(model_path=model_path, meta_path=meta_path)
                 self.loaded = True
                 print(f"[XGBoostAdapter] Loaded model from {model_path}")
+                if hasattr(self.predictor, "explain"):
+                    try:
+                        self._baseline_shap = self.predictor.explain({}, top_k=8)
+                        print(f"[XGBoostAdapter] Baseline TreeSHAP computed successfully.")
+                    except Exception as se:
+                        print(f"[XGBoostAdapter] Baseline TreeSHAP note: {se}")
             except Exception as e:
                 print(f"[XGBoostAdapter] Warning: Could not initialize model: {e}")
 
@@ -339,14 +346,9 @@ class LiveXGBoostAdapter:
     def _warmup_response(self) -> Dict[str, Any]:
         zero_probs = {n: 0.0 for n in FAULT_CLASS_NAMES}
         zero_probs["NORMAL"] = 1.0
-        return {
-            "model_name": "PRATIBIMB XGBoost 9-Class Physics Digital Twin",
-            "predicted_fault": "NORMAL", "predicted_class": 0,
-            "confidence": 1.0, "is_anomaly": False,
-            "runner_up": "NONE", "margin": 1.0,
-            "probabilities": zero_probs,
-            "top_deviations": [],
-            "shap_explanation": {
+        shap = self._baseline_shap
+        if not shap:
+            shap = {
                 "predicted_class": 0,
                 "fault_name": "NORMAL",
                 "confidence": 1.0,
@@ -357,7 +359,15 @@ class LiveXGBoostAdapter:
                 "negative_suppressors": [],
                 "top_attributions": [],
                 "framework": "TreeSHAP / DeepSHAP Physics Feature Attribution",
-            },
+            }
+        return {
+            "model_name": "PRATIBIMB XGBoost 9-Class Physics Digital Twin",
+            "predicted_fault": "NORMAL", "predicted_class": 0,
+            "confidence": 1.0, "is_anomaly": False,
+            "runner_up": "NONE", "margin": 1.0,
+            "probabilities": zero_probs,
+            "top_deviations": [],
+            "shap_explanation": shap,
             "window_seconds": len(self.buffer),
             "status": "warming_up",
         }

@@ -528,9 +528,9 @@
   .pratibimb-hero-overlay {
     position: fixed; inset: 0; z-index: 9999;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: rgba(240, 243, 248, 0.42);
-    backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%);
-    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(240, 243, 248, 0.22);
+    backdrop-filter: blur(10px) saturate(135%); -webkit-backdrop-filter: blur(10px) saturate(135%);
+    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     padding: 24px;
   }
   .pratibimb-hero-overlay.unblurring {
@@ -684,7 +684,7 @@
   }
 
   .tutorial-overlay {
-    position: fixed; inset: 0; z-index: 10002;
+    position: fixed; inset: 0; z-index: 10020;
     background: transparent;
     display: flex; align-items: flex-end; justify-content: center;
     padding-bottom: 28px;
@@ -695,14 +695,21 @@
 
   .tutorial-card {
     pointer-events: auto;
-    background: #ffffff;
-    border: 2px solid #0284c7;
-    box-shadow: 0 25px 65px rgba(0,0,0,0.6), 0 0 30px rgba(2, 132, 199, 0.35);
-    border-radius: 10px;
+    position: relative;
+    z-index: 10030 !important;
+    background: #ffffff !important;
+    border: 2px solid #0284c7 !important;
+    box-shadow: 0 25px 65px rgba(0,0,0,0.65), 0 0 35px rgba(2, 132, 199, 0.45) !important;
+    border-radius: 12px;
     padding: 24px 30px;
     max-width: 680px;
     width: 92vw;
-    color: #0f172a;
+    color: #0f172a !important;
+    filter: none !important;
+    -webkit-filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    isolation: isolate;
   }
   .tutorial-step-tag {
     display: inline-block; font-size: 11px; font-weight: 700;
@@ -1052,6 +1059,6 @@
   <script src="/static/vendor/react-dom.production.min.js"></script>
   <script src="/static/audio_alerts.js"></script>
   <script src="/static/config.js"></script>
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=3.1"></script>
 </body>
 </html>

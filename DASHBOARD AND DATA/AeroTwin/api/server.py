@@ -364,7 +364,7 @@ class SimulationService:
         self.latest_telemetry: Optional[Dict[str, Any]] = None
         self.latest_assessment: Optional[Dict[str, Any]] = None
         self.xgboost_adapter = LiveXGBoostAdapter()
-        self.latest_xgboost_diagnosis: Optional[Dict[str, Any]] = None
+        self.latest_xgboost_diagnosis: Optional[Dict[str, Any]] = self.xgboost_adapter._warmup_response()
         self.running = False
         self.started_at: Optional[float] = None
 
@@ -405,7 +405,7 @@ class SimulationService:
         self.xgboost_adapter.reset()
         self.latest_telemetry = None
         self.latest_assessment = None
-        self.latest_xgboost_diagnosis = None
+        self.latest_xgboost_diagnosis = self.xgboost_adapter._warmup_response()
 
     async def start(self, **kwargs):
         await self.stop(broadcast_stopped=False)
@@ -427,7 +427,7 @@ class SimulationService:
         # Cleanly reset all simulation, telemetry, and health states
         self.latest_telemetry = None
         self.latest_assessment = None
-        self.latest_xgboost_diagnosis = None
+        self.latest_xgboost_diagnosis = self.xgboost_adapter._warmup_response()
         self._auto_elapsed = 0.0
         if self.runner:
             self.runner.clear_overrides()
@@ -534,6 +534,7 @@ class SimulationService:
                         "model": str(xgb_diag.get("model_name", "XGBoost 9-Class Physics Digital Twin")),
                         "probabilities": xgb_diag.get("probabilities", {}),
                         "top_deviations": xgb_diag.get("top_deviations", []),
+                        "shap_explanation": xgb_diag.get("shap_explanation"),
                     }
 
                 # Compute rigorous physics-informed health index
@@ -676,7 +677,10 @@ app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
 @app.get("/")
 def dashboard():
     """Serve the operator dashboard so the demo is a single command."""
-    return FileResponse(os.path.join(_STATIC_DIR, "index.html"))
+    return FileResponse(
+        os.path.join(_STATIC_DIR, "index.html"),
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+    )
 
 
 @app.get("/api")
@@ -722,12 +726,14 @@ def status():
 
 @app.get("/api/diagnose/xgboost")
 def diagnose_xgboost():
-    if service.latest_xgboost_diagnosis is None:
-        raise HTTPException(
-            status_code=404,
-            detail="No XGBoost diagnosis available yet; start a sortie.",
-        )
-    return service.latest_xgboost_diagnosis
+    diag = service.latest_xgboost_diagnosis or service.xgboost_adapter._warmup_response()
+    return diag
+
+
+@app.get("/api/shap/latest")
+def latest_shap():
+    diag = service.latest_xgboost_diagnosis or service.xgboost_adapter._warmup_response()
+    return diag.get("shap_explanation") or {}
 
 
 @app.get("/api/telemetry/latest")
