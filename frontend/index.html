@@ -524,58 +524,77 @@
     font-size: 1.25em; font-weight: 300; color: #334155;
   }
 
-  /* ================= Welcome Panel ================= */
+  /* ================= Apple-Style Frosted Blur Hero Opening (no reflection) ================= */
   .pratibimb-hero-overlay {
     position: fixed; inset: 0; z-index: 9999;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(27, 32, 39, 0.4);
-    transition: opacity 0.2s ease;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(240, 243, 248, 0.22);
+    backdrop-filter: blur(10px) saturate(135%); -webkit-backdrop-filter: blur(10px) saturate(135%);
+    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     padding: 24px;
   }
   .pratibimb-hero-overlay.unblurring {
     opacity: 0;
     pointer-events: none;
+    backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
   }
   .hero-minimal-wrap {
-    max-width: 620px; width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border-2);
-    text-align: left;
-    padding: 36px 40px;
+    max-width: 900px; width: 100%; text-align: center;
+    animation: hero-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   .hero-reflection-wrap {
-    margin: 0 0 16px 0;
-    padding-bottom: 16px;
-    border-bottom: 2px solid var(--ink);
+    display: inline-block;
+    position: relative;
+    margin: 0 auto 32px auto;
   }
   .hero-apple-title {
-    font: inherit;
-    font-size: 27px; font-weight: 800; letter-spacing: -.4px;
-    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
+    font-size: 80px; font-weight: 900; letter-spacing: 5px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 65%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin: 0;
-    line-height: 1.15;
+    line-height: 1.0;
+    text-transform: uppercase;
   }
-  .hero-reflection-mirror { display: none; }
   .hero-typewriter-line {
-    font-size: 14.5px; font-weight: 400; line-height: 1.65;
-    color: var(--ink-2); margin: 0 0 26px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
+    font-size: 21px; font-weight: 400; line-height: 1.65;
+    color: #334155; max-width: 820px; margin: 0 auto 36px auto;
+    min-height: 70px;
   }
-  .typewriter-cursor { display: none; }
+  .typewriter-cursor {
+    display: inline-block; width: 2.5px; height: 1.15em;
+    background: #0284c7; margin-left: 4px; vertical-align: text-bottom;
+    animation: blink-cur 0.9s step-end infinite;
+  }
+  @keyframes blink-cur { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-  .hero-actions { display: flex; align-items: center; justify-content: flex-start; gap: 18px; }
+  .hero-actions { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
   .hero-minimal-btn {
-    font: inherit; font-size: 13.5px; font-weight: 700;
-    padding: 9px 22px; border-radius: 4px; border: 1px solid var(--accent);
-    background: var(--accent); color: #ffffff; cursor: pointer;
-    transition: background .15s;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    font-size: 15.5px; font-weight: 600;
+    padding: 13px 38px; border-radius: 9999px; border: none;
+    background: #0f172a; color: #ffffff; cursor: pointer;
+    box-shadow: 0 4px 22px rgba(15, 23, 42, 0.2);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex; align-items: center; gap: 8px;
   }
-  .hero-minimal-btn:hover { background: #1a5091; }
+  .hero-minimal-btn:hover {
+    background: #1e293b; transform: scale(1.02) translateY(-1px);
+    box-shadow: 0 6px 28px rgba(15, 23, 42, 0.3);
+  }
   .hero-minimal-skip {
-    font: inherit; font-size: 13px; font-weight: 600;
-    padding: 6px 4px; border: none; background: transparent;
-    color: var(--ink-3); cursor: pointer; transition: color .15s;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    font-size: 13.5px; font-weight: 500;
+    padding: 6px 14px; border: none; background: transparent;
+    color: #64748b; cursor: pointer; transition: all 0.15s;
   }
-  .hero-minimal-skip:hover { color: var(--ink); text-decoration: underline; }
+  .hero-minimal-skip:hover { color: #0f172a; text-decoration: underline; }
 
   /* ================= Subsystems Status Strip ================= */
   .subsystem-strip {
