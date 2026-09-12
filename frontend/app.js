@@ -206,6 +206,207 @@ function SortieLogModal(props) {
   );
 }
 
+// ----------------------------------------------------------- 3D Flight View
+// A small Three.js scene reacting to live control inputs: throttle drives
+// forward airspeed, altitude sets height above the ground grid, and RPM
+// drives propeller speed. Kept to flat materials and a grid ground (no
+// bloom/glow) to read as a technical flight-sim view rather than a game demo.
+function Flight3DModal(props) {
+  const { open, onClose, liveRef } = props;
+  const mountRef = useRef(null);
+  const rafRef = useRef(null);
+  const sceneRef = useRef(null);
+  const [hud, setHud] = useState({ speed: 0, alt: 0, rpm: 0, throttle: 0 });
+
+  useEffect(function () {
+    if (!open || !mountRef.current || typeof THREE === "undefined") return;
+
+    const mount = mountRef.current;
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xcfe0f0);
+    scene.fog = new THREE.Fog(0xcfe0f0, 260, 1400);
+
+    const camera = new THREE.PerspectiveCamera(52, mount.clientWidth / mount.clientHeight, 0.1, 4000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setSize(mount.clientWidth, mount.clientHeight);
+    mount.appendChild(renderer.domElement);
+
+    // -- Lighting: flat, no bloom/glow — a plain sun + soft ambient fill.
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.75);
+    sun.position.set(120, 220, 80);
+    scene.add(sun);
+
+    // -- Ground: a large flat plane + grid overlay, blueprint style.
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0xe3ecd9, roughness: 1 });
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(20000, 20000), groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = 0;
+    scene.add(ground);
+    const grid = new THREE.GridHelper(20000, 400, 0x8fae8f, 0xb9cdb0);
+    grid.position.y = 0.05;
+    scene.add(grid);
+
+    // Sparse waypoint poles so forward motion actually reads visually.
+    const poleGroup = new THREE.Group();
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x8592a3 });
+    const poleTopMat = new THREE.MeshStandardMaterial({ color: 0xc2410c });
+    for (let i = 0; i < 60; i++) {
+      const z = -i * 60 - 40;
+      const side = (i % 2 === 0) ? -1 : 1;
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 18, 8), poleMat);
+      pole.position.set(side * 55, 9, z);
+      const top = new THREE.Mesh(new THREE.SphereGeometry(1.6, 8, 8), poleTopMat);
+      top.position.set(side * 55, 18, z);
+      poleGroup.add(pole, top);
+    }
+    scene.add(poleGroup);
+
+    // -- Aircraft: simple flat-shaded fixed-wing UAV built from primitives.
+    const aircraft = new THREE.Group();
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf5f7fa, roughness: 0.6 });
+    const accentMat = new THREE.MeshStandardMaterial({ color: 0x1f5fa8, roughness: 0.6 });
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x2b3542, roughness: 0.7 });
+
+    const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 0.5, 9, 12), bodyMat);
+    fuselage.rotation.x = Math.PI / 2;
+    aircraft.add(fuselage);
+
+    const nose = new THREE.Mesh(new THREE.ConeGeometry(1.1, 2.0, 12), darkMat);
+    nose.rotation.x = -Math.PI / 2;
+    nose.position.z = -5.5;
+    aircraft.add(nose);
+
+    const wing = new THREE.Mesh(new THREE.BoxGeometry(14, 0.25, 2.1), accentMat);
+    wing.position.set(0, 0.1, 0.4);
+    aircraft.add(wing);
+
+    const tailWing = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.2, 1.2), accentMat);
+    tailWing.position.set(0, 0.6, 4.3);
+    aircraft.add(tailWing);
+
+    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.6, 1.4), darkMat);
+    fin.position.set(0, 1.3, 4.3);
+    aircraft.add(fin);
+
+    // Propeller: spins about the nose axis, speed driven by RPM.
+    const propGroup = new THREE.Group();
+    propGroup.position.z = -6.5;
+    const bladeMat = new THREE.MeshStandardMaterial({ color: 0x2b3542 });
+    const blade1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3.4, 0.35), bladeMat);
+    const blade2 = blade1.clone();
+    blade2.rotation.z = Math.PI / 2;
+    propGroup.add(blade1, blade2);
+    aircraft.add(propGroup);
+
+    aircraft.position.set(0, 40, 0);
+    scene.add(aircraft);
+
+    camera.position.set(10, 55, 30);
+
+    sceneRef.current = { renderer, scene, camera, aircraft, propGroup, poleGroup, mount };
+
+    function onResize() {
+      if (!mount) return;
+      camera.aspect = mount.clientWidth / mount.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(mount.clientWidth, mount.clientHeight);
+    }
+    window.addEventListener("resize", onResize);
+
+    let lastT = performance.now();
+    let distance = 0;
+    let pitch = 0;
+
+    function frame(now) {
+      const dt = Math.min(0.05, (now - lastT) / 1000);
+      lastT = now;
+
+      const live = (liveRef && liveRef.current) || {};
+      const throttle = Number.isFinite(live.throttle) ? live.throttle : 0.5;
+      const rpm = Number.isFinite(live.rpm) ? live.rpm : 0;
+      const altFt = Number.isFinite(live.altitude_ft) ? live.altitude_ft : 0;
+      const running = !!live.running;
+
+      const speedUnitsPerSec = running ? (6 + throttle * 55) : 0;
+      distance += speedUnitsPerSec * dt;
+
+      const targetAlt = 40 + altFt * 0.03;
+      aircraft.position.y += (targetAlt - aircraft.position.y) * Math.min(1, dt * 1.2);
+
+      const targetPitch = running ? (throttle - 0.5) * 0.22 : 0;
+      pitch += (targetPitch - pitch) * Math.min(1, dt * 2.0);
+      aircraft.rotation.x = pitch;
+      aircraft.rotation.z = Math.sin(distance * 0.01) * 0.03;
+
+      propGroup.rotation.z += (rpm / 60) * 2 * Math.PI * dt * (running ? 1 : 0.15);
+
+      // World scrolls under a fixed aircraft — reads as forward flight
+      // without the plane ever running out of ground.
+      grid.position.z = distance % 50;
+      poleGroup.position.z = distance % 120;
+
+      // Chase cam sits above and behind the aircraft looking down at it, so
+      // the wings and fuselage read as a plane instead of end-on at the tail.
+      const camTargetY = aircraft.position.y + 15;
+      camera.position.y += (camTargetY - camera.position.y) * Math.min(1, dt * 2);
+      camera.position.x += (10 - camera.position.x) * Math.min(1, dt * 2);
+      camera.position.z = aircraft.position.z + 30;
+      camera.lookAt(aircraft.position.x, aircraft.position.y - 2, aircraft.position.z - 6);
+
+      renderer.render(scene, camera);
+
+      setHud(function (prev) {
+        const next = {
+          speed: Math.round(speedUnitsPerSec * 3.6),
+          alt: Math.round(altFt),
+          rpm: Math.round(rpm),
+          throttle: Math.round(throttle * 100),
+        };
+        if (prev.speed === next.speed && prev.alt === next.alt && prev.rpm === next.rpm && prev.throttle === next.throttle) {
+          return prev;
+        }
+        return next;
+      });
+
+      rafRef.current = requestAnimationFrame(frame);
+    }
+    rafRef.current = requestAnimationFrame(frame);
+
+    return function () {
+      window.removeEventListener("resize", onResize);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      renderer.dispose();
+      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
+      sceneRef.current = null;
+    };
+  }, [open]);
+
+  if (!open) return null;
+
+  return h("div", { className: "modal-overlay" },
+    h("div", { className: "modal-box flight3d-box" },
+      h("div", { className: "modal-head" },
+        h("span", { className: "modal-title" }, "3D Flight View — Live Control Response"),
+        h("span", { className: "modal-meta" }, "Forward speed follows throttle, altitude follows the altitude control, propeller follows RPM"),
+        h("div", { className: "modal-actions" },
+          h("button", { className: "modal-close", onClick: onClose }, "Close")
+        )
+      ),
+      h("div", { className: "flight3d-canvas-wrap", ref: mountRef },
+        h("div", { className: "flight3d-hud" },
+          h("div", { className: "cell" }, h("div", { className: "lbl" }, "Throttle"), h("div", { className: "val" }, hud.throttle + "%")),
+          h("div", { className: "cell" }, h("div", { className: "lbl" }, "Airspeed"), h("div", { className: "val" }, hud.speed + " kph")),
+          h("div", { className: "cell" }, h("div", { className: "lbl" }, "Altitude"), h("div", { className: "val" }, hud.alt + " ft")),
+          h("div", { className: "cell" }, h("div", { className: "lbl" }, "RPM"), h("div", { className: "val" }, hud.rpm))
+        ),
+        h("div", { className: "flight3d-note" }, "Illustrative flight-dynamics view driven by live throttle, altitude and RPM — not a certified aerodynamic simulation.")
+      )
+    )
+  );
+}
+
 // ----------------------------------------------------------- Security System Alert Audio Engine
 function playUrgentBuzzerBurst() {
   if (window.PratibimbAudio) {
@@ -1766,9 +1967,39 @@ function XGBoostTab(props) {
   const a = props.assessment;
   const xgb = (a && a.xgboost) || (liveDiag) || (a && a.diagnosis && a.diagnosis.shap_explanation ? a.diagnosis : null) || (props.status && props.status.xgboost && props.status.xgboost.latest) || (a && a.diagnosis) || null;
   const probs = (xgb && xgb.probabilities) || (liveDiag && liveDiag.probabilities) || {};
-  const topDevs = (xgb && xgb.top_deviations) || (liveDiag && liveDiag.top_deviations) || [];
+  const backendTopDevs = (xgb && xgb.top_deviations) || (liveDiag && liveDiag.top_deviations) || [];
   const shap = (xgb && xgb.shap_explanation) || (liveDiag && liveDiag.shap_explanation) || (a && a.diagnosis && a.diagnosis.shap_explanation) || (props.status && props.status.xgboost && props.status.xgboost.latest && props.status.xgboost.latest.shap_explanation) || null;
   const isFault = Boolean(xgb && xgb.predicted_fault && xgb.predicted_fault !== "NORMAL" && xgb.predicted_fault !== "HEALTHY");
+
+  // Client-side deviation attribution — computed straight from live telemetry
+  // vs the digital twin's expected values, using the same sigmas the rest of
+  // the dashboard already uses. This exists so the attribution graphs still
+  // populate when a deployed backend's TreeSHAP explainer only ever returns
+  // empty positive_drivers/negative_suppressors/top_attributions (e.g. the
+  // optional `shap` package isn't installed there) — it's the same real
+  // physics residuals, just computed here instead of trusting an empty
+  // server-side list.
+  const tTel = props.telemetry || {};
+  const eTel = props.expected || {};
+  function zDev(measured, expected, sigma) {
+    if (!Number.isFinite(measured) || !Number.isFinite(expected)) return null;
+    return (measured - expected) / sigma;
+  }
+  const oilPBar = Number.isFinite(tTel.oil_pressure_psi) ? tTel.oil_pressure_psi * 0.0689476 : null;
+  const expOilPBar = Number.isFinite(eTel.oil_pressure_psi) ? eTel.oil_pressure_psi * 0.0689476 : null;
+  const clientDevs = [
+    { feature: "RPM Residual",           value: zDev(tTel.rpm, eTel.rpm, 25) },
+    { feature: "CHT z-score",            value: zDev(tTel.cht, eTel.cht, 4.0) },
+    { feature: "EGT z-score",            value: zDev(tTel.egt, eTel.egt, 15.0) },
+    { feature: "Oil Pressure z-score",   value: zDev(oilPBar, expOilPBar, 0.15) },
+    { feature: "Oil Temperature z-score",value: zDev(tTel.oil_temperature, eTel.oil_temperature, 2.0) },
+    { feature: "Fuel Flow z-score",      value: zDev(tTel.fuel_flow_lph, eTel.fuel_flow_lph, 0.5) },
+    { feature: "Vibration z-score",      value: zDev(tTel.vibration, eTel.vibration, 0.12) },
+  ].filter(function (d) { return Number.isFinite(d.value); })
+    .map(function (d) { return { feature: d.feature, value: Number(d.value.toFixed(3)) }; })
+    .sort(function (a2, b2) { return Math.abs(b2.value) - Math.abs(a2.value); });
+
+  const topDevs = backendTopDevs.length >= clientDevs.length ? backendTopDevs : clientDevs;
 
   return h("div", null,
     h("div", { className: "stat-row" },
@@ -1901,27 +2132,38 @@ function XGBoostTab(props) {
         h("span", { className: "shap-title" }, "Explainable AI: TreeSHAP Feature Attribution (Exact Game-Theoretic Shapley Values)"),
         h("span", { className: "shap-badge" }, "Explainability Engine")
       ),
-      shap ? [
-        h("div", { key: "summary", className: "shap-summary-box" },
-          h("b", null, "Diagnostic Attribution: "),
-          shap.summary || "Attributions nominal.",
-          h("span", { style: { marginLeft: "14px", color: "var(--ink-3)", fontFamily: "var(--mono)", fontSize: "11px" } },
-            "Base Expected E[f(x)]: " + (Number.isFinite(shap.base_value) ? shap.base_value.toFixed(3) : "0.000") +
-            " | Output Margin f(x): " + (Number.isFinite(shap.output_margin) ? shap.output_margin.toFixed(3) : "0.000")
-          )
-        ),
-        (function() {
-          const posList = (shap.positive_drivers && shap.positive_drivers.length) ? shap.positive_drivers :
-            ((shap.top_attributions || []).filter(function(a) { return a.shap_value > 0; }));
-          const negList = (shap.negative_suppressors && shap.negative_suppressors.length) ? shap.negative_suppressors :
-            ((shap.top_attributions || []).filter(function(a) { return a.shap_value < 0; }));
+      (shap || topDevs.length) ? (function() {
+        const shapObj = shap || {};
+        const usingRealShap = Boolean(
+          (shapObj.positive_drivers && shapObj.positive_drivers.length) ||
+          (shapObj.negative_suppressors && shapObj.negative_suppressors.length) ||
+          (shapObj.top_attributions && shapObj.top_attributions.length)
+        );
+        const posList = (shapObj.positive_drivers && shapObj.positive_drivers.length) ? shapObj.positive_drivers :
+          (shapObj.top_attributions && shapObj.top_attributions.length) ? shapObj.top_attributions.filter(function(x) { return x.shap_value > 0; }) :
+          topDevs.filter(function(d) { return d.value > 0; }).map(function(d) { return { feature: d.feature, shap_value: d.value }; });
+        const negList = (shapObj.negative_suppressors && shapObj.negative_suppressors.length) ? shapObj.negative_suppressors :
+          (shapObj.top_attributions && shapObj.top_attributions.length) ? shapObj.top_attributions.filter(function(x) { return x.shap_value < 0; }) :
+          topDevs.filter(function(d) { return d.value < 0; }).map(function(d) { return { feature: d.feature, shap_value: d.value }; });
+        const sym = usingRealShap ? "φ" : "z";
 
-          return h("div", { key: "bars", className: "shap-bars-grid" },
+        return [
+          h("div", { key: "summary", className: "shap-summary-box" },
+            h("b", null, "Diagnostic Attribution: "),
+            usingRealShap
+              ? (shapObj.summary || "Attributions nominal.")
+              : "Feature deviation attribution against the healthy digital twin baseline (calibrated z-scores of measured vs. expected; exact TreeSHAP polynomial-time attribution is unavailable on this deployment).",
+            usingRealShap ? h("span", { style: { marginLeft: "14px", color: "var(--ink-3)", fontFamily: "var(--mono)", fontSize: "11px" } },
+              "Base Expected E[f(x)]: " + (Number.isFinite(shapObj.base_value) ? shapObj.base_value.toFixed(3) : "0.000") +
+              " | Output Margin f(x): " + (Number.isFinite(shapObj.output_margin) ? shapObj.output_margin.toFixed(3) : "0.000")
+            ) : null
+          ),
+          h("div", { key: "bars", className: "shap-bars-grid" },
             // Positive drivers
             h("div", null,
               h("div", { className: "shap-col-title pos" },
                 h("span", null, isFault ? "Fault-Inducing Risk Drivers (Pushing Toward Fault)" : "Dominant Attributions (Pushing Toward Diagnosis)"),
-                h("span", null, "φ > 0")
+                h("span", null, sym + " > 0")
               ),
               posList.length ?
                 posList.map(function(item, idx) {
@@ -1943,7 +2185,7 @@ function XGBoostTab(props) {
             h("div", null,
               h("div", { className: "shap-col-title neg" },
                 h("span", null, "Nominal Envelope Factors (Anchoring Normal Baseline)"),
-                h("span", null, "φ < 0")
+                h("span", null, sym + " < 0")
               ),
               negList.length ?
                 negList.map(function(item, idx) {
@@ -1961,13 +2203,16 @@ function XGBoostTab(props) {
                 }) :
                 h("div", { className: "empty" }, "All feature vectors balanced within calibrated operating margin.")
             )
-          );
-        })(),
-        h("div", { key: "math-note", className: "hint", style: { marginTop: "12px", borderTop: "1px solid var(--border)", paddingTop: "8px" } },
-          "TreeSHAP computes exact polynomial-time Shapley values (Lundberg et al.) attributing the contribution of each physics residual and trend feature to the final classification: f(x) = E[f(x)] + Σ φ_i. " +
-          "Features with positive φ_i directly pushed the model toward " + (xgb ? (xgb.predicted_fault || "FAULT") : "FAULT") + ", while negative φ_i anchored the diagnosis toward healthy nominal operation."
-        )
-      ] : h("div", { className: "empty" }, "Accumulating feature window to calculate TreeSHAP Shapley attributions...")
+          ),
+          h("div", { key: "math-note", className: "hint", style: { marginTop: "12px", borderTop: "1px solid var(--border)", paddingTop: "8px" } },
+            usingRealShap
+              ? ("TreeSHAP computes exact polynomial-time Shapley values (Lundberg et al.) attributing the contribution of each physics residual and trend feature to the final classification: f(x) = E[f(x)] + Σ φ_i. " +
+                 "Features with positive φ_i directly pushed the model toward " + (xgb ? (xgb.predicted_fault || "FAULT") : "FAULT") + ", while negative φ_i anchored the diagnosis toward healthy nominal operation.")
+              : ("Each z-score is the live measurement minus the digital twin's expected value, divided by that channel's calibrated noise floor. " +
+                 "Positive deviations push toward " + (xgb ? (xgb.predicted_fault || "a fault") : "a fault") + "; negative deviations anchor the reading toward the healthy baseline.")
+          )
+        ];
+      })() : h("div", { className: "empty" }, "Accumulating feature window to calculate diagnostic attribution...")
     )
   );
 }
@@ -2009,11 +2254,22 @@ function DigitalTwinTab(props) {
   const altFt = ctrl.altitude_ft !== undefined ? ctrl.altitude_ft : 0;
   const ambC = ctrl.ambient_c !== undefined ? ctrl.ambient_c : 15.0;
 
-  // Active fault detection for live digital twin visual demonstration
+  // Active fault detection for live digital twin visual demonstration.
+  // The 9-class diagnosis needs high confidence AND a filled 30 s rolling
+  // window before it's trusted here — otherwise classifier warm-up noise on
+  // a freshly started sortie paints a fake "fault active" banner and
+  // highlights a cylinder that was never actually touched.
+  const diagWindowSeconds = Number((assessment && assessment.xgboost && assessment.xgboost.window_seconds) || 0);
+  const diagConfident = Boolean(
+    assessment && assessment.diagnosis &&
+    assessment.diagnosis.predicted_fault !== "NORMAL" && assessment.diagnosis.predicted_fault !== "HEALTHY" &&
+    Number(assessment.diagnosis.confidence) >= 0.75 &&
+    diagWindowSeconds >= 20
+  );
   const effFault = activeFault ||
     (t.fault_type) ||
     (assessment && assessment.fault) ||
-    (assessment && assessment.diagnosis && assessment.diagnosis.predicted_fault !== "NORMAL" && assessment.diagnosis.predicted_fault !== "HEALTHY" && assessment.diagnosis.predicted_fault) ||
+    (diagConfident ? assessment.diagnosis.predicted_fault : null) ||
     null;
 
   const isCoolingFault = Boolean(isEngineRunning && effFault && (effFault.includes("COOL") || effFault.includes("TEMP") || effFault.includes("LEAK")));
@@ -3303,6 +3559,12 @@ function App() {
   const [logTick, setLogTick] = useState(0);
   const lastLogTickRef = useRef(0);
 
+  // 3D flight view — the Three.js animation loop reads this ref every frame
+  // instead of React state, so it always sees the latest control values
+  // without re-running the scene setup effect on every telemetry tick.
+  const [flight3dOpen, setFlight3dOpen] = useState(false);
+  const flight3dLiveRef = useRef({ throttle: 0.5, rpm: 0, altitude_ft: 0, running: false });
+
   // Live manual controls
   const [ctrlAuto,     setCtrlAuto]     = useState(true);
   const [ctrlThrottle, setCtrlThrottle] = useState(0.65);
@@ -3320,6 +3582,13 @@ function App() {
   const [faultBusy,       setFaultBusy]       = useState(false);
   const [faultStatus,     setFaultStatus]     = useState(null);  // last inject result msg
   const [activeFault,     setActiveFault]     = useState(null);  // currently injected fault name
+  // The websocket message handler below is set up once (its effect depends
+  // on [push], not on activeFault) and would otherwise close over activeFault's
+  // initial value forever - a classic stale-closure bug that made the alarm
+  // logic permanently see activeFault as null. Read this ref inside that
+  // handler instead so it always sees the current value.
+  const activeFaultRef = useRef(null);
+  useEffect(function () { activeFaultRef.current = activeFault; }, [activeFault]);
 
   // Continuous periodic avionics beep alert while fault is present and audio enabled
   useEffect(function() {
@@ -3378,13 +3647,21 @@ function App() {
         if (msg.subsystems) setSubsystems(msg.subsystems);
         if (msg.physics_equations) setPhysicsState(msg.physics_equations);
 
-        // Continuous urgent avionics buzzer trigger on active fault / anomaly
-        const hasFault = Boolean(
-          activeFault ||
-          (msg.assessment && (msg.assessment.anomaly || (msg.assessment.diagnosis && msg.assessment.diagnosis.predicted_fault !== "NORMAL" && msg.assessment.diagnosis.predicted_fault !== "HEALTHY"))) ||
-          (msg.xgboost && msg.xgboost.is_anomaly) ||
-          (msg.telemetry && msg.telemetry.fault_type)
-        );
+        // Continuous urgent avionics buzzer trigger — tied ONLY to the
+        // operator's own explicit fault state (activeFault), not to the
+        // backend's own anomaly/diagnosis signals.
+        //
+        // This was tested against a real fault injection + clear cycle: the
+        // statistical anomaly detector's "flagged" bit stayed true for over
+        // a minute after the fault was cleared (its residual buffer just
+        // takes a while to settle, and that's backend behaviour we can't
+        // change), which kept the alarm buzzing long after the operator had
+        // already cleared the fault. activeFault, by contrast, is plain
+        // frontend state set synchronously by inject()/clear() themselves,
+        // so it can never lag or desync from what the operator actually
+        // did — it flips the instant Clear Fault succeeds, every time,
+        // regardless of what the backend reports.
+        const hasFault = Boolean(activeFaultRef.current);
         setIsFaultActive(hasFault && !heroVisibleRef.current);
 
         const t = msg.telemetry;
@@ -3653,6 +3930,12 @@ function App() {
   }
 
   const t = telemetry || {};
+  flight3dLiveRef.current = {
+    throttle: Number.isFinite(t.throttle) ? t.throttle : ctrlThrottle,
+    rpm: Number.isFinite(t.rpm) ? t.rpm : 0,
+    altitude_ft: ctrlAlt,
+    running: running,
+  };
   const models = (status && status.pipeline && status.pipeline.models_loaded) || {};
   const windowReady = status && status.pipeline && status.pipeline.window_ready;
   const modelsUp = ["anomaly", "diagnosis", "rul"].filter(function (m) { return models[m]; }).length;
@@ -3744,12 +4027,19 @@ function App() {
       rows:    logRows.current,
     }),
 
+    h(Flight3DModal, {
+      open:    flight3dOpen,
+      onClose: function(){ setFlight3dOpen(false); },
+      liveRef: flight3dLiveRef,
+    }),
+
     h("div", { className: "toolbar" },
       h("div", { className: "tgroup" },
         h("span", { className: "tlabel" }, "Sortie"),
         h("span", { className: "brow" },
           h("button", { className: "go", onClick: start, disabled: busy }, "Start sortie"),
           h("button", { onClick: function () { setLogOpen(true); }, disabled: !running, title: "Open live log" }, "Log"),
+          h("button", { className: "flight3d-btn", onClick: function () { setFlight3dOpen(true); }, disabled: !running, title: "Open 3D flight view driven by live controls" }, "3D Flight View"),
           h("button", { onClick: stop, disabled: busy || !running, title: "End sortie and reset all statistics" }, "Stop")
         )
       ),
@@ -3975,7 +4265,7 @@ function App() {
         faultSeverity: faultSeverity,
         assessment: assessment,
       }) :
-      tab === "xgboost" ? h(XGBoostTab, { assessment: assessment, status: status }) :
+      tab === "xgboost" ? h(XGBoostTab, { assessment: assessment, status: status, telemetry: telemetry, expected: twinExpected }) :
       tab === "efficiency" ? h(EfficiencyTab, { hist: hist.current, tick: tick, efficiency: efficiency, effSummary: effSummary }) :
       tab === "alerts" ? h(AlertsTab, { alerts: alerts, counts: alertCounts }) :
       tab === "maintenance" ? h(MaintenanceTab, { items: assessment && assessment.maintenance, assessment: assessment }) :

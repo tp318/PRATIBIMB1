@@ -306,6 +306,40 @@
   }
   .btn-dl:hover { background: var(--accent); color: #fff; }
 
+  /* ================= 3D Flight View ================= */
+  .flight3d-btn {
+    font: inherit; font-size: 13px; font-weight: 700;
+    padding: 6px 15px; border-radius: 4px;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--border-2);
+    cursor: pointer;
+  }
+  .flight3d-btn:hover:not(:disabled) { background: var(--surface-3); border-color: var(--ink-3); }
+  .flight3d-btn:disabled { opacity: .5; cursor: default; }
+  .flight3d-box { width: 96vw; max-width: 1400px; height: 88vh; }
+  .flight3d-canvas-wrap {
+    position: relative; flex: 1; background: #cfe0f0; overflow: hidden;
+  }
+  .flight3d-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+  .flight3d-hud {
+    position: absolute; left: 14px; bottom: 14px;
+    display: flex; gap: 1px; background: var(--border);
+    border: 1px solid var(--border-2); border-radius: 3px; overflow: hidden;
+    font-family: var(--mono);
+  }
+  .flight3d-hud .cell {
+    background: rgba(255,255,255,0.92); padding: 7px 14px; min-width: 84px;
+  }
+  .flight3d-hud .lbl {
+    font-size: 9.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 2px;
+  }
+  .flight3d-hud .val { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .flight3d-note {
+    position: absolute; right: 14px; bottom: 14px;
+    background: rgba(255,255,255,0.92); border: 1px solid var(--border-2); border-radius: 3px;
+    padding: 6px 12px; font-size: 11px; color: var(--ink-3); max-width: 260px; text-align: right;
+  }
+
   .modal-table-wrap {
     flex: 1; overflow: auto;
   }
@@ -1035,6 +1069,7 @@
   <div id="root"></div>
   <script src="/static/vendor/react.production.min.js"></script>
   <script src="/static/vendor/react-dom.production.min.js"></script>
+  <script src="/static/vendor/three.min.js"></script>
   <script src="/static/audio_alerts.js"></script>
   <script src="/static/config.js"></script>
   <script src="/static/app.js?v=3.1"></script>
