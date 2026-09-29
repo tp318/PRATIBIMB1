@@ -8,8 +8,8 @@
 
 ### Deployment & Quick Links
 - **Live Tactical Ground Station (Vercel):** [https://pratibimb-1.vercel.app/](https://pratibimb-1.vercel.app/)
-- **Live Cloud Backend API (Render):** [https://pratibimb1-3.onrender.com](https://pratibimb1-3.onrender.com)
-- **Interactive OpenAPI Specification:** [https://pratibimb1-3.onrender.com/docs](https://pratibimb1-3.onrender.com/docs)
+- **Live Cloud Backend API (Render):** [https://pratibimb1-fc5s.onrender.com](https://pratibimb1-fc5s.onrender.com)
+- **Interactive OpenAPI Specification:** [https://pratibimb1-fc5s.onrender.com/docs](https://pratibimb1-fc5s.onrender.com/docs)
 - **Repository Source Code:** [https://github.com/tp318/PRATIBIMB1](https://github.com/tp318/PRATIBIMB1)
 
 ---
