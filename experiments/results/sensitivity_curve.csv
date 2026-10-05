@@ -1,0 +1,6 @@
+Severity_Pct,Detection_Probability_Pd_Pct,Median_Time_to_Detect_s,P10_Time_to_Detect_s,P90_Time_to_Detect_s,Total_Evaluated_Runs
+0.5,100.0,12.8,12.8,12.8,80
+1.0,100.0,12.8,12.8,12.8,80
+2.0,100.0,12.8,12.8,12.8,80
+5.0,100.0,12.8,12.8,12.8,80
+10.0,100.0,12.8,12.8,12.8,80

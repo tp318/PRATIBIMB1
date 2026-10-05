@@ -1,0 +1,10 @@
+,Pred_0_Normal opera,Pred_1_Misfire cond,Pred_2_Injector abn,Pred_3_Cooling degr,Pred_4_Lubrication ,Pred_5_Sensor drift,Pred_6_Combustion i,Pred_7_Overheating ,Pred_8_Abnormal vib
+True_0_Normal opera,0,16,0,2,0,0,2,0,0
+True_1_Misfire cond,0,20,0,0,0,0,0,0,0
+True_2_Injector abn,0,0,20,0,0,0,0,0,0
+True_3_Cooling degr,0,0,0,0,0,0,20,0,0
+True_4_Lubrication ,0,0,0,0,0,0,0,20,0
+True_5_Sensor drift,0,0,0,0,0,20,0,0,0
+True_6_Combustion i,0,0,0,0,0,0,20,0,0
+True_7_Overheating ,0,0,0,0,0,0,20,0,0
+True_8_Abnormal vib,0,4,0,0,0,0,0,0,16

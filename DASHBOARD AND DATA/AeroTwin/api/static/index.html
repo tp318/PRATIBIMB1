@@ -26,6 +26,75 @@
     --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
   }
 
+  /* ===== INDIAN ARMY DARK MODE ===== */
+  [data-theme="dark"] {
+    --bg:        #0d1108;
+    --surface:   #141c0d;
+    --surface-2: #1a2410;
+    --surface-3: #1f2c14;
+    --border:    #2e3d1e;
+    --border-2:  #3d5228;
+    --ink:       #d4e8b0;
+    --ink-2:     #9dbf6e;
+    --ink-3:     #6a8f45;
+    --accent:    #7cb518;
+    --accent-bg: #1e2d0e;
+    --normal:    #5aad3e;
+    --normal-bg: #0f2208;
+    --caution:   #c9a227;
+    --caution-bg:#1e1900;
+    --warning:   #d45f3c;
+    --warning-bg:#220d07;
+  }
+
+  [data-theme="dark"] body {
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  [data-theme="dark"] .masthead {
+    border-bottom-color: var(--border-2);
+  }
+
+  [data-theme="dark"] .guide-tour-btn {
+    background: #3d5228;
+    border-color: #5a7a32;
+    color: #d4e8b0;
+  }
+  [data-theme="dark"] .guide-tour-btn:hover {
+    background: #4d6a34;
+  }
+
+  /* Dark mode toggle button */
+  .dark-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: transparent;
+    border: 1.5px solid var(--border-2);
+    border-radius: 9999px;
+    padding: 5px 12px;
+    font: inherit; font-size: 12.5px; font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .dark-toggle:hover {
+    border-color: var(--accent);
+    color: var(--ink);
+    background: var(--surface-2);
+  }
+  .dark-toggle .toggle-icon {
+    font-size: 14px; line-height: 1;
+  }
+  [data-theme="dark"] .dark-toggle {
+    border-color: #5a7a32;
+    color: #9dbf6e;
+  }
+  [data-theme="dark"] .dark-toggle:hover {
+    background: #1e2d0e;
+    color: #d4e8b0;
+  }
+
   * { box-sizing: border-box; }
 
   html, body { height: 100%; }

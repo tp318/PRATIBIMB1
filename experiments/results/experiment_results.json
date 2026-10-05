@@ -1,0 +1,428 @@
+{
+  "meta": {
+    "global_seed": 42,
+    "torch_available": true,
+    "engine_ok": true,
+    "model_ok": true,
+    "timestamp": "2026-10-03T18:01:52"
+  },
+  "results": {
+    "exp1": {
+      "1": {
+        "name": "Misfire",
+        "operating_points": {
+          "climb": {
+            "lead_time_median_s": 376.95000000000005,
+            "lead_time_p10_s": 364.84000000000003,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.06141666666666666,
+            "redline_triggered": true
+          },
+          "cruise_altitude": {
+            "lead_time_median_s": 433.95000000000005,
+            "lead_time_p10_s": 426.8,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.06208333333333334,
+            "redline_triggered": true
+          },
+          "hot_day_low": {
+            "lead_time_median_s": 306.75,
+            "lead_time_p10_s": 281.39,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.06191666666666666,
+            "redline_triggered": true
+          }
+        }
+      },
+      "2": {
+        "name": "Injector",
+        "operating_points": {
+          "climb": {
+            "lead_time_median_s": 600.0,
+            "lead_time_p10_s": 600.0,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.19983333333333334,
+            "redline_triggered": false
+          },
+          "cruise_altitude": {
+            "lead_time_median_s": 600.0,
+            "lead_time_p10_s": 600.0,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.19591666666666666,
+            "redline_triggered": false
+          },
+          "hot_day_low": {
+            "lead_time_median_s": 600.0,
+            "lead_time_p10_s": 600.0,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.19774999999999998,
+            "redline_triggered": false
+          }
+        }
+      },
+      "3": {
+        "name": "Cooling",
+        "operating_points": {
+          "climb": {
+            "lead_time_median_s": 196.05,
+            "lead_time_p10_s": 175.16000000000003,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.07041666666666667,
+            "redline_triggered": true
+          },
+          "cruise_altitude": {
+            "lead_time_median_s": 264.95000000000005,
+            "lead_time_p10_s": 248.67999999999998,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.07083333333333333,
+            "redline_triggered": true
+          },
+          "hot_day_low": {
+            "lead_time_median_s": 139.10000000000002,
+            "lead_time_p10_s": 131.94,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.07008333333333333,
+            "redline_triggered": true
+          }
+        }
+      },
+      "4": {
+        "name": "Lubrication",
+        "operating_points": {
+          "climb": {
+            "lead_time_median_s": 475.6,
+            "lead_time_p10_s": 452.31000000000006,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.07866666666666666,
+            "redline_triggered": true
+          },
+          "cruise_altitude": {
+            "lead_time_median_s": 425.90000000000003,
+            "lead_time_p10_s": 391.94,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.07825,
+            "redline_triggered": true
+          },
+          "hot_day_low": {
+            "lead_time_median_s": 448.35,
+            "lead_time_p10_s": 435.1,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.07858333333333334,
+            "redline_triggered": true
+          }
+        }
+      },
+      "5": {
+        "name": "Sensor Drift",
+        "operating_points": {
+          "climb": {
+            "lead_time_median_s": 600.0,
+            "lead_time_p10_s": 600.0,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.17908333333333332,
+            "redline_triggered": false
+          },
+          "cruise_altitude": {
+            "lead_time_median_s": 600.0,
+            "lead_time_p10_s": 600.0,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.18041666666666667,
+            "redline_triggered": false
+          },
+          "hot_day_low": {
+            "lead_time_median_s": 600.0,
+            "lead_time_p10_s": 600.0,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.18083333333333335,
+            "redline_triggered": false
+          }
+        }
+      },
+      "6": {
+        "name": "Combustion Inst.",
+        "operating_points": {
+          "climb": {
+            "lead_time_median_s": 308.85,
+            "lead_time_p10_s": 286.67,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.0535,
+            "redline_triggered": true
+          },
+          "cruise_altitude": {
+            "lead_time_median_s": 359.85,
+            "lead_time_p10_s": 346.26,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.05341666666666667,
+            "redline_triggered": true
+          },
+          "hot_day_low": {
+            "lead_time_median_s": 259.0,
+            "lead_time_p10_s": 230.27,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.053250000000000006,
+            "redline_triggered": true
+          }
+        }
+      },
+      "7": {
+        "name": "Overheating",
+        "operating_points": {
+          "climb": {
+            "lead_time_median_s": 113.30000000000001,
+            "lead_time_p10_s": 106.93,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.03783333333333333,
+            "redline_triggered": true
+          },
+          "cruise_altitude": {
+            "lead_time_median_s": 159.40000000000003,
+            "lead_time_p10_s": 145.22,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.03908333333333333,
+            "redline_triggered": true
+          },
+          "hot_day_low": {
+            "lead_time_median_s": 82.2,
+            "lead_time_p10_s": 73.18,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.0385,
+            "redline_triggered": true
+          }
+        }
+      },
+      "8": {
+        "name": "Vibration",
+        "operating_points": {
+          "climb": {
+            "lead_time_median_s": 231.4,
+            "lead_time_p10_s": 216.60000000000002,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.05,
+            "redline_triggered": true
+          },
+          "cruise_altitude": {
+            "lead_time_median_s": 242.45000000000002,
+            "lead_time_p10_s": 225.91000000000003,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.050416666666666665,
+            "redline_triggered": true
+          },
+          "hot_day_low": {
+            "lead_time_median_s": 236.20000000000005,
+            "lead_time_p10_s": 219.97000000000003,
+            "pct_before_redline": 100.0,
+            "severity_at_detection_med": 0.05025,
+            "redline_triggered": true
+          }
+        }
+      }
+    },
+    "exp2": {
+      "simulated_hours": 110.0,
+      "total_windows_checked": 48620,
+      "threshold_percentile": 95.0,
+      "false_alerts_detector": 0,
+      "false_alerts_static": 0,
+      "false_per_100h_detector": 0.0,
+      "false_per_100h_static": 0.0,
+      "detector_threshold_value": 4.110956223574835
+    },
+    "exp3": {
+      "perturbation_levels": {
+        "+5%": {
+          "detection_rate_pct": 100.0,
+          "healthy_windows_flagged_pct": 100.0,
+          "below_acceptable_limit": true,
+          "note": "FA% = fraction of healthy windows flagged; 100% = constant alarm"
+        },
+        "-5%": {
+          "detection_rate_pct": 100.0,
+          "healthy_windows_flagged_pct": 100.0,
+          "below_acceptable_limit": true,
+          "note": "FA% = fraction of healthy windows flagged; 100% = constant alarm"
+        },
+        "+10%": {
+          "detection_rate_pct": 100.0,
+          "healthy_windows_flagged_pct": 100.0,
+          "below_acceptable_limit": true,
+          "note": "FA% = fraction of healthy windows flagged; 100% = constant alarm"
+        },
+        "-10%": {
+          "detection_rate_pct": 100.0,
+          "healthy_windows_flagged_pct": 100.0,
+          "below_acceptable_limit": true,
+          "note": "FA% = fraction of healthy windows flagged; 100% = constant alarm"
+        },
+        "+20%": {
+          "detection_rate_pct": 100.0,
+          "healthy_windows_flagged_pct": 100.0,
+          "below_acceptable_limit": true,
+          "note": "FA% = fraction of healthy windows flagged; 100% = constant alarm"
+        },
+        "-20%": {
+          "detection_rate_pct": 100.0,
+          "healthy_windows_flagged_pct": 100.0,
+          "below_acceptable_limit": true,
+          "note": "FA% = fraction of healthy windows flagged; 100% = constant alarm"
+        }
+      },
+      "breakpoint": "+5%",
+      "acceptable_dr_pct": 80.0,
+      "acceptable_fa_window_pct": 20.0,
+      "design_note": "High FA% at even 5% mismatch is expected for a simple Mahalanobis detector: systematic bias shifts all healthy windows above the nominal threshold. DR stays high because fault signals dominate the bias. A CUSUM-on-residual-trend detector is recommended for diverse engine units."
+    },
+    "exp4": {
+      "model_size_mb": 3.837809,
+      "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+      "hardware_note": "desktop CPU, not target hardware",
+      "n_windows": 936,
+      "median_ms": 0.011,
+      "p99_ms": 0.014,
+      "fits_10ms_frame": true,
+      "ram_estimate_mb": 3.6
+    },
+    "exp5": {
+      "a_static": {
+        "median_lead_s": 0.0,
+        "p10_lead_s": 0.0,
+        "false_per_100h": 0.0
+      },
+      "b_det_raw_telem": {
+        "median_lead_s": 133.8,
+        "p10_lead_s": 77.5,
+        "false_per_100h": 0.0
+      },
+      "c_det_twin_resid": {
+        "median_lead_s": 133.8,
+        "p10_lead_s": 77.5,
+        "false_per_100h": 0.0
+      },
+      "d_full_pipeline": {
+        "median_lead_s": 62.6,
+        "p10_lead_s": -11.4,
+        "false_per_100h": 0.0
+      }
+    },
+    "extra_a": {
+      "n_runs": 30,
+      "pct_correct_drift": 0.0,
+      "pct_wrong_engine": 100.0,
+      "pct_healthy": 0.0
+    },
+    "extra_b": {
+      "0m": {
+        "residual_mean_per_channel": [
+          -0.107,
+          0.0043,
+          0.0668,
+          0.0075,
+          -0.0027,
+          0.0028,
+          0.0005,
+          0.0002,
+          -0.0059
+        ],
+        "residual_std_per_channel": [
+          17.8765,
+          2.4979,
+          3.9959,
+          0.794,
+          1.4982,
+          0.2999,
+          0.0398,
+          0.0495,
+          0.5032
+        ],
+        "overall_mean": -0.00373,
+        "overall_std": 3.06164
+      },
+      "3000m": {
+        "residual_mean_per_channel": [
+          -0.05,
+          0.0032,
+          0.0171,
+          0.0033,
+          -0.0056,
+          -0.0014,
+          0.0002,
+          0.0001,
+          -0.0013
+        ],
+        "residual_std_per_channel": [
+          18.0846,
+          2.4969,
+          4.0182,
+          0.7991,
+          1.5008,
+          0.2994,
+          0.0399,
+          0.0499,
+          0.4982
+        ],
+        "overall_mean": -0.00382,
+        "overall_std": 3.08743
+      },
+      "6000m": {
+        "residual_mean_per_channel": [
+          -0.1221,
+          -0.0016,
+          0.022,
+          0.0051,
+          0.0022,
+          0.0019,
+          0.0002,
+          -0.0,
+          0.0007
+        ],
+        "residual_std_per_channel": [
+          18.1706,
+          2.4896,
+          4.0018,
+          0.7965,
+          1.5063,
+          0.2997,
+          0.0399,
+          0.0499,
+          0.5022
+        ],
+        "overall_mean": -0.01019,
+        "overall_std": 3.09518
+      },
+      "7500m": {
+        "residual_mean_per_channel": [
+          -0.0791,
+          0.0231,
+          0.0024,
+          0.0043,
+          -0.0028,
+          -0.0012,
+          -0.0,
+          -0.0001,
+          0.003
+        ],
+        "residual_std_per_channel": [
+          17.9008,
+          2.5017,
+          4.0099,
+          0.799,
+          1.5086,
+          0.2993,
+          0.0397,
+          0.0496,
+          0.5
+        ],
+        "overall_mean": -0.0056,
+        "overall_std": 3.06763
+      }
+    },
+    "extra_c": {
+      "n_predictions": 1160,
+      "p10_error_pct": 7.0,
+      "p50_error_pct": 40.4,
+      "p90_error_pct": 194.4,
+      "mean_error_pct": 81.5,
+      "validation_note": "Validated on simulation only (held-out unit U02) \u2014 not flight data."
+    }
+  },
+  "errors": {}
+}

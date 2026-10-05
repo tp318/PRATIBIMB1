@@ -1,0 +1,25 @@
+fault_id,fault_name,operating_point,n_runs,misses,miss_rate_pct,median_lead_s,p10_lead_s,pct_before_redline,median_sev_at_det,redline_triggered
+1,Misfire,climb,20,0,0.0,426.4,394.4,100.0,0.024,True
+1,Misfire,cruise_altitude,20,0,0.0,521.6,476.3,100.0,0.024,True
+1,Misfire,hot_day_low,20,0,0.0,396.8,383.8,100.0,0.024,True
+2,Injector,climb,20,0,0.0,573.6,571.2,100.0,0.044,False
+2,Injector,cruise_altitude,20,0,0.0,572.8,568.0,100.0,0.045,False
+2,Injector,hot_day_low,20,0,0.0,574.4,569.6,100.0,0.043,False
+3,Cooling,climb,20,0,0.0,256.0,242.9,100.0,0.025,True
+3,Cooling,cruise_altitude,20,0,0.0,386.4,360.0,100.0,0.024,True
+3,Cooling,hot_day_low,20,0,0.0,172.8,161.4,100.0,0.024,True
+4,Lubrication,climb,20,0,0.0,568.0,529.3,100.0,0.027,True
+4,Lubrication,cruise_altitude,20,0,0.0,500.8,467.4,100.0,0.027,True
+4,Lubrication,hot_day_low,20,0,0.0,448.8,408.5,100.0,0.027,True
+5,Sensor Drift,climb,20,0,0.0,575.2,569.6,100.0,0.041,False
+5,Sensor Drift,cruise_altitude,20,0,0.0,577.6,572.8,100.0,0.037,False
+5,Sensor Drift,hot_day_low,20,0,0.0,576.8,572.8,100.0,0.039,False
+6,Combustion Inst.,climb,20,0,0.0,367.2,332.6,100.0,0.024,True
+6,Combustion Inst.,cruise_altitude,20,0,0.0,431.2,403.2,100.0,0.024,True
+6,Combustion Inst.,hot_day_low,20,0,0.0,344.0,319.7,100.0,0.021,True
+7,Overheating,climb,20,0,0.0,152.0,138.4,100.0,0.021,True
+7,Overheating,cruise_altitude,20,0,0.0,214.4,203.0,100.0,0.021,True
+7,Overheating,hot_day_low,20,0,0.0,104.0,92.3,100.0,0.021,True
+8,Vibration,climb,20,0,0.0,276.8,258.7,100.0,0.024,True
+8,Vibration,cruise_altitude,20,0,0.0,285.6,261.9,100.0,0.023,True
+8,Vibration,hot_day_low,20,0,0.0,281.6,252.6,100.0,0.024,True

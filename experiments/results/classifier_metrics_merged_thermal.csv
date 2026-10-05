@@ -1,0 +1,8 @@
+Class_ID,Diagnosis,Precision_Pct,Recall_Pct,F1_Score,Support
+1,Misfire,0.0,0.0,0.0,25
+2,Injector,100.0,100.0,100.0,25
+3,Thermal Degradation,61.5,80.0,69.6,50
+4,Lubrication,0.0,0.0,0.0,25
+5,Sensor Drift,0.0,0.0,0.0,25
+6,Combustion Instability,42.9,24.0,30.8,25
+7,Vibration,41.0,100.0,58.1,25

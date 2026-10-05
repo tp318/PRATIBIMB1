@@ -1,0 +1,9 @@
+Class_ID,Class_Name,Precision_Pct,Recall_Pct,F1_Score,Support
+1,Misfire conditions,0.0,0.0,0.0,25
+2,Injector abnormalities,100.0,100.0,100.0,25
+3,Cooling degradation,62.5,100.0,76.9,25
+4,Lubrication issues,0.0,0.0,0.0,25
+5,Sensor drift / failure,0.0,0.0,0.0,25
+6,Combustion instability,42.9,24.0,30.8,25
+7,Overheating trends,0.0,0.0,0.0,25
+8,Abnormal vibration patterns,41.0,100.0,58.1,25

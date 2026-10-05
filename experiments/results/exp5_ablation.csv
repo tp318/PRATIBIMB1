@@ -1,0 +1,5 @@
+Variant,Median_Alert_Lead_s,P10_Alert_Lead_s,Median_Diagnosis_Lead_s,False_Alerts_per_100h,Envelope_Viability
+(a) Static Redlines,0.0,0.0,0.0,0.0,Baseline (Late warning)
+(b) Strong Raw Telemetry Detector,250.9,134.8,-,310.0,High False Alarms in Dynamic Climb/Descent
+(c) Twin Residual Detector,249.3,136.1,-,0.0,Viable & Envelope Invariant
+(d) Full Pipeline (Residuals -> Alert -> Classifier),249.3,136.1,0.0,0.0,Optimal (Early warning + Specific root cause)

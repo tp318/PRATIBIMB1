@@ -1,0 +1,481 @@
+fault_id,fault_name,operating_point,seed,t_alert_s,t_label_s,t_redline_s,lead_time_s,severity_at_det,missed
+1,Misfire,climb,1042,16.0,16.0,448.0,432.0,0.027,False
+1,Misfire,climb,1043,12.8,12.8,440.0,427.2,0.021,False
+1,Misfire,climb,1044,12.8,12.8,467.2,454.4,0.021,False
+1,Misfire,climb,1045,12.8,12.8,456.0,443.2,0.021,False
+1,Misfire,climb,1046,12.8,12.8,419.2,406.4,0.021,False
+1,Misfire,climb,1047,16.0,17.6,467.2,451.2,0.027,False
+1,Misfire,climb,1048,17.6,17.6,440.0,422.4,0.029,False
+1,Misfire,climb,1049,16.0,16.0,403.2,387.2,0.027,False
+1,Misfire,climb,1050,14.4,14.4,438.4,424.0,0.024,False
+1,Misfire,climb,1051,17.6,17.6,454.4,436.8,0.029,False
+1,Misfire,climb,1052,16.0,20.8,476.8,460.8,0.027,False
+1,Misfire,climb,1053,17.6,19.2,377.6,360.0,0.029,False
+1,Misfire,climb,1054,14.4,14.4,440.0,425.6,0.024,False
+1,Misfire,climb,1055,14.4,14.4,409.6,395.2,0.024,False
+1,Misfire,climb,1056,12.8,12.8,425.6,412.8,0.021,False
+1,Misfire,climb,1057,16.0,16.0,462.4,446.4,0.027,False
+1,Misfire,climb,1058,14.4,14.4,462.4,448.0,0.024,False
+1,Misfire,climb,1059,12.8,19.2,430.4,417.6,0.021,False
+1,Misfire,climb,1060,14.4,14.4,433.6,419.2,0.024,False
+1,Misfire,climb,1061,16.0,16.0,451.2,435.2,0.027,False
+1,Misfire,cruise_altitude,1142,14.4,14.4,508.8,494.4,0.024,False
+1,Misfire,cruise_altitude,1143,16.0,16.0,545.6,529.6,0.027,False
+1,Misfire,cruise_altitude,1144,14.4,14.4,486.4,472.0,0.024,False
+1,Misfire,cruise_altitude,1145,14.4,14.4,555.2,540.8,0.024,False
+1,Misfire,cruise_altitude,1146,14.4,14.4,576.0,561.6,0.024,False
+1,Misfire,cruise_altitude,1147,12.8,12.8,508.8,496.0,0.021,False
+1,Misfire,cruise_altitude,1148,14.4,14.4,505.6,491.2,0.024,False
+1,Misfire,cruise_altitude,1149,16.0,16.0,537.6,521.6,0.027,False
+1,Misfire,cruise_altitude,1150,14.4,17.6,536.0,521.6,0.024,False
+1,Misfire,cruise_altitude,1151,14.4,14.4,556.8,542.4,0.024,False
+1,Misfire,cruise_altitude,1152,16.0,16.0,476.8,460.8,0.027,False
+1,Misfire,cruise_altitude,1153,16.0,16.0,523.2,507.2,0.027,False
+1,Misfire,cruise_altitude,1154,16.0,16.0,518.4,502.4,0.027,False
+1,Misfire,cruise_altitude,1155,16.0,16.0,568.0,552.0,0.027,False
+1,Misfire,cruise_altitude,1156,12.8,12.8,500.8,488.0,0.021,False
+1,Misfire,cruise_altitude,1157,12.8,12.8,544.0,531.2,0.021,False
+1,Misfire,cruise_altitude,1158,14.4,14.4,539.2,524.8,0.024,False
+1,Misfire,cruise_altitude,1159,14.4,14.4,491.2,476.8,0.024,False
+1,Misfire,cruise_altitude,1160,16.0,16.0,539.2,523.2,0.027,False
+1,Misfire,cruise_altitude,1161,14.4,14.4,542.4,528.0,0.024,False
+1,Misfire,hot_day_low,1242,14.4,14.4,452.8,438.4,0.024,False
+1,Misfire,hot_day_low,1243,14.4,14.4,417.6,403.2,0.024,False
+1,Misfire,hot_day_low,1244,14.4,16.0,404.8,390.4,0.024,False
+1,Misfire,hot_day_low,1245,14.4,17.6,388.8,374.4,0.024,False
+1,Misfire,hot_day_low,1246,16.0,16.0,403.2,387.2,0.027,False
+1,Misfire,hot_day_low,1247,16.0,16.0,409.6,393.6,0.027,False
+1,Misfire,hot_day_low,1248,14.4,16.0,412.8,398.4,0.024,False
+1,Misfire,hot_day_low,1249,16.0,16.0,435.2,419.2,0.027,False
+1,Misfire,hot_day_low,1250,14.4,19.2,419.2,404.8,0.024,False
+1,Misfire,hot_day_low,1251,12.8,12.8,427.2,414.4,0.021,False
+1,Misfire,hot_day_low,1252,12.8,17.6,396.8,384.0,0.021,False
+1,Misfire,hot_day_low,1253,14.4,14.4,424.0,409.6,0.024,False
+1,Misfire,hot_day_low,1254,16.0,16.0,428.8,412.8,0.027,False
+1,Misfire,hot_day_low,1255,14.4,17.6,396.8,382.4,0.024,False
+1,Misfire,hot_day_low,1256,14.4,14.4,419.2,404.8,0.024,False
+1,Misfire,hot_day_low,1257,14.4,14.4,430.4,416.0,0.024,False
+1,Misfire,hot_day_low,1258,14.4,14.4,406.4,392.0,0.024,False
+1,Misfire,hot_day_low,1259,16.0,16.0,406.4,390.4,0.027,False
+1,Misfire,hot_day_low,1260,16.0,16.0,404.8,388.8,0.027,False
+1,Misfire,hot_day_low,1261,14.4,17.6,409.6,395.2,0.024,False
+2,Injector,climb,2042,28.8,52.8,,571.2,0.048,False
+2,Injector,climb,2043,27.2,62.4,,572.8,0.045,False
+2,Injector,climb,2044,22.4,49.6,,577.6,0.037,False
+2,Injector,climb,2045,25.6,72.0,,574.4,0.043,False
+2,Injector,climb,2046,27.2,67.2,,572.8,0.045,False
+2,Injector,climb,2047,17.6,32.0,,582.4,0.029,False
+2,Injector,climb,2048,25.6,38.4,,574.4,0.043,False
+2,Injector,climb,2049,28.8,73.6,,571.2,0.048,False
+2,Injector,climb,2050,25.6,46.4,,574.4,0.043,False
+2,Injector,climb,2051,27.2,64.0,,572.8,0.045,False
+2,Injector,climb,2052,25.6,41.6,,574.4,0.043,False
+2,Injector,climb,2053,28.8,41.6,,571.2,0.048,False
+2,Injector,climb,2054,25.6,25.6,,574.4,0.043,False
+2,Injector,climb,2055,27.2,44.8,,572.8,0.045,False
+2,Injector,climb,2056,27.2,56.0,,572.8,0.045,False
+2,Injector,climb,2057,25.6,64.0,,574.4,0.043,False
+2,Injector,climb,2058,28.8,46.4,,571.2,0.048,False
+2,Injector,climb,2059,27.2,28.8,,572.8,0.045,False
+2,Injector,climb,2060,24.0,46.4,,576.0,0.04,False
+2,Injector,climb,2061,25.6,64.0,,574.4,0.043,False
+2,Injector,cruise_altitude,2142,24.0,36.8,,576.0,0.04,False
+2,Injector,cruise_altitude,2143,32.0,40.0,,568.0,0.053,False
+2,Injector,cruise_altitude,2144,28.8,72.0,,571.2,0.048,False
+2,Injector,cruise_altitude,2145,28.8,54.4,,571.2,0.048,False
+2,Injector,cruise_altitude,2146,30.4,62.4,,569.6,0.051,False
+2,Injector,cruise_altitude,2147,32.0,48.0,,568.0,0.053,False
+2,Injector,cruise_altitude,2148,22.4,41.6,,577.6,0.037,False
+2,Injector,cruise_altitude,2149,28.8,46.4,,571.2,0.048,False
+2,Injector,cruise_altitude,2150,24.0,81.6,,576.0,0.04,False
+2,Injector,cruise_altitude,2151,22.4,73.6,,577.6,0.037,False
+2,Injector,cruise_altitude,2152,22.4,28.8,,577.6,0.037,False
+2,Injector,cruise_altitude,2153,25.6,48.0,,574.4,0.043,False
+2,Injector,cruise_altitude,2154,25.6,49.6,,574.4,0.043,False
+2,Injector,cruise_altitude,2155,27.2,46.4,,572.8,0.045,False
+2,Injector,cruise_altitude,2156,24.0,44.8,,576.0,0.04,False
+2,Injector,cruise_altitude,2157,27.2,51.2,,572.8,0.045,False
+2,Injector,cruise_altitude,2158,19.2,52.8,,580.8,0.032,False
+2,Injector,cruise_altitude,2159,27.2,68.8,,572.8,0.045,False
+2,Injector,cruise_altitude,2160,27.2,41.6,,572.8,0.045,False
+2,Injector,cruise_altitude,2161,33.6,68.8,,566.4,0.056,False
+2,Injector,hot_day_low,2242,19.2,44.8,,580.8,0.032,False
+2,Injector,hot_day_low,2243,22.4,38.4,,577.6,0.037,False
+2,Injector,hot_day_low,2244,20.8,43.2,,579.2,0.035,False
+2,Injector,hot_day_low,2245,27.2,35.2,,572.8,0.045,False
+2,Injector,hot_day_low,2246,25.6,72.0,,574.4,0.043,False
+2,Injector,hot_day_low,2247,25.6,60.8,,574.4,0.043,False
+2,Injector,hot_day_low,2248,24.0,46.4,,576.0,0.04,False
+2,Injector,hot_day_low,2249,30.4,62.4,,569.6,0.051,False
+2,Injector,hot_day_low,2250,25.6,35.2,,574.4,0.043,False
+2,Injector,hot_day_low,2251,19.2,19.2,,580.8,0.032,False
+2,Injector,hot_day_low,2252,22.4,54.4,,577.6,0.037,False
+2,Injector,hot_day_low,2253,25.6,28.8,,574.4,0.043,False
+2,Injector,hot_day_low,2254,32.0,86.4,,568.0,0.053,False
+2,Injector,hot_day_low,2255,30.4,40.0,,569.6,0.051,False
+2,Injector,hot_day_low,2256,19.2,49.6,,580.8,0.032,False
+2,Injector,hot_day_low,2257,20.8,54.4,,579.2,0.035,False
+2,Injector,hot_day_low,2258,25.6,52.8,,574.4,0.043,False
+2,Injector,hot_day_low,2259,20.8,57.6,,579.2,0.035,False
+2,Injector,hot_day_low,2260,30.4,54.4,,569.6,0.051,False
+2,Injector,hot_day_low,2261,30.4,49.6,,569.6,0.051,False
+3,Cooling,climb,3042,12.8,,256.0,243.2,0.021,False
+3,Cooling,climb,3043,16.0,,241.6,225.6,0.027,False
+3,Cooling,climb,3044,12.8,12.8,291.2,278.4,0.021,False
+3,Cooling,climb,3045,16.0,,270.4,254.4,0.027,False
+3,Cooling,climb,3046,14.4,14.4,283.2,268.8,0.024,False
+3,Cooling,climb,3047,14.4,,280.0,265.6,0.024,False
+3,Cooling,climb,3048,17.6,,264.0,246.4,0.029,False
+3,Cooling,climb,3049,16.0,,273.6,257.6,0.027,False
+3,Cooling,climb,3050,16.0,,272.0,256.0,0.027,False
+3,Cooling,climb,3051,16.0,,264.0,248.0,0.027,False
+3,Cooling,climb,3052,14.4,,286.4,272.0,0.024,False
+3,Cooling,climb,3053,16.0,,260.8,244.8,0.027,False
+3,Cooling,climb,3054,12.8,,265.6,252.8,0.021,False
+3,Cooling,climb,3055,16.0,,302.4,286.4,0.027,False
+3,Cooling,climb,3056,14.4,,284.8,270.4,0.024,False
+3,Cooling,climb,3057,16.0,16.0,291.2,275.2,0.027,False
+3,Cooling,climb,3058,14.4,,270.4,256.0,0.024,False
+3,Cooling,climb,3059,16.0,,256.0,240.0,0.027,False
+3,Cooling,climb,3060,14.4,,268.8,254.4,0.024,False
+3,Cooling,climb,3061,14.4,22.4,283.2,268.8,0.024,False
+3,Cooling,cruise_altitude,3142,14.4,,403.2,388.8,0.024,False
+3,Cooling,cruise_altitude,3143,14.4,,404.8,390.4,0.024,False
+3,Cooling,cruise_altitude,3144,16.0,,395.2,379.2,0.027,False
+3,Cooling,cruise_altitude,3145,16.0,,420.8,404.8,0.027,False
+3,Cooling,cruise_altitude,3146,14.4,,374.4,360.0,0.024,False
+3,Cooling,cruise_altitude,3147,12.8,,406.4,393.6,0.021,False
+3,Cooling,cruise_altitude,3148,14.4,14.4,427.2,412.8,0.024,False
+3,Cooling,cruise_altitude,3149,16.0,,428.8,412.8,0.027,False
+3,Cooling,cruise_altitude,3150,16.0,16.0,355.2,339.2,0.027,False
+3,Cooling,cruise_altitude,3151,17.6,,436.8,419.2,0.029,False
+3,Cooling,cruise_altitude,3152,16.0,,412.8,396.8,0.027,False
+3,Cooling,cruise_altitude,3153,12.8,,396.8,384.0,0.021,False
+3,Cooling,cruise_altitude,3154,16.0,,414.4,398.4,0.027,False
+3,Cooling,cruise_altitude,3155,12.8,,392.0,379.2,0.021,False
+3,Cooling,cruise_altitude,3156,12.8,,393.6,380.8,0.021,False
+3,Cooling,cruise_altitude,3157,16.0,,382.4,366.4,0.027,False
+3,Cooling,cruise_altitude,3158,14.4,,417.6,403.2,0.024,False
+3,Cooling,cruise_altitude,3159,14.4,,380.8,366.4,0.024,False
+3,Cooling,cruise_altitude,3160,16.0,,376.0,360.0,0.027,False
+3,Cooling,cruise_altitude,3161,14.4,,392.0,377.6,0.024,False
+3,Cooling,hot_day_low,3242,17.6,,188.8,171.2,0.029,False
+3,Cooling,hot_day_low,3243,14.4,,176.0,161.6,0.024,False
+3,Cooling,hot_day_low,3244,16.0,,190.4,174.4,0.027,False
+3,Cooling,hot_day_low,3245,16.0,,203.2,187.2,0.027,False
+3,Cooling,hot_day_low,3246,16.0,,188.8,172.8,0.027,False
+3,Cooling,hot_day_low,3247,14.4,19.2,179.2,164.8,0.024,False
+3,Cooling,hot_day_low,3248,12.8,16.0,196.8,184.0,0.021,False
+3,Cooling,hot_day_low,3249,16.0,,190.4,174.4,0.027,False
+3,Cooling,hot_day_low,3250,16.0,20.8,184.0,168.0,0.027,False
+3,Cooling,hot_day_low,3251,16.0,,176.0,160.0,0.027,False
+3,Cooling,hot_day_low,3252,14.4,17.6,185.6,171.2,0.024,False
+3,Cooling,hot_day_low,3253,14.4,,192.0,177.6,0.024,False
+3,Cooling,hot_day_low,3254,14.4,,193.6,179.2,0.024,False
+3,Cooling,hot_day_low,3255,12.8,,185.6,172.8,0.021,False
+3,Cooling,hot_day_low,3256,14.4,,177.6,163.2,0.024,False
+3,Cooling,hot_day_low,3257,14.4,,174.4,160.0,0.024,False
+3,Cooling,hot_day_low,3258,17.6,,198.4,180.8,0.029,False
+3,Cooling,hot_day_low,3259,16.0,19.2,200.0,184.0,0.027,False
+3,Cooling,hot_day_low,3260,14.4,14.4,187.2,172.8,0.024,False
+3,Cooling,hot_day_low,3261,14.4,,203.2,188.8,0.024,False
+4,Lubrication,climb,4042,14.4,,,585.6,0.024,False
+4,Lubrication,climb,4043,16.0,,,584.0,0.027,False
+4,Lubrication,climb,4044,12.8,,576.0,563.2,0.021,False
+4,Lubrication,climb,4045,17.6,,,582.4,0.029,False
+4,Lubrication,climb,4046,19.2,,545.6,526.4,0.032,False
+4,Lubrication,climb,4047,17.6,,587.2,569.6,0.029,False
+4,Lubrication,climb,4048,17.6,,584.0,566.4,0.029,False
+4,Lubrication,climb,4049,17.6,,,582.4,0.029,False
+4,Lubrication,climb,4050,17.6,,577.6,560.0,0.029,False
+4,Lubrication,climb,4051,12.8,,,587.2,0.021,False
+4,Lubrication,climb,4052,16.0,,566.4,550.4,0.027,False
+4,Lubrication,climb,4053,16.0,,577.6,561.6,0.027,False
+4,Lubrication,climb,4054,14.4,,574.4,560.0,0.024,False
+4,Lubrication,climb,4055,16.0,,593.6,577.6,0.027,False
+4,Lubrication,climb,4056,16.0,,545.6,529.6,0.027,False
+4,Lubrication,climb,4057,16.0,,598.4,582.4,0.027,False
+4,Lubrication,climb,4058,16.0,,,584.0,0.027,False
+4,Lubrication,climb,4059,19.2,,512.0,492.8,0.032,False
+4,Lubrication,climb,4060,17.6,,588.8,571.2,0.029,False
+4,Lubrication,climb,4061,16.0,,577.6,561.6,0.027,False
+4,Lubrication,cruise_altitude,4142,14.4,,515.2,500.8,0.024,False
+4,Lubrication,cruise_altitude,4143,16.0,,516.8,500.8,0.027,False
+4,Lubrication,cruise_altitude,4144,16.0,,489.6,473.6,0.027,False
+4,Lubrication,cruise_altitude,4145,14.4,,523.2,508.8,0.024,False
+4,Lubrication,cruise_altitude,4146,16.0,,507.2,491.2,0.027,False
+4,Lubrication,cruise_altitude,4147,16.0,,536.0,520.0,0.027,False
+4,Lubrication,cruise_altitude,4148,14.4,,564.8,550.4,0.024,False
+4,Lubrication,cruise_altitude,4149,16.0,,532.8,516.8,0.027,False
+4,Lubrication,cruise_altitude,4150,16.0,,505.6,489.6,0.027,False
+4,Lubrication,cruise_altitude,4151,16.0,,572.8,556.8,0.027,False
+4,Lubrication,cruise_altitude,4152,16.0,,580.8,564.8,0.027,False
+4,Lubrication,cruise_altitude,4153,16.0,,526.4,510.4,0.027,False
+4,Lubrication,cruise_altitude,4154,14.4,,588.8,574.4,0.024,False
+4,Lubrication,cruise_altitude,4155,17.6,,521.6,504.0,0.029,False
+4,Lubrication,cruise_altitude,4156,14.4,,483.2,468.8,0.024,False
+4,Lubrication,cruise_altitude,4157,16.0,,470.4,454.4,0.027,False
+4,Lubrication,cruise_altitude,4158,17.6,,467.2,449.6,0.029,False
+4,Lubrication,cruise_altitude,4159,17.6,,516.8,499.2,0.029,False
+4,Lubrication,cruise_altitude,4160,19.2,,507.2,488.0,0.032,False
+4,Lubrication,cruise_altitude,4161,14.4,,508.8,494.4,0.024,False
+4,Lubrication,hot_day_low,4242,14.4,,476.8,462.4,0.024,False
+4,Lubrication,hot_day_low,4243,16.0,,480.0,464.0,0.027,False
+4,Lubrication,hot_day_low,4244,16.0,,435.2,419.2,0.027,False
+4,Lubrication,hot_day_low,4245,16.0,,476.8,460.8,0.027,False
+4,Lubrication,hot_day_low,4246,19.2,,411.2,392.0,0.032,False
+4,Lubrication,hot_day_low,4247,17.6,,416.0,398.4,0.029,False
+4,Lubrication,hot_day_low,4248,16.0,,462.4,446.4,0.027,False
+4,Lubrication,hot_day_low,4249,16.0,,464.0,448.0,0.027,False
+4,Lubrication,hot_day_low,4250,16.0,,451.2,435.2,0.027,False
+4,Lubrication,hot_day_low,4251,17.6,,507.2,489.6,0.029,False
+4,Lubrication,hot_day_low,4252,12.8,,462.4,449.6,0.021,False
+4,Lubrication,hot_day_low,4253,16.0,,449.6,433.6,0.027,False
+4,Lubrication,hot_day_low,4254,16.0,,472.0,456.0,0.027,False
+4,Lubrication,hot_day_low,4255,17.6,,427.2,409.6,0.029,False
+4,Lubrication,hot_day_low,4256,12.8,,488.0,475.2,0.021,False
+4,Lubrication,hot_day_low,4257,12.8,,462.4,449.6,0.021,False
+4,Lubrication,hot_day_low,4258,17.6,,428.8,411.2,0.029,False
+4,Lubrication,hot_day_low,4259,17.6,,483.2,465.6,0.029,False
+4,Lubrication,hot_day_low,4260,14.4,,465.6,451.2,0.024,False
+4,Lubrication,hot_day_low,4261,17.6,,452.8,435.2,0.029,False
+5,Sensor Drift,climb,5042,20.8,72.0,,579.2,0.035,False
+5,Sensor Drift,climb,5043,25.6,60.8,,574.4,0.043,False
+5,Sensor Drift,climb,5044,25.6,65.6,,574.4,0.043,False
+5,Sensor Drift,climb,5045,30.4,59.2,,569.6,0.051,False
+5,Sensor Drift,climb,5046,24.0,60.8,,576.0,0.04,False
+5,Sensor Drift,climb,5047,19.2,59.2,,580.8,0.032,False
+5,Sensor Drift,climb,5048,24.0,57.6,,576.0,0.04,False
+5,Sensor Drift,climb,5049,24.0,65.6,,576.0,0.04,False
+5,Sensor Drift,climb,5050,25.6,67.2,,574.4,0.043,False
+5,Sensor Drift,climb,5051,25.6,57.6,,574.4,0.043,False
+5,Sensor Drift,climb,5052,25.6,54.4,,574.4,0.043,False
+5,Sensor Drift,climb,5053,20.8,54.4,,579.2,0.035,False
+5,Sensor Drift,climb,5054,22.4,64.0,,577.6,0.037,False
+5,Sensor Drift,climb,5055,28.8,54.4,,571.2,0.048,False
+5,Sensor Drift,climb,5056,22.4,76.8,,577.6,0.037,False
+5,Sensor Drift,climb,5057,22.4,70.4,,577.6,0.037,False
+5,Sensor Drift,climb,5058,30.4,65.6,,569.6,0.051,False
+5,Sensor Drift,climb,5059,30.4,65.6,,569.6,0.051,False
+5,Sensor Drift,climb,5060,27.2,65.6,,572.8,0.045,False
+5,Sensor Drift,climb,5061,20.8,56.0,,579.2,0.035,False
+5,Sensor Drift,cruise_altitude,5142,24.0,64.0,,576.0,0.04,False
+5,Sensor Drift,cruise_altitude,5143,22.4,60.8,,577.6,0.037,False
+5,Sensor Drift,cruise_altitude,5144,27.2,64.0,,572.8,0.045,False
+5,Sensor Drift,cruise_altitude,5145,22.4,44.8,,577.6,0.037,False
+5,Sensor Drift,cruise_altitude,5146,20.8,57.6,,579.2,0.035,False
+5,Sensor Drift,cruise_altitude,5147,22.4,67.2,,577.6,0.037,False
+5,Sensor Drift,cruise_altitude,5148,30.4,65.6,,569.6,0.051,False
+5,Sensor Drift,cruise_altitude,5149,24.0,75.2,,576.0,0.04,False
+5,Sensor Drift,cruise_altitude,5150,22.4,59.2,,577.6,0.037,False
+5,Sensor Drift,cruise_altitude,5151,20.8,51.2,,579.2,0.035,False
+5,Sensor Drift,cruise_altitude,5152,19.2,52.8,,580.8,0.032,False
+5,Sensor Drift,cruise_altitude,5153,14.4,49.6,,585.6,0.024,False
+5,Sensor Drift,cruise_altitude,5154,25.6,57.6,,574.4,0.043,False
+5,Sensor Drift,cruise_altitude,5155,22.4,57.6,,577.6,0.037,False
+5,Sensor Drift,cruise_altitude,5156,25.6,51.2,,574.4,0.043,False
+5,Sensor Drift,cruise_altitude,5157,24.0,64.0,,576.0,0.04,False
+5,Sensor Drift,cruise_altitude,5158,22.4,54.4,,577.6,0.037,False
+5,Sensor Drift,cruise_altitude,5159,27.2,67.2,,572.8,0.045,False
+5,Sensor Drift,cruise_altitude,5160,22.4,46.4,,577.6,0.037,False
+5,Sensor Drift,cruise_altitude,5161,19.2,56.0,,580.8,0.032,False
+5,Sensor Drift,hot_day_low,5242,22.4,57.6,,577.6,0.037,False
+5,Sensor Drift,hot_day_low,5243,25.6,62.4,,574.4,0.043,False
+5,Sensor Drift,hot_day_low,5244,28.8,59.2,,571.2,0.048,False
+5,Sensor Drift,hot_day_low,5245,20.8,49.6,,579.2,0.035,False
+5,Sensor Drift,hot_day_low,5246,20.8,68.8,,579.2,0.035,False
+5,Sensor Drift,hot_day_low,5247,19.2,49.6,,580.8,0.032,False
+5,Sensor Drift,hot_day_low,5248,19.2,54.4,,580.8,0.032,False
+5,Sensor Drift,hot_day_low,5249,25.6,57.6,,574.4,0.043,False
+5,Sensor Drift,hot_day_low,5250,24.0,70.4,,576.0,0.04,False
+5,Sensor Drift,hot_day_low,5251,27.2,51.2,,572.8,0.045,False
+5,Sensor Drift,hot_day_low,5252,25.6,60.8,,574.4,0.043,False
+5,Sensor Drift,hot_day_low,5253,22.4,65.6,,577.6,0.037,False
+5,Sensor Drift,hot_day_low,5254,22.4,56.0,,577.6,0.037,False
+5,Sensor Drift,hot_day_low,5255,20.8,65.6,,579.2,0.035,False
+5,Sensor Drift,hot_day_low,5256,27.2,60.8,,572.8,0.045,False
+5,Sensor Drift,hot_day_low,5257,19.2,62.4,,580.8,0.032,False
+5,Sensor Drift,hot_day_low,5258,22.4,59.2,,577.6,0.037,False
+5,Sensor Drift,hot_day_low,5259,27.2,68.8,,572.8,0.045,False
+5,Sensor Drift,hot_day_low,5260,24.0,64.0,,576.0,0.04,False
+5,Sensor Drift,hot_day_low,5261,25.6,48.0,,574.4,0.043,False
+6,Combustion Inst.,climb,6042,16.0,16.0,395.2,379.2,0.027,False
+6,Combustion Inst.,climb,6043,14.4,14.4,374.4,360.0,0.024,False
+6,Combustion Inst.,climb,6044,14.4,14.4,345.6,331.2,0.024,False
+6,Combustion Inst.,climb,6045,16.0,16.0,344.0,328.0,0.027,False
+6,Combustion Inst.,climb,6046,14.4,14.4,353.6,339.2,0.024,False
+6,Combustion Inst.,climb,6047,12.8,12.8,382.4,369.6,0.021,False
+6,Combustion Inst.,climb,6048,16.0,16.0,368.0,352.0,0.027,False
+6,Combustion Inst.,climb,6049,14.4,14.4,428.8,414.4,0.024,False
+6,Combustion Inst.,climb,6050,14.4,14.4,347.2,332.8,0.024,False
+6,Combustion Inst.,climb,6051,12.8,12.8,385.6,372.8,0.021,False
+6,Combustion Inst.,climb,6052,12.8,12.8,377.6,364.8,0.021,False
+6,Combustion Inst.,climb,6053,14.4,14.4,377.6,363.2,0.024,False
+6,Combustion Inst.,climb,6054,12.8,12.8,390.4,377.6,0.021,False
+6,Combustion Inst.,climb,6055,14.4,14.4,409.6,395.2,0.024,False
+6,Combustion Inst.,climb,6056,14.4,14.4,387.2,372.8,0.024,False
+6,Combustion Inst.,climb,6057,14.4,14.4,388.8,374.4,0.024,False
+6,Combustion Inst.,climb,6058,14.4,14.4,403.2,388.8,0.024,False
+6,Combustion Inst.,climb,6059,12.8,12.8,353.6,340.8,0.021,False
+6,Combustion Inst.,climb,6060,12.8,12.8,350.4,337.6,0.021,False
+6,Combustion Inst.,climb,6061,14.4,14.4,387.2,372.8,0.024,False
+6,Combustion Inst.,cruise_altitude,6142,14.4,14.4,412.8,398.4,0.024,False
+6,Combustion Inst.,cruise_altitude,6143,14.4,16.0,432.0,417.6,0.024,False
+6,Combustion Inst.,cruise_altitude,6144,12.8,12.8,472.0,459.2,0.021,False
+6,Combustion Inst.,cruise_altitude,6145,14.4,14.4,449.6,435.2,0.024,False
+6,Combustion Inst.,cruise_altitude,6146,14.4,14.4,425.6,411.2,0.024,False
+6,Combustion Inst.,cruise_altitude,6147,14.4,14.4,468.8,454.4,0.024,False
+6,Combustion Inst.,cruise_altitude,6148,12.8,12.8,456.0,443.2,0.021,False
+6,Combustion Inst.,cruise_altitude,6149,14.4,14.4,427.2,412.8,0.024,False
+6,Combustion Inst.,cruise_altitude,6150,12.8,12.8,433.6,420.8,0.021,False
+6,Combustion Inst.,cruise_altitude,6151,14.4,14.4,419.2,404.8,0.024,False
+6,Combustion Inst.,cruise_altitude,6152,14.4,14.4,491.2,476.8,0.024,False
+6,Combustion Inst.,cruise_altitude,6153,14.4,16.0,486.4,472.0,0.024,False
+6,Combustion Inst.,cruise_altitude,6154,12.8,12.8,425.6,412.8,0.021,False
+6,Combustion Inst.,cruise_altitude,6155,16.0,16.0,419.2,403.2,0.027,False
+6,Combustion Inst.,cruise_altitude,6156,12.8,12.8,476.8,464.0,0.021,False
+6,Combustion Inst.,cruise_altitude,6157,12.8,12.8,456.0,443.2,0.021,False
+6,Combustion Inst.,cruise_altitude,6158,14.4,14.4,454.4,440.0,0.024,False
+6,Combustion Inst.,cruise_altitude,6159,14.4,14.4,417.6,403.2,0.024,False
+6,Combustion Inst.,cruise_altitude,6160,14.4,14.4,441.6,427.2,0.024,False
+6,Combustion Inst.,cruise_altitude,6161,12.8,12.8,470.4,457.6,0.021,False
+6,Combustion Inst.,hot_day_low,6242,12.8,12.8,340.8,328.0,0.021,False
+6,Combustion Inst.,hot_day_low,6243,14.4,14.4,353.6,339.2,0.024,False
+6,Combustion Inst.,hot_day_low,6244,12.8,12.8,332.8,320.0,0.021,False
+6,Combustion Inst.,hot_day_low,6245,14.4,14.4,344.0,329.6,0.024,False
+6,Combustion Inst.,hot_day_low,6246,14.4,14.4,364.8,350.4,0.024,False
+6,Combustion Inst.,hot_day_low,6247,12.8,12.8,379.2,366.4,0.021,False
+6,Combustion Inst.,hot_day_low,6248,14.4,14.4,371.2,356.8,0.024,False
+6,Combustion Inst.,hot_day_low,6249,14.4,16.0,358.4,344.0,0.024,False
+6,Combustion Inst.,hot_day_low,6250,12.8,12.8,368.0,355.2,0.021,False
+6,Combustion Inst.,hot_day_low,6251,12.8,12.8,348.8,336.0,0.021,False
+6,Combustion Inst.,hot_day_low,6252,12.8,12.8,366.4,353.6,0.021,False
+6,Combustion Inst.,hot_day_low,6253,14.4,14.4,331.2,316.8,0.024,False
+6,Combustion Inst.,hot_day_low,6254,12.8,12.8,361.6,348.8,0.021,False
+6,Combustion Inst.,hot_day_low,6255,14.4,14.4,334.4,320.0,0.024,False
+6,Combustion Inst.,hot_day_low,6256,12.8,12.8,371.2,358.4,0.021,False
+6,Combustion Inst.,hot_day_low,6257,12.8,14.4,352.0,339.2,0.021,False
+6,Combustion Inst.,hot_day_low,6258,12.8,14.4,360.0,347.2,0.021,False
+6,Combustion Inst.,hot_day_low,6259,12.8,12.8,324.8,312.0,0.021,False
+6,Combustion Inst.,hot_day_low,6260,14.4,14.4,369.6,355.2,0.024,False
+6,Combustion Inst.,hot_day_low,6261,14.4,14.4,358.4,344.0,0.024,False
+7,Overheating,climb,7042,12.8,,158.4,145.6,0.021,False
+7,Overheating,climb,7043,12.8,,164.8,152.0,0.021,False
+7,Overheating,climb,7044,12.8,,161.6,148.8,0.021,False
+7,Overheating,climb,7045,12.8,,126.4,113.6,0.021,False
+7,Overheating,climb,7046,12.8,,164.8,152.0,0.021,False
+7,Overheating,climb,7047,12.8,,169.6,156.8,0.021,False
+7,Overheating,climb,7048,12.8,,166.4,153.6,0.021,False
+7,Overheating,climb,7049,12.8,,169.6,156.8,0.021,False
+7,Overheating,climb,7050,14.4,,184.0,169.6,0.024,False
+7,Overheating,climb,7051,12.8,,158.4,145.6,0.021,False
+7,Overheating,climb,7052,14.4,,160.0,145.6,0.024,False
+7,Overheating,climb,7053,12.8,,176.0,163.2,0.021,False
+7,Overheating,climb,7054,12.8,,164.8,152.0,0.021,False
+7,Overheating,climb,7055,12.8,,161.6,148.8,0.021,False
+7,Overheating,climb,7056,12.8,,144.0,131.2,0.021,False
+7,Overheating,climb,7057,14.4,,153.6,139.2,0.024,False
+7,Overheating,climb,7058,12.8,,187.2,174.4,0.021,False
+7,Overheating,climb,7059,14.4,,156.8,142.4,0.024,False
+7,Overheating,climb,7060,14.4,,171.2,156.8,0.024,False
+7,Overheating,climb,7061,12.8,,164.8,152.0,0.021,False
+7,Overheating,cruise_altitude,7142,12.8,,240.0,227.2,0.021,False
+7,Overheating,cruise_altitude,7143,12.8,,243.2,230.4,0.021,False
+7,Overheating,cruise_altitude,7144,12.8,,236.8,224.0,0.021,False
+7,Overheating,cruise_altitude,7145,12.8,,184.0,171.2,0.021,False
+7,Overheating,cruise_altitude,7146,12.8,,249.6,236.8,0.021,False
+7,Overheating,cruise_altitude,7147,12.8,,224.0,211.2,0.021,False
+7,Overheating,cruise_altitude,7148,12.8,,241.6,228.8,0.021,False
+7,Overheating,cruise_altitude,7149,14.4,,217.6,203.2,0.024,False
+7,Overheating,cruise_altitude,7150,12.8,,214.4,201.6,0.021,False
+7,Overheating,cruise_altitude,7151,12.8,,267.2,254.4,0.021,False
+7,Overheating,cruise_altitude,7152,12.8,,244.8,232.0,0.021,False
+7,Overheating,cruise_altitude,7153,12.8,,224.0,211.2,0.021,False
+7,Overheating,cruise_altitude,7154,12.8,,227.2,214.4,0.021,False
+7,Overheating,cruise_altitude,7155,12.8,,220.8,208.0,0.021,False
+7,Overheating,cruise_altitude,7156,12.8,,257.6,244.8,0.021,False
+7,Overheating,cruise_altitude,7157,12.8,,252.8,240.0,0.021,False
+7,Overheating,cruise_altitude,7158,12.8,,227.2,214.4,0.021,False
+7,Overheating,cruise_altitude,7159,12.8,,225.6,212.8,0.021,False
+7,Overheating,cruise_altitude,7160,12.8,,220.8,208.0,0.021,False
+7,Overheating,cruise_altitude,7161,12.8,,225.6,212.8,0.021,False
+7,Overheating,hot_day_low,7242,14.4,,121.6,107.2,0.024,False
+7,Overheating,hot_day_low,7243,12.8,,112.0,99.2,0.021,False
+7,Overheating,hot_day_low,7244,12.8,,100.8,88.0,0.021,False
+7,Overheating,hot_day_low,7245,12.8,,123.2,110.4,0.021,False
+7,Overheating,hot_day_low,7246,12.8,,132.8,120.0,0.021,False
+7,Overheating,hot_day_low,7247,12.8,,110.4,97.6,0.021,False
+7,Overheating,hot_day_low,7248,12.8,,107.2,94.4,0.021,False
+7,Overheating,hot_day_low,7249,12.8,,115.2,102.4,0.021,False
+7,Overheating,hot_day_low,7250,12.8,,126.4,113.6,0.021,False
+7,Overheating,hot_day_low,7251,12.8,,105.6,92.8,0.021,False
+7,Overheating,hot_day_low,7252,12.8,,116.8,104.0,0.021,False
+7,Overheating,hot_day_low,7253,12.8,,136.0,123.2,0.021,False
+7,Overheating,hot_day_low,7254,12.8,,118.4,105.6,0.021,False
+7,Overheating,hot_day_low,7255,12.8,,113.6,100.8,0.021,False
+7,Overheating,hot_day_low,7256,12.8,,116.8,104.0,0.021,False
+7,Overheating,hot_day_low,7257,12.8,,123.2,110.4,0.021,False
+7,Overheating,hot_day_low,7258,12.8,,123.2,110.4,0.021,False
+7,Overheating,hot_day_low,7259,12.8,,116.8,104.0,0.021,False
+7,Overheating,hot_day_low,7260,12.8,,113.6,100.8,0.021,False
+7,Overheating,hot_day_low,7261,12.8,,92.8,80.0,0.021,False
+8,Vibration,climb,8042,14.4,86.4,296.0,281.6,0.024,False
+8,Vibration,climb,8043,14.4,88.0,260.8,246.4,0.024,False
+8,Vibration,climb,8044,14.4,48.0,273.6,259.2,0.024,False
+8,Vibration,climb,8045,14.4,60.8,302.4,288.0,0.024,False
+8,Vibration,climb,8046,14.4,64.0,283.2,268.8,0.024,False
+8,Vibration,climb,8047,14.4,76.8,318.4,304.0,0.024,False
+8,Vibration,climb,8048,16.0,81.6,286.4,270.4,0.027,False
+8,Vibration,climb,8049,12.8,59.2,292.8,280.0,0.021,False
+8,Vibration,climb,8050,14.4,81.6,281.6,267.2,0.024,False
+8,Vibration,climb,8051,12.8,92.8,286.4,273.6,0.021,False
+8,Vibration,climb,8052,16.0,67.2,318.4,302.4,0.027,False
+8,Vibration,climb,8053,14.4,88.0,268.8,254.4,0.024,False
+8,Vibration,climb,8054,12.8,40.0,292.8,280.0,0.021,False
+8,Vibration,climb,8055,12.8,102.4,284.8,272.0,0.021,False
+8,Vibration,climb,8056,16.0,62.4,276.8,260.8,0.027,False
+8,Vibration,climb,8057,14.4,65.6,307.2,292.8,0.024,False
+8,Vibration,climb,8058,14.4,97.6,300.8,286.4,0.024,False
+8,Vibration,climb,8059,14.4,92.8,284.8,270.4,0.024,False
+8,Vibration,climb,8060,14.4,83.2,302.4,288.0,0.024,False
+8,Vibration,climb,8061,12.8,28.8,296.0,283.2,0.021,False
+8,Vibration,cruise_altitude,8142,14.4,38.4,297.6,283.2,0.024,False
+8,Vibration,cruise_altitude,8143,14.4,80.0,307.2,292.8,0.024,False
+8,Vibration,cruise_altitude,8144,14.4,80.0,272.0,257.6,0.024,False
+8,Vibration,cruise_altitude,8145,12.8,59.2,315.2,302.4,0.021,False
+8,Vibration,cruise_altitude,8146,12.8,57.6,288.0,275.2,0.021,False
+8,Vibration,cruise_altitude,8147,14.4,68.8,300.8,286.4,0.024,False
+8,Vibration,cruise_altitude,8148,12.8,88.0,276.8,264.0,0.021,False
+8,Vibration,cruise_altitude,8149,14.4,48.0,320.0,305.6,0.024,False
+8,Vibration,cruise_altitude,8150,12.8,99.2,297.6,284.8,0.021,False
+8,Vibration,cruise_altitude,8151,14.4,52.8,276.8,262.4,0.024,False
+8,Vibration,cruise_altitude,8152,14.4,78.4,286.4,272.0,0.024,False
+8,Vibration,cruise_altitude,8153,14.4,70.4,312.0,297.6,0.024,False
+8,Vibration,cruise_altitude,8154,12.8,96.0,304.0,291.2,0.021,False
+8,Vibration,cruise_altitude,8155,12.8,84.8,302.4,289.6,0.021,False
+8,Vibration,cruise_altitude,8156,12.8,99.2,296.0,283.2,0.021,False
+8,Vibration,cruise_altitude,8157,14.4,43.2,240.0,225.6,0.024,False
+8,Vibration,cruise_altitude,8158,12.8,70.4,308.8,296.0,0.021,False
+8,Vibration,cruise_altitude,8159,16.0,89.6,305.6,289.6,0.027,False
+8,Vibration,cruise_altitude,8160,12.8,80.0,289.6,276.8,0.021,False
+8,Vibration,cruise_altitude,8161,12.8,33.6,302.4,289.6,0.021,False
+8,Vibration,hot_day_low,8242,14.4,64.0,289.6,275.2,0.024,False
+8,Vibration,hot_day_low,8243,14.4,72.0,305.6,291.2,0.024,False
+8,Vibration,hot_day_low,8244,14.4,68.8,267.2,252.8,0.024,False
+8,Vibration,hot_day_low,8245,12.8,68.8,288.0,275.2,0.021,False
+8,Vibration,hot_day_low,8246,14.4,73.6,275.2,260.8,0.024,False
+8,Vibration,hot_day_low,8247,16.0,107.2,299.2,283.2,0.027,False
+8,Vibration,hot_day_low,8248,14.4,81.6,345.6,331.2,0.024,False
+8,Vibration,hot_day_low,8249,12.8,86.4,315.2,302.4,0.021,False
+8,Vibration,hot_day_low,8250,14.4,62.4,288.0,273.6,0.024,False
+8,Vibration,hot_day_low,8251,14.4,88.0,304.0,289.6,0.024,False
+8,Vibration,hot_day_low,8252,12.8,84.8,310.4,297.6,0.021,False
+8,Vibration,hot_day_low,8253,12.8,62.4,302.4,289.6,0.021,False
+8,Vibration,hot_day_low,8254,14.4,78.4,305.6,291.2,0.024,False
+8,Vibration,hot_day_low,8255,14.4,73.6,289.6,275.2,0.024,False
+8,Vibration,hot_day_low,8256,16.0,59.2,284.8,268.8,0.027,False
+8,Vibration,hot_day_low,8257,14.4,33.6,302.4,288.0,0.024,False
+8,Vibration,hot_day_low,8258,14.4,56.0,294.4,280.0,0.024,False
+8,Vibration,hot_day_low,8259,16.0,89.6,260.8,244.8,0.027,False
+8,Vibration,hot_day_low,8260,14.4,60.8,304.0,289.6,0.024,False
+8,Vibration,hot_day_low,8261,14.4,115.2,265.6,251.2,0.024,False

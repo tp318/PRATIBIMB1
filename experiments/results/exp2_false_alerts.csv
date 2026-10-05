@@ -1,0 +1,2 @@
+simulated_hours,total_windows,raw_alert_windows,raw_window_flag_pct,persisted_alerts,false_alerts_per_100h,threshold_percentile,persistence_count_k
+110.0,246620,1091,0.44,0,0.0,99.5,5
